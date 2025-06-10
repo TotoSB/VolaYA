@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from .models import *
 
 Usuarios = get_user_model()
 
@@ -60,3 +61,57 @@ class LoginSerializer(serializers.Serializer):
 
         data['user'] = user
         return data
+
+class PaisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paises
+        fields = ['id', 'nombre']
+
+class CiudadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ciudades
+        fields = ['id', 'nombre', 'pais', 'latitud', 'longitud']
+
+class AutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Autos
+        fields = ['id', 'marca', 'modelo', 'color', 'precio_dia']
+
+class HotelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Hoteles
+        fields = ['id', 'nombre', 'ciudad', 'descripcion', 'precio_noche', 'direccion']
+
+
+class PaqueteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paquetes
+        fields = [
+            'id_usuario',
+            'descripcion',
+            'personas',
+            'fecha_salida',
+            'fecha_regreso',
+            'ciudad_destino',
+            'ciudad_salida',
+            'hora_salida',
+            'auto',
+            'hotel',
+            'pagado',
+            'total'
+        ]
+
+class PersonaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Personas
+        fields = [
+            'id_usuario',
+            'nombre',
+            'apellido',
+            'tipo_documento',
+            'documento',
+            'telefono',
+            'fecha_nacimiento',
+            'genero'
+        ]
+

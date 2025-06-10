@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from .serializers import RegisterSerializer
+from .serializers import *
 from .models import Usuarios
 import random
 from django.core.mail import send_mail
@@ -130,3 +130,60 @@ def log_code(request):
         "correo": user.correo,
         "nombre_usuario": user.nombre_usuario,
     }, status=status.HTTP_200_OK)
+
+
+#Parte de creacion de paises, autos, ciudades y hoteles
+
+@api_view(['POST'])
+def crear_pais(request):
+    serializer = PaisSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "País creado correctamente."}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_ciudad(request):
+    serializer = CiudadSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Ciudad creada correctamente."}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_auto(request):
+    serializer = AutoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Auto creado correctamente."}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+def crear_hotel(request):
+    serializer = HotelSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Hotel creado correctamente."}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+#Añadir Paquete y Persona
+
+
+
+@api_view(['POST'])
+def crear_paquete(request):
+    serializer = PaqueteSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Paquete creado exitosamente"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def crear_persona(request):
+    serializer = PersonaSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Persona creada exitosamente"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
