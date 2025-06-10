@@ -26,4 +26,5 @@ Una vez instalado esto debemos de clonar nuestro repositorio con el siguiente co
 Debemos de dirigirnos a la carpeta "Frontend"
 <code>cd frontend</code>
 Luego debemos de ejecutar el repositorio vite con el siguiente comando:
+<code>npm install</code>
 <code>npm run dev</code>
