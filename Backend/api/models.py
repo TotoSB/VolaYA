@@ -29,6 +29,7 @@ class Usuarios(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     activo = models.BooleanField(default=True)
+    codigo_activacion = models.IntegerField(null=True, blank=True)
 
     objects = CustomUserManager()
 

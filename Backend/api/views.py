@@ -5,13 +5,19 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import RegisterSerializer
+from .models import Usuarios
+import random
+from django.core.mail import send_mail
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save()
+        user.activo = False  # El usuario se desactiva, para validar luego y pedir el codigo de verificacion
+        user.save()
+        send_verification_code(user)
         return Response(
             {"message": "Registro exitoso. Verifica tu correo electrónico para activar tu cuenta."},
             status=status.HTTP_201_CREATED
@@ -43,33 +49,84 @@ def login(request):
         'nombre_usuario': user.nombre_usuario,
     })
 
-    Usuarios = get_user_model()
 
-    @api_view(['POST'])
-    @permission_classes([AllowAny])
-    def login(request):
-        correo = request.data.get('correo')
-        password = request.data.get('password')
+def send_verification_code(user):
+    code = random.randint(100000, 999999)
+    user.codigo_activacion = code
+    user.save()
 
-        if not correo or not password:
-            return Response({"error": "Correo y contraseña son requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+    send_mail(
+        'Volaya - Tu código de verificación',
+        f'Tu código de verificación es: {code}',
+        "noreplyprobuildsalbiononline@gmail.com",
+        [user.correo],
+        fail_silently=False,
+    )
 
-        try:
-            user = Usuarios.objects.get(correo=correo)
-        except Usuarios.DoesNotExist:
-            return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
+    return "Se ha enviado un código de verificación a tu correo electrónico."
 
-        if not user.check_password(password):
-            return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        if not user.activo:
-            return Response({"error": "Usuario no activo"}, status=status.HTTP_403_FORBIDDEN)
 
-        refresh = RefreshToken.for_user(user)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    correo = request.data.get('correo')
+    password = request.data.get('password')
 
+    if not correo or not password:
+        return Response({"error": "Correo y contraseña son requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        user = Usuarios.objects.get(correo=correo)
+    except Usuarios.DoesNotExist:
+        return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if not user.check_password(password):
+        return Response({"error": "Credenciales inválidas"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    if not user.activo:
         return Response({
-            "refresh": str(refresh),
-            "access": str(refresh.access_token),
-            "correo": user.correo,
-            "nombre_usuario": user.nombre_usuario,
-        })
+            "message": "Ingresa el código de verificación para terminar de iniciar sesión",
+            "usuario_id": user.id  # Opcional, si querés usar esto para la validación posterior
+        }, status=status.HTTP_403_FORBIDDEN)
+
+    refresh = RefreshToken.for_user(user)
+
+    return Response({
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+        "correo": user.correo,
+        "nombre_usuario": user.nombre_usuario,
+    })
+
+
+@api_view(['POST']) 
+@permission_classes([AllowAny])
+def log_code(request):
+    usuario_id = request.data.get('id_usuario')
+    codigo = request.data.get('codigo_activacion')
+
+    try:
+        user = Usuarios.objects.get(id=usuario_id)
+    except Usuarios.DoesNotExist:
+        return Response({"error": "Usuario no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
+    if user.activo:
+        return Response({"error": "El usuario ya está activado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    if str(user.codigo_activacion) != str(codigo):
+        return Response({"error": "Código de verificación incorrecto"}, status=status.HTTP_400_BAD_REQUEST)
+
+    user.activo = True
+    user.codigo_activacion = None
+    user.save()
+
+    refresh = RefreshToken.for_user(user)
+
+    return Response({
+        "message": "Usuario activado correctamente",
+        "refresh": str(refresh),
+        "access": str(refresh.access_token),
+        "correo": user.correo,
+        "nombre_usuario": user.nombre_usuario,
+    }, status=status.HTTP_200_OK)
