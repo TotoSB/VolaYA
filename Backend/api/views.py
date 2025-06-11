@@ -8,6 +8,13 @@ from .serializers import *
 from .models import Usuarios
 import random
 from django.core.mail import send_mail
+from django.http import HttpResponse
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+
+
+
+#POST
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -132,18 +139,25 @@ def log_code(request):
     }, status=status.HTTP_200_OK)
 
 
-#Parte de creacion de paises, autos, ciudades y hoteles
-
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def crear_pais(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+    
     serializer = PaisSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "País creado correctamente."}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def crear_ciudad(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
     serializer = CiudadSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -151,7 +165,11 @@ def crear_ciudad(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def crear_auto(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
     serializer = AutoSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
@@ -159,31 +177,39 @@ def crear_auto(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def crear_hotel(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
     serializer = HotelSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "Hotel creado correctamente."}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-#Añadir Paquete y Persona
-
-
-
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def crear_paquete(request):
+   
     serializer = PaqueteSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
         return Response({"message": "Paquete creado exitosamente"}, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def persona_view(request):
+    if request.method == 'POST':
+        serializer = PersonaSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Persona creada exitosamente"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'GET':
+        personas = Persona.objects.all()
+        serializer = PersonaSerializer(personas, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-@api_view(['POST'])
-def crear_persona(request):
-    serializer = PersonaSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"message": "Persona creada exitosamente"}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#GET
