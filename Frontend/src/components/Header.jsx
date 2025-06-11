@@ -20,7 +20,6 @@ function Header() {
             {[
               { to: "/", label: "Inicio" },
               { to: "/paquetes", label: "Paquetes" },
-              { to: "/vuelos", label: "Vuelos" },
               { to: "/login", label: "Iniciar sesión" },
               { to: "/register", label: "Registrarse" },
             ].map(({ to, label }) => (
