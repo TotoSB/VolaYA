@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/Login.css"
 
 function Login() {
   const [correo, setCorreo] = useState("");
@@ -56,12 +57,12 @@ const handleLogin = async (e) => {
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
       <Form style={{ width: "500px" }} onSubmit={handleLogin}>
-        <h2 className="mb-3">Iniciar Sesión</h2>
+        <h2 className="mb-3 login-title">Iniciar Sesión</h2>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
         <Form.Group className="mb-3" controlId="formEmail">
-          <Form.Label>Correo</Form.Label>
+          <Form.Label className="login-label">Correo Electronico</Form.Label>
           <Form.Control
             type="email"
             placeholder="Ingresa tu correo"
@@ -72,7 +73,7 @@ const handleLogin = async (e) => {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formPassword">
-          <Form.Label>Contraseña</Form.Label>
+          <Form.Label className="login-label">Contraseña</Form.Label>
           <Form.Control
             type="password"
             placeholder="Contraseña"
@@ -83,10 +84,12 @@ const handleLogin = async (e) => {
         </Form.Group>
 
         <Button variant="primary" type="submit" className="w-100 mb-3">
-          Entrar
+          <div className="login-button">
+            Entrar
+          </div>
         </Button>
 
-        <div className="text-center">
+        <div className="text-center login-cuenta">
           ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
         </div>
       </Form>

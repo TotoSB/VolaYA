@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Container, Form, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/Register.css"
 
 function Register() {
   const navigate = useNavigate();
@@ -52,10 +53,10 @@ function Register() {
       style={{ height: "80vh" }}
     >
       <Form style={{ width: "500px" }} onSubmit={handleSubmit}>
-        <h2 className="mb-3">Registrarse</h2>
+        <h2 className="mb-3 register-title">Registrarse</h2>
 
         <Form.Group className="mb-3" controlId="formName">
-          <Form.Label>Nombre</Form.Label>
+          <Form.Label className="register-label">Nombre</Form.Label>
           <Form.Control
             type="text"
             placeholder="Ingresa tu nombre"
@@ -65,7 +66,7 @@ function Register() {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formEmail">
-          <Form.Label>Email</Form.Label>
+          <Form.Label className="register-label">Correo Electronico</Form.Label>
           <Form.Control
             type="email"
             placeholder="Ingresa tu email"
@@ -75,7 +76,7 @@ function Register() {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formPassword">
-          <Form.Label>Contraseña</Form.Label>
+          <Form.Label className="register-label">Contraseña</Form.Label>
           <Form.Control
             type="password"
             placeholder="Crea una contraseña"
@@ -85,7 +86,7 @@ function Register() {
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formPassword2">
-          <Form.Label>Confirmar Contraseña</Form.Label>
+          <Form.Label className="register-label">Confirmar Contraseña</Form.Label>
           <Form.Control
             type="password"
             placeholder="Confirmar contraseña"
@@ -95,10 +96,12 @@ function Register() {
         </Form.Group>
 
         <Button variant="primary" type="submit" className="w-100 mb-3">
-          Registrarse
+          <div className="register-button">
+            Registrarse
+          </div>
         </Button>
 
-        <div className="text-center">
+        <div className="text-center register-cuenta">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
         </div>
       </Form>

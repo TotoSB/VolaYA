@@ -1,0 +1,53 @@
+/* Estilo general de la bienvenida */
+.welcome {
+  text-align: center;
+  padding: 4rem 1rem;
+}
+
+/* Título principal */
+.welcome__title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Párrafo principal */
+.welcome__subtitle {
+  font-size: 1.25rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+/* Botones */
+.welcome__buttons a {
+  margin: 0 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.welcome__buttons a:hover {
+  transform: scale(1.05);
+}
+
+/* Cards */
+.welcome__card {
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem 1rem;
+}
+
+.welcome__card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Íconos */
+.welcome__icon {
+  font-size: 80px;
+  color: #0d6efd;
+  transition: transform 0.3s ease;
+}
+
+.welcome__card:hover .welcome__icon {
+  transform: scale(1.2) rotate(5deg);
+}

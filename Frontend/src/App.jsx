@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import 'boxicons/css/boxicons.min.css';
 
 function App() {
   return (
