@@ -174,7 +174,7 @@ def log_code(request):
 
     refresh = RefreshToken.for_user(user)
 
-    Carritos.objects.create(usuario=user)
+    Carritos.objects.create(id_usuario=user)
 
     return Response({
         "message": "Usuario activado correctamente",
