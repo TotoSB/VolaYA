@@ -39,6 +39,10 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         })
         return data
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuarios
+        fields = ['correo', 'nombre_usuario', 'is_staff']
 
 Usuarios = get_user_model()
 
@@ -87,7 +91,6 @@ class PaqueteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Paquetes
         fields = [
-            'id_usuario',
             'descripcion',
             'personas',
             'fecha_salida',
@@ -98,8 +101,12 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'auto',
             'hotel',
             'pagado',
-            'total'
+            'total',
+            'id_usuario'
         ]
+
+        read_only_fields = ['id_usuario', 'pagado', 'total']
+
 
 class PersonaSerializer(serializers.ModelSerializer):
     class Meta:
@@ -112,6 +119,28 @@ class PersonaSerializer(serializers.ModelSerializer):
             'documento',
             'telefono',
             'fecha_nacimiento',
-            'genero'
+            'genero',
+            'dueno'
         ]
 
+
+class CarritoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Carritos
+        fields = ['id_usuario', 'total']
+
+class ReservaUsuarioSerializer(serializers.ModelSerializer):
+    total_paquete = serializers.DecimalField(source='paquete.total', max_digits=10, decimal_places=2, read_only=True)
+
+    class Meta:
+        model = Reservas_usuario
+        fields = ['id', 'usuario', 'paquete', 'total_paquete']
+
+class FacturaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Facturas
+        fields = ['id', 'paquete', 'fecha_emision', 'total', 'detalles']
+
+    def create(self, validated_data):
+        factura = Facturas.objects.create(**validated_data)
+        return factura
