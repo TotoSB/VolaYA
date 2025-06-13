@@ -43,7 +43,7 @@ const handleLogin = async (e) => {
     // ✅ Si es login normal con token
     if (data.access) {
       localStorage.setItem("access", data.access);
-      navigate("/");
+      window.location.href = "/";
     }
 
   } catch (err) {

@@ -7,6 +7,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import Package from "./Package";
 import InsertarCodigo from "./InsertCode";
 import "../styles/Home.css";
+import Perfil from "./Perfil";
 
 
 
@@ -21,7 +22,7 @@ function Home() {
           <Route path="/register" element={<Register />} />
           <Route path="/paquetes" element={<Package />} />
           <Route path="/codigo" element={<InsertarCodigo />} />
-        </Routes>
+          <Route path="/perfil" element={<Perfil />} /></Routes>
       </Container>
     </>
   );

@@ -41,6 +41,7 @@ function InsertarCodigo() {
         localStorage.setItem("access", data.access);
         localStorage.removeItem("usuario_id");
         navigate("/"); // Redirigir a inicio o dashboard
+        window.location.href = "/";
       } else {
         setError("No se recibió el token de acceso.");
       }

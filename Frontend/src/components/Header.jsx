@@ -1,21 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Header.css";
 import VerifyToken from "./VerifyToken";
-import { useAuth } from "../context/AuthContext";
 
 function Header() {
   const [expanded, setExpanded] = useState(false);
-  const { isAuthenticated, setIsAuthenticated, setUserData, userData } = useAuth();
+  const [username, setUsername] = useState(null)
   const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("access");
-    setIsAuthenticated(false);
-    setUserData(null);
+    setUsername(null)
     navigate("/");
   };
+
+    useEffect(() => {
+    const token = localStorage.getItem('access');
+
+    if (token) {
+      fetch('http://127.0.0.1:8000/conseguir_mi_usuario/', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Failed to fetch user data');
+          }
+          return response.json();
+        })
+        .then(data => {
+            console.log("Respuesta del backend:", data);
+            setUsername(data.nombre_usuario);
+          // setUsername(data.username);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+    } else {
+      setUsername(null)
+    }
+  }, []);
+
+  useEffect(() => {
+  console.log("El username ha cambiado:", username);
+  }, [username]);
 
   return (
     <>
@@ -49,7 +81,7 @@ function Header() {
                 Paquetes
               </Nav.Link>
 
-              {!isAuthenticated ? (
+              {!username ? (
                 <>
                   <Nav.Link
                     as={Link}
@@ -73,7 +105,7 @@ function Header() {
                     to="/perfil"
                     onClick={() => setExpanded(false)}
                   >
-                    {userData?.username || "Usuario"}
+                    {username || "Usuario"}
                   </Nav.Link>
                   <Nav.Link
                     className="logout-link"
@@ -84,12 +116,11 @@ function Header() {
                   >
                     Cerrar sesión
                   </Nav.Link>
+                    <Nav.Link as={Link} to="/carrito" onClick={() => setExpanded(false)}>
+                    Carrito
+                  </Nav.Link>
                 </>
               )}
-
-              <Nav.Link as={Link} to="/carrito" onClick={() => setExpanded(false)}>
-                Carrito
-              </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
