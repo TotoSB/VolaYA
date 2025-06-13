@@ -105,7 +105,7 @@ function Header() {
                     to="/perfil"
                     onClick={() => setExpanded(false)}
                   >
-                    {username || "Usuario"}
+                    Perfil
                   </Nav.Link>
                   <Nav.Link
                     className="logout-link"

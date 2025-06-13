@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import '../styles/Perfil.css';
 
 function Perfil() {
   const [userData, setUserData] = useState(null);
@@ -7,7 +8,7 @@ function Perfil() {
     const token = localStorage.getItem('access');
 
     if (token) {
-      fetch('http://127.0.0.1:8000/perfil/', {
+      fetch('http://127.0.0.1:8000/conseguir_mi_usuario/', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -18,7 +19,7 @@ function Perfil() {
           if (!response.ok) {
             throw new Error('Error al obtener los datos del usuario');
           }
-          return response.json(); // ✅ esto solo una vez
+          return response.json();
         })
         .then(data => {
           setUserData(data);
@@ -30,16 +31,21 @@ function Perfil() {
   }, []);
 
   return (
-    <div className="perfil-container">
-      <h2>Mi Perfil</h2>
-      {userData ? (
-        <div className="perfil-info">
-          <p><strong>Nombre:</strong> {userData.nombre}</p>
-          <p><strong>Correo:</strong> {userData.correo}</p>
+    <div className="perfil-wrapper">
+      <div className="perfil-container">
+        <div className="perfil-avatar">
+          <i className='bx bxs-user-circle'></i>
         </div>
-      ) : (
-        <p>Cargando datos...</p>
-      )}
+        <h2>Mi Perfil</h2>
+        {userData ? (
+          <div className="perfil-info">
+            <p><i className='bx bxs-user'></i> <strong>Nombre:</strong> {userData.nombre_usuario}</p>
+            <p><i className='bx bxs-envelope'></i> <strong>Correo:</strong> {userData.correo}</p>
+          </div>
+        ) : (
+          <p className="cargando"><i className='bx bx-loader bx-spin'></i> Cargando datos...</p>
+        )}
+      </div>
     </div>
   );
 }
