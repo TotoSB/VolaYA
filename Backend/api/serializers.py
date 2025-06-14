@@ -84,7 +84,7 @@ class AutoSerializer(serializers.ModelSerializer):
 class HotelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hoteles
-        fields = ['id', 'nombre', 'ciudad', 'descripcion', 'precio_noche', 'direccion']
+        fields = ['id', 'nombre', 'ciudad', 'descripcion', 'precio_noche', 'direccion', 'personas']
 
 
 class PaqueteSerializer(serializers.ModelSerializer):
@@ -106,6 +106,20 @@ class PaqueteSerializer(serializers.ModelSerializer):
         ]
 
         read_only_fields = ['id_usuario', 'pagado', 'total']
+
+
+class CotizarPaqueteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Paquetes
+        fields = [
+            'personas',
+            'fecha_salida',
+            'fecha_regreso',
+            'ciudad_destino',
+            'ciudad_salida',
+            'auto',
+        ]
+        read_only_fields = ['total']
 
 
 class PersonaSerializer(serializers.ModelSerializer):

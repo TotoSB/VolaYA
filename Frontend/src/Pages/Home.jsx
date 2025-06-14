@@ -8,14 +8,13 @@ import Package from "./Package";
 import InsertarCodigo from "./InsertCode";
 import "../styles/Home.css";
 import Perfil from "./Perfil";
-
-
+import Search from "../components/Search";
 
 function Home() {
   return (
     <>
       <Header />
-      <Container className="mt-4">
+      <Container className="mt-4 bg-video">
         <Routes>
           <Route path="/" element={<Welcome />} />
           <Route path="/login" element={<Login />} />
@@ -42,8 +41,7 @@ function Welcome() {
       </p>
 
       <div className="welcome__buttons d-flex justify-content-center align-items-center gap-3 mb-5">
-        <a href="/paquetes" className="btn btn-primary px-4">Ver Paquetes</a>
-        <a href="/register" className="btn btn-outline-primary px-4">Registrarse</a>
+        <Search />
       </div>
 
       <div className="row row-cols-1 row-cols-md-3 g-4">

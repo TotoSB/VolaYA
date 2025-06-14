@@ -250,7 +250,7 @@ def crear_paquete(request):
 
         distancia_km = calcular_distancia_km(lat1, lon1, lat2, lon2)
         precio_por_km = 2000
-        costo_total = distancia_km * precio_por_km * serializer.validated_data['personas']
+        costo_total = distancia_km * precio_por_km
 
         auto = serializer.validated_data.get('auto')
         hotel = serializer.validated_data.get('hotel')
@@ -378,6 +378,49 @@ def get_my_user(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def obtener_paquetes_search(request):
+    if request.method == 'POST':
+        serializer = CotizarPaqueteSerializer(data=request.data)
+        if serializer.is_valid():
+            ciudad_salida = serializer.validated_data['ciudad_salida']
+            ciudad_destino = serializer.validated_data['ciudad_destino']
+            personass = serializer.validated_data['personas']
+
+            fecha_salida = serializer.validated_data['fecha_salida']
+            fecha_regreso = serializer.validated_data['fecha_regreso']
+
+            lat1 = float(ciudad_salida.latitud)
+            lon1 = float(ciudad_salida.longitud)
+            lat2 = float(ciudad_destino.latitud)
+            lon2 = float(ciudad_destino.longitud)
+
+            distancia_km = calcular_distancia_km(lat1, lon1, lat2, lon2)
+            precio_por_km = 2000
+
+            costo_vuelo = (distancia_km * precio_por_km) * personass
+            costo_vuelo = round(costo_vuelo, 2)  # Redondear a dos decimales
+
+            auto = serializer.validated_data.get('auto')
+            if auto:
+                auto_seleccionado = Autos.objects.get(id=auto.id)
+                costo_vuelo += auto_seleccionado.precio_dia * (fecha_regreso - fecha_salida).days
+
+
+            # Filtrar hoteles con capacidad suficiente
+            hoteles_buscar = Hoteles.objects.filter(
+                ciudad=ciudad_destino,
+                personas__gte=personass
+            )
+
+            # Podés seguir acá con lo que querés hacer con los hoteles filtrados y el costo
+            return Response({
+                "costo_vuelo_y_servicios": costo_vuelo,
+                "hoteles_disponibles": HotelSerializer(hoteles_buscar, many=True).data
+            })
+        return Response(serializer.errors, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

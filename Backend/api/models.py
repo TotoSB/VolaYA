@@ -71,6 +71,7 @@ class Hoteles(models.Model):
     nombre = models.CharField(max_length=100, null=False, blank=False)
     ciudad = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='hoteles')
     descripcion = models.TextField(null=True, blank=True)
+    personas = models.IntegerField(null=False, blank=False, default=1)
     precio_noche = models.IntegerField(null=False, blank=False)
     direccion = models.CharField(max_length=255, null=True, blank=True)
 

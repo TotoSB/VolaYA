@@ -32,6 +32,7 @@ urlpatterns = [
     path('conseguir_ciudades/', views.get_ciudades, name='conseguir_ciudades'),
     path('conseguir_paquetes_en_venta/', views.get_paquetes_en_venta, name='conseguir_paquetes_en_venta'),
     path('buscar_hoteles/', views.buscar_hoteles, name='buscar_hoteles'),
+    path('obtener_paquetes_search/', views.obtener_paquetes_search, name='obtener_paquetes_search'),
     #Get Jefe de ventas
     path('conseguir_personas/', views.get_personas, name='conseguir_personas'),
     path('conseguir_paquetes_pendientes/', views.get_paquetes_pendientes, name='conseguir_paquetes_pendientes'),
