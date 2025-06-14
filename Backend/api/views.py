@@ -15,7 +15,7 @@ import math
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 
-from django.db.models import Q
+from django.db.models import Q, F
 import mercadopago
 
 sdk = mercadopago.SDK("TEST-6677338736055594-061201-ec6608dc36251133dd3b1718995d2dc4-292453564")
@@ -508,10 +508,12 @@ def buscar_hoteles(request):
 
     hoteles = Hoteles.objects.filter(
         Q(ciudad__nombre__icontains=search) | Q(ciudad__pais__nombre__icontains=search)
+    ).values(
+        ciudad_nombre=F('ciudad__nombre'),
+        pais_nombre=F('ciudad__pais__nombre')
     ).distinct()
 
-    serializer = HotelSerializer(hoteles, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(list(hoteles), status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

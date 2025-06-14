@@ -82,9 +82,21 @@ class AutoSerializer(serializers.ModelSerializer):
         fields = ['id', 'marca', 'modelo', 'color', 'precio_dia']
 
 class HotelSerializer(serializers.ModelSerializer):
+    ciudad_nombre = serializers.CharField(source='ciudad.nombre', read_only=True)
+    pais_nombre = serializers.CharField(source='ciudad.pais.nombre', read_only=True)
+
     class Meta:
         model = Hoteles
-        fields = ['id', 'nombre', 'ciudad', 'descripcion', 'precio_noche', 'direccion', 'personas']
+        fields = [
+            'id',
+            'nombre',
+            'ciudad_nombre',
+            'pais_nombre',
+            'descripcion',
+            'precio_noche',
+            'direccion',
+            'personas'
+        ]
 
 
 class PaqueteSerializer(serializers.ModelSerializer):
