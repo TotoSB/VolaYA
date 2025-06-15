@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../styles/search.css';
+import '../../styles/Search.css';
 
 function Search() {
   const [origen, setOrigen] = useState('');

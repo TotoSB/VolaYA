@@ -1,5 +1,23 @@
+.login-form{
+    padding: 50px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.login-volaya{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 35px;
+    gap: 8px;
+    border-bottom: solid 1px rgba(0, 0, 0, 0.192);
+    padding: 5px;
+}
 .login-title{
-    font-weight: 900 !important;
+    font-weight: bold !important;
+    text-align: center;
+}
+.login-p{
+    text-align: center;
 }
 
 .login-label{

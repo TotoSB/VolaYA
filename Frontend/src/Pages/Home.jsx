@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../components/Header";
+import Header from "../components/Public/Header";
 import Login from "./Login";
 import Register from "./Register";
 import { Container } from "react-bootstrap";
@@ -8,7 +8,7 @@ import Package from "./Package";
 import InsertarCodigo from "./InsertCode";
 import "../styles/Home.css";
 import Perfil from "./Perfil";
-import Search from "../components/Search";
+import Search from "../components/Public/Search";
 
 function Home() {
   return (

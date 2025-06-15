@@ -1,0 +1,10 @@
+.staff-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.staff-content {
+  flex: 1;
+  padding: 2rem;
+  background-color: #f9f9f9;
+}

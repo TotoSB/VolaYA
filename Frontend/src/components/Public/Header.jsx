@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navbar, Nav, Container } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
-import "../styles/Header.css";
+import "../../styles/Header.css";
 import VerifyToken from "./VerifyToken";
 
 function Header() {

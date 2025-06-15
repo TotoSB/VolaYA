@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import { Container, Form, Button, Alert, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css"
 
@@ -24,7 +24,6 @@ const handleLogin = async (e) => {
     const data = await response.json();
     console.log("Respuesta del login:", data);
 
-    // ✅ Verificamos si es el mensaje de código, incluso si la respuesta fue 403
     if (
       data.message?.includes("código de verificación") &&
       data.usuario_id
@@ -34,16 +33,31 @@ const handleLogin = async (e) => {
       return;
     }
 
-    // ❌ Si no fue el mensaje esperado y la respuesta no fue exitosa
     if (!response.ok) {
       setError(data.message || "Credenciales inválidas");
       return;
     }
 
-    // ✅ Si es login normal con token
     if (data.access) {
       localStorage.setItem("access", data.access);
-      window.location.href = "/";
+      localStorage.setItem("usuario_id", data.usuario_id);
+
+      // 🔐 Verificamos si es staff usando el token
+      const userRes = await fetch("http://127.0.0.1:8000/conseguir_mi_usuario/", {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${data.access}`,
+        },
+      });
+
+      const userData = await userRes.json();
+      console.log("Datos del usuario:", userData);
+
+      if (userData.is_staff) {
+        navigate("/Staff"); // Ruta del panel de staff
+      } else {
+        navigate("/"); // Ruta común
+      }
     }
 
   } catch (err) {
@@ -54,42 +68,57 @@ const handleLogin = async (e) => {
 
 
 
+
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
-      <Form style={{ width: "500px" }} onSubmit={handleLogin}>
-        <h2 className="mb-3 login-title">Iniciar Sesión</h2>
+      <Form className="login-form shadow-lg" style={{ width: "500px" }} onSubmit={handleLogin}>
+        <div className="login-volaya mb-3 text-center">
+          <i className="bx bx-paper-plane" style={{ color: "#0d6efd", fontSize: "47px" }}></i>
+          <span className="ms-2">VolaYA</span>
+        </div>
+        <p className="mb-3 login-p">Inicia sesión para continuar tu aventura</p>
 
         {error && <Alert variant="danger">{error}</Alert>}
 
+        {/* Email */}
         <Form.Group className="mb-3" controlId="formEmail">
-          <Form.Label className="login-label">Correo Electronico</Form.Label>
-          <Form.Control
-            type="email"
-            placeholder="Ingresa tu correo"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-            required
-          />
+          <Form.Label className="login-label">Correo Electrónico</Form.Label>
+          <InputGroup>
+            <InputGroup.Text>
+              <i className="bx bx-envelope"></i>
+            </InputGroup.Text>
+            <Form.Control
+              type="email"
+              placeholder="Correo electrónico"
+              value={correo}
+              onChange={(e) => setCorreo(e.target.value)}
+              required
+            />
+          </InputGroup>
         </Form.Group>
 
+        {/* Contraseña */}
         <Form.Group className="mb-3" controlId="formPassword">
           <Form.Label className="login-label">Contraseña</Form.Label>
-          <Form.Control
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <InputGroup>
+            <InputGroup.Text>
+              <i className="bx bx-lock-alt"></i>
+            </InputGroup.Text>
+            <Form.Control
+              type="password"
+              placeholder="Contraseña"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </InputGroup>
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100 mb-3">
-          <div className="login-button">
-            Entrar
-          </div>
+        <Button variant="primary" type="submit" className="w-100 mt-4">
+          <div className="login-button">Iniciar Sesión</div>
         </Button>
 
-        <div className="text-center login-cuenta">
+        <div className="text-center login-cuenta mt-3">
           ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
         </div>
       </Form>
