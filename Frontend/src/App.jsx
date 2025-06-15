@@ -4,11 +4,13 @@ import HomeStaff from './Pages/Staff/HomeStaff';
 import ListCars from './Pages/Staff/Cars/ListCars';
 import CreateCars from './Pages/Staff/Cars/CreateCars';
 import 'boxicons/css/boxicons.min.css';
+import HotelesDisponibles from './Pages/HotelesDisponibles';
 
 function App() {
   return (
     <Routes>
       <Route path="/*" element={<Home />} />
+      <Route path="/hoteles-disponibles" element={<HotelesDisponibles />} />
 
       <Route path="/staff" element={<HomeStaff />}>
         <Route index element={<p>Bienvenido al panel de administración</p>} />

@@ -506,14 +506,20 @@ def buscar_hoteles(request):
     if not search:
         return Response({"error": "Debe proporcionar un término de búsqueda."}, status=status.HTTP_400_BAD_REQUEST)
 
-    hoteles = Hoteles.objects.filter(
-        Q(ciudad__nombre__icontains=search) | Q(ciudad__pais__nombre__icontains=search)
-    ).values(
-        ciudad_nombre=F('ciudad__nombre'),
-        pais_nombre=F('ciudad__pais__nombre')
-    ).distinct()
+    ciudades = Ciudades.objects.filter(
+        Q(nombre__icontains=search) | Q(pais__nombre__icontains=search),
+        hoteles__isnull=False  # Asegura que haya al menos un hotel en esa ciudad
+    ).select_related('pais').distinct()
 
-    return Response(list(hoteles), status=status.HTTP_200_OK)
+    resultado = []
+    for ciudad in ciudades:
+        resultado.append({
+            'id_ciudad': ciudad.id,
+            'ciudad_nombre': ciudad.nombre,
+            'pais_nombre': ciudad.pais.nombre
+        })
+
+    return Response(resultado, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/Search.css';
+import { useNavigate } from 'react-router-dom';
+
 
 function Search() {
   const [origen, setOrigen] = useState('');
@@ -12,8 +14,38 @@ function Search() {
   const [fechaSalida, setFechaSalida] = useState('');
   const [fechaVuelta, setFechaVuelta] = useState('');
   const [error, setError] = useState('');
+  const [personas, setPersonas] = useState(1);
+  const [token] = useState(localStorage.getItem('access') || '');
+  const [autos, setAutos] = useState([]);
+  const [autoSeleccionadoId, setAutoSeleccionadoId] = useState(null);
+
+  const [origenId, setOrigenId] = useState(null);
+  const [destinoId, setDestinoId] = useState(null);
 
   const today = new Date().toISOString().split('T')[0];
+
+  useEffect(() => {
+    const fetchAutos = async () => {
+      try {
+        const token = localStorage.getItem('access');
+        const res = await fetch('http://127.0.0.1:8000/conseguir_autos/', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (!res.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+        const data = await res.json();
+        setAutos(data);
+      } catch (error) {
+        console.error('Error al traer autos:', error);
+      }
+    };
+
+    fetchAutos();
+  }, []);
 
   const buscarSugerencias = async (valor, setSugerencias, setMostrar) => {
     if (valor.length >= 3) {
@@ -34,26 +66,32 @@ function Search() {
   const handleChangeOrigen = (e) => {
     const valor = e.target.value;
     setOrigen(valor);
+    setOrigenId(null);
     buscarSugerencias(valor, setSugerenciasOrigen, setMostrarSugerenciasOrigen);
   };
 
   const handleChangeDestino = (e) => {
     const valor = e.target.value;
     setDestino(valor);
+    setDestinoId(null);
     buscarSugerencias(valor, setSugerenciasDestino, setMostrarSugerenciasDestino);
   };
 
-  const seleccionarSugerenciaOrigen = (ciudad, pais) => {
+  const seleccionarSugerenciaOrigen = (id, ciudad, pais) => {
     setOrigen(`${ciudad}, ${pais}`);
+    setOrigenId(id);
     setMostrarSugerenciasOrigen(false);
   };
 
-  const seleccionarSugerenciaDestino = (ciudad, pais) => {
+  const seleccionarSugerenciaDestino = (id, ciudad, pais) => {
     setDestino(`${ciudad}, ${pais}`);
+    setDestinoId(id);
     setMostrarSugerenciasDestino(false);
   };
 
-  const handleSubmit = (e) => {
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const salida = new Date(fechaSalida);
@@ -76,8 +114,61 @@ function Search() {
       return;
     }
 
+    if (!origenId || !destinoId) {
+      setError('Debe seleccionar un origen y un destino válidos de la lista.');
+      return;
+    }
+
+    if (origenId === destinoId) {
+      alert('La ciudad de origen y destino no pueden ser iguales.');
+      return;
+    }
+
     setError('');
     console.log('Formulario válido');
+
+    const buscarDestinos = async () => {
+      try {
+        const res = await fetch(`http://127.0.0.1:8000/obtener_paquetes_search/`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            personas,
+            fecha_salida: fechaSalida,
+            fecha_regreso: fechaVuelta,
+            ciudad_destino: destinoId,
+            ciudad_salida: origenId,
+            auto: autoSeleccionadoId,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error('Error en la búsqueda');
+        }
+
+        const data = await res.json();
+        console.log(data);
+
+        navigate('/hoteles-disponibles', { 
+          state: { 
+            hoteles: data,
+            searchParams: { origen, destino, fechaSalida, fechaVuelta }
+          } 
+        });
+      } catch (err) {
+        console.error("Error al buscar paquetes:", err);
+        setError('Error al buscar hoteles disponibles.');
+      }
+    };
+
+    buscarDestinos();
+  };
+
+  const handleChangeAuto = (e) => {
+    setAutoSeleccionadoId(e.target.value);
   };
 
   return (
@@ -99,7 +190,7 @@ function Search() {
               {sugerenciasOrigen.map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => seleccionarSugerenciaOrigen(item.ciudad_nombre, item.pais_nombre)}
+                  onClick={() => seleccionarSugerenciaOrigen(item.id_ciudad, item.ciudad_nombre, item.pais_nombre)}
                 >
                   {item.ciudad_nombre}, {item.pais_nombre}
                 </li>
@@ -124,7 +215,7 @@ function Search() {
               {sugerenciasDestino.map((item, index) => (
                 <li
                   key={index}
-                  onClick={() => seleccionarSugerenciaDestino(item.ciudad_nombre, item.pais_nombre)}
+                  onClick={() => seleccionarSugerenciaDestino(item.id_ciudad, item.ciudad_nombre, item.pais_nombre)}
                 >
                   {item.ciudad_nombre}, {item.pais_nombre}
                 </li>
@@ -157,11 +248,30 @@ function Search() {
         {/* Personas */}
         <div className="form-group">
           <label>Personas:</label>
-          <input type="number" min="1" max="10" defaultValue="1" />
+          <input
+            onChange={(e) => setPersonas(e.target.value)}
+            type="number"
+            min="1"
+            max="10"
+            defaultValue="1"
+          />
+        </div>
+
+        {/* Autos */}
+        <div className="form-group">
+          <label>Autos:</label>
+          <select id="miLista" size="5" onChange={handleChangeAuto} value={autoSeleccionadoId || ''}>
+            <option value="">Sin auto</option>
+            {autos.map((auto) => (
+              <option key={auto.id} value={auto.id}>
+                {auto.marca} {auto.modelo}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button type="submit" className="search-btn">
-          <i className="bx bx-search" style={{ color: "#fff", fontSize: "20px" }}></i> Buscar
+          <i className="bx bx-search" style={{ color: '#fff', fontSize: '20px' }}></i> Buscar
         </button>
       </form>
 
