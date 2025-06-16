@@ -76,6 +76,51 @@ const SidebarStaff = () => {
               </ul>
             )}
           </li>
+            
+
+            <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('paises')}>
+              <i className='bx bx-flag'></i> Paises
+              <i className={`bx bx-chevron-${openMenu === 'paises' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'paises' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/pais/lista">
+                    <i className="bx bx-list-ul"></i> Listar Paises
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/pais/crear">
+                    <i className="bx bx-plus"></i> Crear Pais
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+
+
+           <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('ciudades')}>
+              <i className='bx bx-globe'></i> Ciudades
+              <i className={`bx bx-chevron-${openMenu === 'Ciudades' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'ciudades' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/ciudad/lista">
+                    <i className="bx bx-list-ul"></i> Listar Ciudad
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/ciudad/crear">
+                    <i className="bx bx-plus"></i> Crear Ciudad
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
         </ul>
       </nav>
     </aside>
