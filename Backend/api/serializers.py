@@ -90,34 +90,46 @@ class HotelSerializer(serializers.ModelSerializer):
         fields = [
             'id',
             'nombre',
-            'ciudad_nombre',
-            'pais_nombre',
             'descripcion',
             'precio_noche',
             'direccion',
-            'personas'
+            'personas',
+            'ciudad',         # Necesario para que acepte el ID
+            'ciudad_nombre',
+            'pais_nombre',
         ]
 
 
+
 class PaqueteSerializer(serializers.ModelSerializer):
+    ciudad_salida_nombre = serializers.CharField(source='ciudad_salida.nombre', read_only=True)
+    ciudad_destino_nombre = serializers.CharField(source='ciudad_destino.nombre', read_only=True)
+    auto_nombre = serializers.CharField(source='auto.modelo', read_only=True)
+    hotel_nombre = serializers.CharField(source='hotel.nombre', read_only=True)
+
     class Meta:
         model = Paquetes
         fields = [
+            'id',
             'descripcion',
             'personas',
             'fecha_salida',
             'fecha_regreso',
-            'ciudad_destino',
             'ciudad_salida',
+            'ciudad_salida_nombre',
+            'ciudad_destino',
+            'ciudad_destino_nombre',
             'hora_salida',
             'auto',
+            'auto_nombre',
             'hotel',
+            'hotel_nombre',
             'pagado',
             'total',
-            'id_usuario'
+            'id_usuario',
         ]
-
         read_only_fields = ['id_usuario', 'pagado', 'total']
+
 
 
 class CotizarPaqueteSerializer(serializers.ModelSerializer):

@@ -117,10 +117,7 @@ function Header() {
                     Cerrar sesión
                   </Nav.Link>
                     <Nav.Link as={Link} to="/carrito" onClick={() => setExpanded(false)}>
-                    <i 
-                    className="bx bx-cart"
-                    style={{ color: "#000", fontSize: "30px" }} 
-                    ></i>
+                    Carrito
                   </Nav.Link>
                 </>
               )}

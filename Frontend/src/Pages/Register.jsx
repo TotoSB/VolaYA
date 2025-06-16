@@ -10,9 +10,13 @@ function Register() {
   const [correo, setCorreo] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+  const [errorMensaje, setErrorMensaje] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // Nuevo estado para loading
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMensaje("");
+    setIsLoading(true);
 
     const body = {
       correo,
@@ -36,12 +40,13 @@ function Register() {
         alert("Cuenta creada con éxito. Inicia sesión para continuar");
         navigate("/login");
       } else {
-        alert("Error en el registro. Verifica los datos.");
-        console.error(data);
+        const errores = Object.values(data).flat().join(" ");
+        setErrorMensaje(errores || "Error en el registro. Verifica los datos.");
       }
     } catch (error) {
-      console.error("Error del servidor:", error);
-      alert("Error del servidor.");
+      setErrorMensaje("Error del servidor. Intenta más tarde.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -49,7 +54,7 @@ function Register() {
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
       <Form className="register-form shadow-lg" style={{ width: "500px" }} onSubmit={handleSubmit}>
         <div className="register-volaya mb-3 text-center">
-          <i className="bx bx-paper-plane" style={{ color: "#0d6efd", fontSize: "47px",}}></i>
+          <i className="bx bx-paper-plane" style={{ color: "#0d6efd", fontSize: "47px" }}></i>
           <span className="ms-2">VolaYA</span>
         </div>
         <p className="mb-3 register-p text-center">Crea tu cuenta para comenzar la aventura</p>
@@ -118,13 +123,30 @@ function Register() {
           </InputGroup>
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100 mt-4">
-          <div className="register-button">Registrarse</div>
+        <Button variant="primary" type="submit" className="w-100 mt-4" disabled={isLoading}>
+          <div className="register-button">
+            {isLoading ? (
+              <>
+                <span
+                  className="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                Creando...
+              </>
+            ) : (
+              "Crear Cuenta"
+            )}
+          </div>
         </Button>
 
         <div className="text-center register-cuenta mt-3">
           ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
         </div>
+
+        {errorMensaje && (
+          <div className="mt-4 alert alert-danger text-center">{errorMensaje}</div>
+        )}
       </Form>
     </Container>
   );

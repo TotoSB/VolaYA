@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Container, Form, Button, Row, Col } from 'react-bootstrap';
-import '../../../styles/Staff/Cars/Create.css';
+import { Container, Form, Button } from 'react-bootstrap';
+import '../../../styles/Staff/Create.css';
 
 const CreateCars = () => {
   const [marca, setMarca] = useState('');
@@ -41,65 +41,32 @@ const CreateCars = () => {
   };
 
   return (
-    <Container
-      className="d-flex justify-content-center align-items-center"
-      style={{ height: '80vh' }}
-    >
-      <Form style={{ width: '100%', maxWidth: '500px' }} onSubmit={handleSubmit}>
-        <h2 className="mb-3 create-title">Crear Auto</h2>
+    <Container className="mt-5" style={{ maxWidth: '700px' }}>
+      <Form onSubmit={handleSubmit}>
+        <h2 className="mb-4 text-center create-title">Agregar Autos</h2>
 
-        <Row className="mb-3">
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label className="create-label">Marca</Form.Label>
-              <Form.Control
-                type="text"
-                value={marca}
-                onChange={(e) => setMarca(e.target.value)}
-                required
-              />
-            </Form.Group>
-          </Col>
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label className="create-label">Modelo</Form.Label>
-              <Form.Control
-                type="text"
-                value={modelo}
-                onChange={(e) => setModelo(e.target.value)}
-                required
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+        <div className="mb-3">
+          <Form.Label className="create-label">Marca</Form.Label>
+          <Form.Control type="text" value={marca} onChange={(e) => setMarca(e.target.value)} required />
+        </div>
 
-        <Row className="mb-4">
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label className="create-label">Color</Form.Label>
-              <Form.Control
-                type="text"
-                value={color}
-                onChange={(e) => setColor(e.target.value)}
-                required
-              />
-            </Form.Group>
-          </Col>
-          <Col md={6}>
-            <Form.Group>
-              <Form.Label className="create-label">Precio por día</Form.Label>
-              <Form.Control
-                type="number"
-                value={precioDia}
-                onChange={(e) => setPrecioDia(e.target.value)}
-                required
-              />
-            </Form.Group>
-          </Col>
-        </Row>
+        <div className="mb-3">
+          <Form.Label className="create-label">Modelo</Form.Label>
+          <Form.Control type="text" value={modelo} onChange={(e) => setModelo(e.target.value)} required />
+        </div>
 
-        <Button variant="primary" type="submit" className="w-100 mb-2">
-          <div className="create-button">Crear Auto</div>
+        <div className="mb-3">
+          <Form.Label className="create-label">Color</Form.Label>
+          <Form.Control type="text" value={color} onChange={(e) => setColor(e.target.value)} required />
+        </div>
+
+        <div className="mb-4">
+          <Form.Label className="create-label">Precio por día</Form.Label>
+          <Form.Control type="number" value={precioDia} onChange={(e) => setPrecioDia(e.target.value)} required />
+        </div>
+
+        <Button variant="primary" type="submit" className="w-100">
+          <div className="create-button">Guardar +</div>
         </Button>
       </Form>
     </Container>

@@ -21,8 +21,16 @@ const SidebarStaff = () => {
             </button>
             {openMenu === 'autos' && (
               <ul className="sidebar-submenu">
-                <li><Link to="/staff/autos/lista">Listar Autos</Link></li>
-                <li><Link to="/staff/autos/crear">Crear Auto</Link></li>
+                <li>
+                  <Link to="/staff/autos/lista">
+                    <i className="bx bx-list-ul"></i> Listar Autos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/autos/agregar">
+                    <i className="bx bx-plus"></i> Agregar Auto
+                  </Link>
+                </li>
               </ul>
             )}
           </li>
@@ -34,8 +42,16 @@ const SidebarStaff = () => {
             </button>
             {openMenu === 'hoteles' && (
               <ul className="sidebar-submenu">
-                <li><Link to="/staff/hoteles/lista">Listar Hoteles</Link></li>
-                <li><Link to="/staff/hoteles/crear">Crear Hotel</Link></li>
+                <li>
+                  <Link to="/staff/hoteles/lista">
+                    <i className="bx bx-list-ul"></i> Listar Hoteles
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/hoteles/agregar">
+                    <i className="bx bx-plus"></i> Agregar Hotel
+                  </Link>
+                </li>
               </ul>
             )}
           </li>
@@ -47,8 +63,16 @@ const SidebarStaff = () => {
             </button>
             {openMenu === 'paquetes' && (
               <ul className="sidebar-submenu">
-                <li><Link to="/staff/paquetes/lista">Listar Paquetes</Link></li>
-                <li><Link to="/staff/paquetes/crear">Crear Paquete</Link></li>
+                <li>
+                  <Link to="/staff/paquetes/lista">
+                    <i className="bx bx-list-ul"></i> Listar Paquetes
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/paquetes/crear">
+                    <i className="bx bx-plus"></i> Crear Paquete
+                  </Link>
+                </li>
               </ul>
             )}
           </li>

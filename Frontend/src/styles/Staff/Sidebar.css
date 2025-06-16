@@ -69,7 +69,10 @@
   color: #343a40;
   text-decoration: none;
   font-size: 0.95rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
   padding: 0.3rem 0.5rem;
   border-radius: 4px;
   transition: background-color 0.2s ease;
@@ -79,6 +82,12 @@
   background-color: #e9f2ff;
   color: #0d6efd;
 }
+
+
+.sidebar-submenu li a i {
+  font-size: 20px; 
+}
+
 
 @keyframes slideDown {
   from {
