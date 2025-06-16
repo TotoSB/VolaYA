@@ -1,0 +1,177 @@
+/* Reset básico y fuentes */
+body,
+html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+}
+
+.cont-hoteles {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Títulos */
+.page-title {
+  text-align: center;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: #0d6efd;
+}
+
+h2 {
+  color: #0d6efd;
+  margin-top: 2rem;
+  margin-bottom: 0.8rem;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Contenedor principal */
+.main-container {
+  max-width: 1100px;
+  margin: 0 auto 4rem;
+  padding: 0 1.5rem;
+}
+
+/* Sección presupuesto */
+.budget-section {
+  background-color: #e7f0ff;
+  border-left: 6px solid #0d6efd;
+  padding: 1.5rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgb(13 110 253 / 0.15);
+  margin-bottom: 3rem;
+}
+
+.cotizacion {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #084fc1;
+}
+
+/* Lista de hoteles en grid */
+.hoteles-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.4rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Tarjetas individuales */
+.hotel-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1.4rem 1.6rem;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 0.12);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  cursor: default;
+}
+
+.hotel-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgb(0 0 0 / 0.18);
+}
+
+/* Nombre del hotel */
+.hotel-card strong {
+  font-size: 1.3rem;
+  color: #0d6efd;
+  margin-bottom: 0.35rem;
+}
+
+/* Info secundaria */
+.hotel-info {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  margin-bottom: 1.3rem;
+  color: #555;
+}
+
+.precio {
+  font-weight: 700;
+  color: #0d6efd;
+}
+
+/* Botón añadir */
+.btn-agregar {
+  align-self: flex-start;
+  background-color: #0d6efd;
+  border: none;
+  color: white;
+  padding: 0.6rem 1.3rem;
+  font-size: 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.15s ease;
+  user-select: none;
+}
+
+.btn-agregar:hover {
+  background-color: #084fc1;
+  transform: scale(1.05);
+}
+
+/* Mensaje cuando no hay hoteles */
+.no-hotels-message {
+  text-align: center;
+  margin: 4rem 1rem;
+  font-size: 1.3rem;
+  color: #666;
+}
+
+/* Botón volver */
+.no-hotels-message button {
+  background-color: #6c757d;
+  border: none;
+  color: white;
+  padding: 0.65rem 1.4rem;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 1.3rem;
+  transition: background-color 0.3s ease;
+}
+
+.no-hotels-message button:hover {
+  background-color: #545b62;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 4rem;
+  font-size: 1.3rem;
+  color: #0d6efd;
+  font-weight: 600;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  .hotel-card {
+    padding: 1rem 1.1rem;
+  }
+
+  .btn-agregar {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}

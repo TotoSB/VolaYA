@@ -30,7 +30,6 @@ function Search() {
         const token = localStorage.getItem('access');
         const res = await fetch('http://127.0.0.1:8000/conseguir_autos/', {
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
           }
         });
@@ -133,7 +132,6 @@ function Search() {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
           },
           body: JSON.stringify({
             personas,
@@ -151,17 +149,24 @@ function Search() {
 
         const data = await res.json();
         console.log(data);
-
-        navigate('/hoteles-disponibles', { 
-          state: { 
-            hoteles: data,
-            searchParams: { origen, destino, fechaSalida, fechaVuelta }
-          } 
+        navigate('/hoteles-disponibles', {
+          state: {
+            hoteles: data.hoteles_disponibles,
+            costoTotal: data.costo_vuelo_y_servicios,
+            personas,
+            fechaSalida,
+            fechaVuelta,
+            origenId,
+            destinoId,
+            origen,            // 👈 añadí esto
+            destino,           // 👈 y esto
+            autoSeleccionadoId
+          }
         });
-      } catch (err) {
-        console.error("Error al buscar paquetes:", err);
-        setError('Error al buscar hoteles disponibles.');
-      }
+        } catch (err) {
+          console.error("Error al buscar paquetes:", err);
+          setError('Error al buscar hoteles disponibles.');
+        }
     };
 
     buscarDestinos();

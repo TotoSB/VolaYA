@@ -45,10 +45,6 @@ function Header() {
     }
   }, []);
 
-  useEffect(() => {
-  console.log("El username ha cambiado:", username);
-  }, [username]);
-
   return (
     <>
       <VerifyToken />

@@ -380,7 +380,7 @@ def get_my_user(request):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def obtener_paquetes_search(request):
     if request.method == 'POST':
         serializer = CotizarPaqueteSerializer(data=request.data)
@@ -455,7 +455,7 @@ def get_reservas_usuario(request):
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_autos(request):
     if request.method == 'GET':
         autos = Autos.objects.all()
@@ -464,7 +464,7 @@ def get_autos(request):
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_hoteles(request):
     if request.method == 'GET':
         hoteles = Hoteles.objects.all()
@@ -473,7 +473,7 @@ def get_hoteles(request):
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_paises(request):
     if request.method == 'GET':
         paises = Paises.objects.all()
@@ -482,7 +482,7 @@ def get_paises(request):
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_ciudades(request):
     if request.method == 'GET':
         ciudades = Ciudades.objects.all()
@@ -491,7 +491,7 @@ def get_ciudades(request):
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_paquetes_en_venta(request):
     if request.method == 'GET':
         paquetes = Paquetes.objects.filter(id_usuario__is_staff=True)
