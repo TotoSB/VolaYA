@@ -1,0 +1,536 @@
+/* Contenedor principal */
+.cart-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #87CEEB 0%, #4682B4 50%, #4169E1 100%);
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Fondo animado */
+.animated-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cloud {
+  position: absolute;
+  font-size: 3rem;
+  opacity: 0.7;
+  animation: float-cloud 25s infinite linear;
+}
+
+.cloud-1 {
+  top: 10%;
+  animation-delay: 0s;
+}
+
+.cloud-2 {
+  top: 20%;
+  animation-delay: -8s;
+  animation-duration: 30s;
+}
+
+.cloud-3 {
+  top: 30%;
+  animation-delay: -16s;
+  animation-duration: 20s;
+}
+
+.airplane {
+  position: absolute;
+  font-size: 2rem;
+  animation: fly-plane 15s infinite linear;
+}
+
+.airplane-1 {
+  top: 15%;
+  animation-delay: 0s;
+}
+
+.airplane-2 {
+  top: 35%;
+  animation-delay: -7s;
+  animation-duration: 18s;
+}
+
+@keyframes float-cloud {
+  0% { transform: translateX(-100px); }
+  100% { transform: translateX(calc(100vw + 100px)); }
+}
+
+@keyframes fly-plane {
+  0% { transform: translateX(-150px) rotate(15deg); }
+  100% { transform: translateX(calc(100vw + 150px)) rotate(15deg); }
+}
+
+/* Loading screen */
+.loading-screen {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: white;
+}
+
+.loading-icon {
+  font-size: 4rem;
+  animation: spin 2s infinite linear;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Header */
+.cart-header {
+  position: relative;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  color: white;
+}
+
+.plane-icon {
+  font-size: 2rem;
+  transform: rotate(45deg);
+}
+
+.logo h1 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Main content */
+.cart-main {
+  position: relative;
+  z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.cart-title {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.cart-title h1 {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Empty cart */
+.empty-cart {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 4rem 2rem;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.empty-cart h2 {
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+.empty-cart p {
+  color: #666;
+  margin-bottom: 2rem;
+}
+
+.explore-btn {
+  background: #4169E1;
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.explore-btn:hover {
+  background: #3155C4;
+}
+
+/* Cart content */
+.cart-content {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+}
+
+@media (max-width: 1024px) {
+  .cart-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Tickets section */
+.tickets-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.section-header h2 {
+  margin: 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.flight-cost {
+  margin: 0.5rem 0 0 0;
+  color: #22C55E;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.tickets-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Ticket (boletito) */
+.ticket {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  display: flex;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.ticket:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.ticket-left {
+  flex: 1;
+  padding: 1.5rem;
+  position: relative;
+}
+
+.ticket-right {
+  width: 120px;
+  background: linear-gradient(135deg, #4169E1, #6A5ACD);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+}
+
+/* Perforaciones del ticket */
+.ticket-perforations {
+  position: absolute;
+  left: -5px;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.perforation {
+  width: 10px;
+  height: 10px;
+  background: #87CEEB;
+  border-radius: 50%;
+}
+
+/* Header del ticket */
+.ticket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.hotel-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hotel-name {
+  font-weight: bold;
+  color: #4169E1;
+  font-size: 1.1rem;
+}
+
+.hotel-location {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.remove-btn, .add-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s;
+}
+
+.remove-btn:hover, .add-btn:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.add-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Detalles del hotel */
+.hotel-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.label {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.value {
+  font-weight: 600;
+  color: #333;
+}
+
+/* SecciÃ³n de precio en el ticket */
+.price-section {
+  text-align: center;
+  z-index: 2;
+}
+
+.total-price {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.unit-price {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Summary section */
+.summary-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.summary-card, .promo-card, .benefits-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card h3, .benefits-card h3 {
+  margin: 0 0 1rem 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  color: #666;
+}
+
+.summary-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #22C55E;
+  padding-top: 1rem;
+  border-top: 2px solid #E5E7EB;
+  margin-bottom: 1.5rem;
+}
+
+.checkout-btn {
+  width: 100%;
+  background: #22C55E;
+  color: white;
+  border: none;
+  padding: 1rem;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-bottom: 1rem;
+}
+
+.checkout-btn:hover:not(:disabled) {
+  background: #16A34A;
+}
+
+.checkout-btn:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.security-info {
+  text-align: center;
+}
+
+.security-info p {
+  margin: 0.25rem 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+/* Promo card */
+.promo-card {
+  background: linear-gradient(135deg, #FF8A00, #FF6B00) !important;
+  color: white;
+  text-align: center;
+}
+
+.promo-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.promo-card h3 {
+  color: white !important;
+  margin-bottom: 0.5rem;
+}
+
+.promo-card p {
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.promo-btn {
+  background: white;
+  color: #FF6B00;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.promo-btn:hover {
+  background: #F5F5F5;
+}
+
+/* Benefits */
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.benefit {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .cart-main {
+    padding: 1rem;
+  }
+  
+  .ticket {
+    flex-direction: column;
+  }
+  
+  .ticket-right {
+    width: 100%;
+    height: 80px;
+    flex-direction: row;
+  }
+  
+  .ticket-perforations {
+    display: none;
+  }
+  
+  .hotel-details {
+    gap: 0.5rem;
+  }
+}
