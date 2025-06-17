@@ -1,5 +1,5 @@
-import '../../../styles/Staff/Create.css';
 import React, { useEffect, useState } from 'react';
+import '../../../styles/Staff/Create.css';
 
 const ListPedidosPendientes = () => {
   const [pedidos, setPedidos] = useState([]);
@@ -20,7 +20,6 @@ const ListPedidosPendientes = () => {
         return res.json();
       })
       .then(data => {
-        // Filtramos los no pagados (pendientes)
         const pendientes = data.filter(p => !p.pagado);
         setPedidos(pendientes);
       })
@@ -32,62 +31,76 @@ const ListPedidosPendientes = () => {
   }, []);
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '1200px' }}>
-      <h2 className="mb-4 text-center">Pedidos Pendientes</h2>
+    <div className="container mt-4">
+      <div
+        className="d-flex align-items-center mb-3 fw-bold gap-2"
+        style={{ color: "#0d6efd", fontSize: "25px" }}
+      >
+        <i className="bx bx-cart-alt" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
+        Pedidos Pendientes
+      </div>
 
-      {loading && <p>Cargando pedidos...</p>}
-      {error && <div className="alert alert-danger">{error}</div>}
+      <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
+        {loading && <p className="text-center fw-bold text-secondary">Cargando pedidos...</p>}
+        {error && <div className="alert alert-danger text-center">{error}</div>}
+        {!loading && pedidos.length === 0 && (
+          <p className="text-center fw-bold" style={{ color: "#0d6efd" }}>
+            No hay pedidos pendientes.
+          </p>
+        )}
 
-      {!loading && pedidos.length === 0 && (
-        <p className="text-center">No hay pedidos.</p>
-      )}
-
-      {!loading && pedidos.length > 0 && (
-        <table className="table table-bordered table-sm">
-          <thead className="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Descripción</th>
-              <th>Personas</th>
-              <th>Fecha Salida</th>
-              <th>Fecha Regreso</th>
-              <th>Ciudad Salida</th>
-              <th>Ciudad Salida Nombre</th>
-              <th>Ciudad Destino</th>
-              <th>Ciudad Destino Nombre</th>
-              <th>Hora Salida</th>
-              <th>Auto</th>
-              <th>Hotel</th>
-              <th>Hotel Nombre</th>
-              <th>Pagado</th>
-              <th>Total</th>
-              <th>ID Usuario</th>
-            </tr>
-          </thead>
-          <tbody>
-            {pedidos.map(pedido => (
-              <tr key={pedido.id}>
-                <td>{pedido.id}</td>
-                <td>{pedido.descripcion || '-'}</td>
-                <td>{pedido.personas}</td>
-                <td>{new Date(pedido.fecha_salida).toLocaleDateString()}</td>
-                <td>{new Date(pedido.fecha_regreso).toLocaleDateString()}</td>
-                <td>{pedido.ciudad_salida}</td>
-                <td>{pedido.ciudad_salida_nombre}</td>
-                <td>{pedido.ciudad_destino}</td>
-                <td>{pedido.ciudad_destino_nombre}</td>
-                <td>{pedido.hora_salida}</td>
-                <td>{pedido.auto || '-'}</td>
-                <td>{pedido.hotel}</td>
-                <td>{pedido.hotel_nombre}</td>
-                <td>{pedido.pagado ? 'Sí' : 'No'}</td>
-                <td>{new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(pedido.total)}</td>
-                <td>{pedido.id_usuario}</td>
+        {!loading && pedidos.length > 0 && (
+          <table className="table table-striped table-bordered align-middle text-center">
+            <thead className="table-primary text-center">
+              <tr>
+                <th>ID</th>
+                <th>Descripción</th>
+                <th>Personas</th>
+                <th>Fecha Salida</th>
+                <th>Fecha Regreso</th>
+                <th>Ciudad Salida</th>
+                <th>Ciudad Salida Nombre</th>
+                <th>Ciudad Destino</th>
+                <th>Ciudad Destino Nombre</th>
+                <th>Hora Salida</th>
+                <th>Auto</th>
+                <th>Hotel</th>
+                <th>Hotel Nombre</th>
+                <th>Pagado</th>
+                <th>Total</th>
+                <th>ID Usuario</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {pedidos.map(pedido => (
+                <tr key={pedido.id}>
+                  <td>{pedido.id}</td>
+                  <td>{pedido.descripcion || '-'}</td>
+                  <td>{pedido.personas}</td>
+                  <td>{new Date(pedido.fecha_salida).toLocaleDateString()}</td>
+                  <td>{new Date(pedido.fecha_regreso).toLocaleDateString()}</td>
+                  <td>{pedido.ciudad_salida}</td>
+                  <td>{pedido.ciudad_salida_nombre}</td>
+                  <td>{pedido.ciudad_destino}</td>
+                  <td>{pedido.ciudad_destino_nombre}</td>
+                  <td>{pedido.hora_salida}</td>
+                  <td>{pedido.auto || '-'}</td>
+                  <td>{pedido.hotel}</td>
+                  <td>{pedido.hotel_nombre}</td>
+                  <td>{pedido.pagado ? 'Sí' : 'No'}</td>
+                  <td>
+                    {new Intl.NumberFormat('es-AR', {
+                      style: 'currency',
+                      currency: 'ARS',
+                    }).format(pedido.total)}
+                  </td>
+                  <td>{pedido.id_usuario}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };

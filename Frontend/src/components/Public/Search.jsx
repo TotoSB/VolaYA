@@ -149,6 +149,8 @@ function Search() {
 
         const data = await res.json();
         console.log(data);
+        const autoSeleccionado = autos.find(a => a.id === parseInt(autoSeleccionadoId));
+
         navigate('/hoteles-disponibles', {
           state: {
             hoteles: data.hoteles_disponibles,
@@ -158,11 +160,13 @@ function Search() {
             fechaVuelta,
             origenId,
             destinoId,
-            origen,            
-            destino,           
-            autoSeleccionadoId
+            origen,
+            destino,
+            autoSeleccionadoId,
+            auto: autoSeleccionado || null
           }
         });
+        
         } catch (err) {
           console.error("Error al buscar paquetes:", err);
           setError('Error al buscar hoteles disponibles.');
@@ -177,111 +181,132 @@ function Search() {
   };
 
   return (
-    <>
-      <form className="search-form" onSubmit={handleSubmit}>
-        {/* Origen */}
-        <div className="form-group">
-          <label>Origen:</label>
-          <input
-            type="text"
-            placeholder="Ciudad de origen"
-            value={origen}
-            onChange={handleChangeOrigen}
-            onFocus={() => setMostrarSugerenciasOrigen(true)}
-            onBlur={() => setTimeout(() => setMostrarSugerenciasOrigen(false), 200)}
-          />
-          {mostrarSugerenciasOrigen && sugerenciasOrigen.length > 0 && (
-            <ul className="sugerencias-lista">
-              {sugerenciasOrigen.map((item, index) => (
-                <li
-                  key={index}
-                  onClick={() => seleccionarSugerenciaOrigen(item.id_ciudad, item.ciudad_nombre, item.pais_nombre)}
-                >
-                  {item.ciudad_nombre}, {item.pais_nombre}
-                </li>
+    <div className="container py-4">
+      <form className="container mt-4" onSubmit={handleSubmit}>
+        {/* Primera fila: Origen, Destino, Fecha de ida, Fecha vuelta */}
+        <div className="row g-3 align-items-end">
+          {/* Origen */}
+          <div className="col-md-3 position-relative">
+            <label className="form-label">Origen:</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Ciudad de origen"
+              value={origen}
+              onChange={handleChangeOrigen}
+              onFocus={() => setMostrarSugerenciasOrigen(true)}
+              onBlur={() => setTimeout(() => setMostrarSugerenciasOrigen(false), 200)}
+            />
+            {mostrarSugerenciasOrigen && sugerenciasOrigen.length > 0 && (
+              <ul className="sugerencias-lista">
+                {sugerenciasOrigen.map((item, index) => (
+                  <li
+                    key={index}
+                    onClick={() => seleccionarSugerenciaOrigen(item.id_ciudad, item.ciudad_nombre, item.pais_nombre)}
+                  >
+                    {item.ciudad_nombre}, {item.pais_nombre}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Destino */}
+          <div className="col-md-3 position-relative">
+            <label className="form-label">Destino:</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Ciudad de destino"
+              value={destino}
+              onChange={handleChangeDestino}
+              onFocus={() => setMostrarSugerenciasDestino(true)}
+              onBlur={() => setTimeout(() => setMostrarSugerenciasDestino(false), 200)}
+            />
+            {mostrarSugerenciasDestino && sugerenciasDestino.length > 0 && (
+              <ul className="sugerencias-lista">
+                {sugerenciasDestino.map((item, index) => (
+                  <li
+                    key={index}
+                    onClick={() => seleccionarSugerenciaDestino(item.id_ciudad, item.ciudad_nombre, item.pais_nombre)}
+                  >
+                    {item.ciudad_nombre}, {item.pais_nombre}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Fecha ida */}
+          <div className="col-md-3">
+            <label className="form-label">Fecha de ida:</label>
+            <input
+              type="date"
+              className="form-control"
+              value={fechaSalida}
+              min={today}
+              onChange={(e) => setFechaSalida(e.target.value)}
+            />
+          </div>
+
+          {/* Fecha vuelta */}
+          <div className="col-md-3">
+            <label className="form-label">Fecha vuelta:</label>
+            <input
+              type="date"
+              className="form-control"
+              value={fechaVuelta}
+              min={today}
+              onChange={(e) => setFechaVuelta(e.target.value)}
+            />
+          </div>
+        </div>
+
+        {/* Segunda fila: Personas y Autos */}
+        <div className="row mt-3 g-3 align-items-end">
+          {/* Personas */}
+          <div className="col-md-3">
+            <label className="form-label">Personas:</label>
+            <input
+              type="number"
+              className="form-control"
+              value={personas}
+              min="1"
+              max="10"
+              onChange={(e) => setPersonas(e.target.value)}
+            />
+          </div>
+
+          {/* Autos */}
+          <div className="col-md-6">
+            <label className="form-label">Autos:</label>
+            <select
+              className="form-select"
+              onChange={handleChangeAuto}
+              value={autoSeleccionadoId || ''}
+              size="1"
+            >
+              <option value="">Sin auto</option>
+              {autos.map((auto) => (
+                <option key={auto.id} value={auto.id}>
+                  {auto.marca} {auto.modelo}
+                </option>
               ))}
-            </ul>
-          )}
+            </select>
+          </div>
+
+          {/* Botón buscar */}
+          <div className="col-md-3 d-grid">
+            <button type="submit" className="btn btn-primary">
+              <i className="bx bx-search me-2"></i>Buscar
+            </button>
+          </div>
         </div>
 
-        {/* Destino */}
-        <div className="form-group">
-          <label>Destino:</label>
-          <input
-            type="text"
-            placeholder="Ciudad de destino"
-            value={destino}
-            onChange={handleChangeDestino}
-            onFocus={() => setMostrarSugerenciasDestino(true)}
-            onBlur={() => setTimeout(() => setMostrarSugerenciasDestino(false), 200)}
-          />
-          {mostrarSugerenciasDestino && sugerenciasDestino.length > 0 && (
-            <ul className="sugerencias-lista">
-              {sugerenciasDestino.map((item, index) => (
-                <li
-                  key={index}
-                  onClick={() => seleccionarSugerenciaDestino(item.id_ciudad, item.ciudad_nombre, item.pais_nombre)}
-                >
-                  {item.ciudad_nombre}, {item.pais_nombre}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        {/* Fechas */}
-        <div className="form-group">
-          <label>Fecha de ida:</label>
-          <input
-            type="date"
-            value={fechaSalida}
-            min={today}
-            onChange={(e) => setFechaSalida(e.target.value)}
-          />
-        </div>
-
-        <div className="form-group">
-          <label>Fecha vuelta:</label>
-          <input
-            type="date"
-            value={fechaVuelta}
-            min={today}
-            onChange={(e) => setFechaVuelta(e.target.value)}
-          />
-        </div>
-
-        {/* Personas */}
-        <div className="form-group">
-          <label>Personas:</label>
-          <input
-            onChange={(e) => setPersonas(e.target.value)}
-            type="number"
-            min="1"
-            max="10"
-            defaultValue="1"
-          />
-        </div>
-
-        {/* Autos */}
-        <div className="form-group">
-          <label>Autos:</label>
-          <select id="miLista" size="5" onChange={handleChangeAuto} value={autoSeleccionadoId || ''}>
-            <option value="">Sin auto</option>
-            {autos.map((auto) => (
-              <option key={auto.id} value={auto.id}>
-                {auto.marca} {auto.modelo}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <button type="submit" className="search-btn">
-          <i className="bx bx-search" style={{ color: '#fff', fontSize: '20px' }}></i> Buscar
-        </button>
+        {/* Mensaje de error */}
+        {error && <div className="alert alert-danger mt-3">{error}</div>}
       </form>
-
-      {error && <p className="error-msg">{error}</p>}
-    </>
+    </div>
   );
 }
 

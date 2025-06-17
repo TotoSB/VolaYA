@@ -21,7 +21,8 @@ function HotelesDisponibles() {
     destinoId,
     origen,
     destino,
-    autoSeleccionadoId
+    autoSeleccionadoId,
+    auto
   } = location.state || {};
 
 
@@ -129,6 +130,16 @@ function HotelesDisponibles() {
     );
   }
 
+    const calcularNoches = (salida, regreso) => {
+    const f1 = new Date(salida);
+    const f2 = new Date(regreso);
+    const diffTime = Math.abs(f2 - f1);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  const noches = calcularNoches(fechaSalida, fechaVuelta);
+
   return (
     <>
       <Header />
@@ -148,7 +159,7 @@ function HotelesDisponibles() {
             <p><strong>Fecha de salida:</strong> {fechaSalida}</p>
             <p><strong>Fecha de regreso:</strong> {fechaVuelta}</p>
             <p><strong>Personas:</strong> {personas}</p>
-            <p><strong>Auto seleccionado:</strong> {autoSeleccionadoId ? `ID ${autoSeleccionadoId}` : 'Sin auto'}</p>
+            <p><strong>Auto seleccionado:</strong> {auto ? `${auto.marca} ${auto.modelo}` : 'Sin auto'}</p>
           </section>
         </section>
 
@@ -168,6 +179,7 @@ function HotelesDisponibles() {
                   Precio/noche: <span className="precio">{formatoPesos(hotel.precio_noche)}</span>
                 </div>
                 <button className="btn-agregar" onClick={() => handleAgregarAlCarrito(hotel.id)}>Agregar al carrito</button>
+                <h1>Total + vuelo: <span className="cotizacion">{formatoPesos(costoTotal + (hotel.precio_noche * noches))}</span></h1>
               </li>
             ))}
           </ul>

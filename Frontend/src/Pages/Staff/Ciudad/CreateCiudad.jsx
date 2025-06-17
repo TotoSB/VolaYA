@@ -54,7 +54,7 @@ const CreateCiudad = () => {
         setIsLoading(false); // ✅ Finalizar loading
         if (res.status === 201) {
           alert('Ciudad creada correctamente');
-          navigate('/staff/Ciudad/ListCiudad');
+          navigate('/staff/ciudad/lista');
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);

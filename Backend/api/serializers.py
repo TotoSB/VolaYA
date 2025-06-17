@@ -72,9 +72,11 @@ class PaisSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
 
 class CiudadSerializer(serializers.ModelSerializer):
+    pais_nombre = serializers.CharField(source='pais.nombre', read_only=True)
+
     class Meta:
         model = Ciudades
-        fields = ['id', 'nombre', 'pais', 'latitud', 'longitud']
+        fields = ['id', 'nombre', 'pais', 'pais_nombre', 'latitud', 'longitud']
 
 class AutoSerializer(serializers.ModelSerializer):
     class Meta:

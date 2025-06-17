@@ -290,12 +290,12 @@ const CreatePacks = () => {
 
         <div className="mb-3">
           <label className="create-label">Fecha de salida</label>
-          <input type="datetime-local" className="form-control" name="fecha_salida" value={form.fecha_salida} onChange={handleChange} required />
+          <input type="date" className="form-control" name="fecha_salida" value={form.fecha_salida} onChange={handleChange} required />
         </div>
 
         <div className="mb-3">
           <label className="create-label">Fecha de regreso</label>
-          <input type="datetime-local" className="form-control" name="fecha_regreso" value={form.fecha_regreso} onChange={handleChange} required />
+          <input type="date" className="form-control" name="fecha_regreso" value={form.fecha_regreso} onChange={handleChange} required />
         </div>
 
         <div className="mb-3">
