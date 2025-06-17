@@ -133,9 +133,6 @@ function HotelesDisponibles() {
     <>
       <Header />
       <div>
-      <div className="welcome__buttons d-flex justify-content-center align-items-center gap-3 mb-5">
-        <Search/>
-      </div>
 
       <main className="main-container">
         <section className="budget-section">

@@ -26,6 +26,7 @@ urlpatterns = [
     path('conseguir_mi_usuario/', views.get_my_user, name='conseguir_mi_usuario'),
     path('conseguir_carrito/', views.get_carrito, name='conseguir_carrito'),
     path('conseguir_mis_reservas/', views.get_reservas_usuario, name='conseguir_mis_reservas'),
+    path('conseguir_mis_reservas_pendientes/', views.get_paquetes_pendientes_usuario, name='conseguir_mis_reservas_pendientes'),
     path('conseguir_autos/', views.get_autos, name='conseguir_autos'),
     path('conseguir_hoteles/', views.get_hoteles, name='conseguir_hoteles'),
     path('conseguir_paises/', views.get_paises, name='conseguir_paises'),

@@ -449,8 +449,15 @@ def get_reservas_usuario(request):
     if request.method == 'GET':
         reservas = Reservas_usuario.objects.filter(usuario=request.user)
         serializer = ReservaUsuarioSerializer(reservas, many=True)
-        for reserva in reservas:
-            print(reserva.paquete.total)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_paquetes_pendientes_usuario(request):
+    if request.method == 'GET':
+        paquetes = Paquetes.objects.filter(id_usuario=request.user, pagado=False)
+        serializer = PaqueteSerializer(paquetes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
