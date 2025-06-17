@@ -258,8 +258,7 @@ def crear_paquete(request):
         dias = (serializer.validated_data['fecha_regreso'] - serializer.validated_data['fecha_salida']).days
         if auto:
             costo_total += auto.precio_dia * dias
-        if hotel:
-            costo_total += hotel.precio_noche * dias
+        costo_total += hotel.precio_noche * dias
 
         serializer.save(total=costo_total, id_usuario=request.user)
 
