@@ -15,6 +15,7 @@ import ListPais from './Pages/Staff/Pais/ListPais';
 import CreatePais from './Pages/Staff/Pais/Createpais';
 import ListCiudad from './Pages/Staff/Ciudad/ListCiudad';
 import CreateCiudad from './Pages/Staff/Ciudad/CreateCiudad';
+import ListPedidosPendientes from './Pages/Staff/Pendientes/ListPedidosPendientes';
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route path="pais/crear" element={<CreatePais />} />
         <Route path="ciudad/lista" element={<ListCiudad />} />
         <Route path="ciudad/crear" element={<CreateCiudad/>} />
+        <Route path="paquetes_pendientes" element={<ListPedidosPendientes/>} />
       </Route>
     </Routes>
   );

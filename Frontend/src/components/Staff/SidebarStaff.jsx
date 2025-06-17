@@ -99,8 +99,6 @@ const SidebarStaff = () => {
             )}
           </li>
 
-
-
            <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('ciudades')}>
               <i className='bx bx-globe'></i> Ciudades
@@ -121,6 +119,27 @@ const SidebarStaff = () => {
               </ul>
             )}
           </li>
+
+
+            <li>
+  <button
+    className="sidebar-toggle"
+    onClick={() => toggleMenu('pendientes')} // 🔧 usamos 'pendientes' como clave
+  >
+    <i className='bx bx-time-five'></i> Paquetes pendientes
+  </button>
+
+  {openMenu === 'pendientes' && ( // ✅ comprobamos contra la misma clave
+    <ul className="sidebar-submenu">
+      <li>
+        <Link to="/staff/paquetes_pendientes">
+          <i className="bx bx-list-ul"></i> Listar Paquetes pendientes
+        </Link>
+      </li>
+    </ul>
+  )}
+</li>
+
         </ul>
       </nav>
     </aside>

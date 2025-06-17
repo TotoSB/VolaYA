@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { Container, Form, Button, Alert, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Login.css";
@@ -69,6 +69,14 @@ function Login() {
       setIsLoading(false); // Siempre desactivar el loading
     }
   };
+
+
+  useEffect(() => {
+  const token = localStorage.getItem("access");
+  if (token) {
+    navigate("/"); // Redirecciona al home si ya está logueado
+  }
+}, [navigate]);
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>

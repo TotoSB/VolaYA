@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Container, Form, Button, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Register.css";
@@ -44,11 +44,18 @@ function Register() {
         setErrorMensaje(errores || "Error en el registro. Verifica los datos.");
       }
     } catch (error) {
+      console.log(error)
       setErrorMensaje("Error del servidor. Intenta más tarde.");
     } finally {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+  const token = localStorage.getItem("access");
+  if (token) {
+    navigate("/"); // Redirecciona al home si ya está logueado
+  }
+}, [navigate]);
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
