@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../../styles/Staff/Create.css'; // Importamos el mismo CSS
+import '../../../styles/Staff/Create.css';
 
 const CreateHotels = () => {
   const navigate = useNavigate();
@@ -15,6 +15,7 @@ const CreateHotels = () => {
   });
 
   const [ciudades, setCiudades] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -37,6 +38,7 @@ const CreateHotels = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem('access');
+    setIsLoading(true); // 🌀 Activamos el loading
 
     fetch('http://127.0.0.1:8000/crear_hotel/', {
       method: 'POST',
@@ -47,6 +49,7 @@ const CreateHotels = () => {
       body: JSON.stringify(form)
     })
       .then(res => {
+        setIsLoading(false); // ✅ Finalizamos el loading
         if (res.status === 201) {
           alert('Hotel creado correctamente');
           navigate('/staff/hoteles/lista');
@@ -58,7 +61,9 @@ const CreateHotels = () => {
         }
       })
       .catch(err => {
+        setIsLoading(false);
         console.error('Error al enviar datos:', err);
+        alert('Ocurrió un error al enviar los datos');
       });
   };
 
@@ -73,20 +78,20 @@ const CreateHotels = () => {
 
         <div className="mb-3">
           <label className="create-label">Ciudad</label>
-            <select
+          <select
             className="form-control"
             name="ciudad"
             value={form.ciudad}
             onChange={(e) => handleChange({ target: { name: 'ciudad', value: parseInt(e.target.value) } })}
             required
-            >
+          >
             <option value="">Seleccionar ciudad</option>
             {ciudades.map(ciudad => (
-                <option key={ciudad.id} value={ciudad.id}>
+              <option key={ciudad.id} value={ciudad.id}>
                 {ciudad.nombre}
-                </option>
+              </option>
             ))}
-            </select>
+          </select>
         </div>
 
         <div className="mb-3">
@@ -109,8 +114,17 @@ const CreateHotels = () => {
           <input type="text" className="form-control" name="direccion" value={form.direccion} onChange={handleChange} />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-          <div className="create-button">Guardar +</div>
+        <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+          <div className="create-button">
+            {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Guardando...
+              </>
+            ) : (
+              'Guardar +'
+            )}
+          </div>
         </button>
       </form>
     </div>

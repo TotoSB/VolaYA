@@ -191,7 +191,8 @@ const CreatePacks = () => {
   const [ciudades, setCiudades] = useState([]);
   const [autos, setAutos] = useState([]);
   const [hoteles, setHoteles] = useState([]);
-  const [hotelesFiltrados, setHotelesFiltrados] = useState([]); // 🆕 hoteles según ciudad destino
+  const [hotelesFiltrados, setHotelesFiltrados] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -234,17 +235,17 @@ const CreatePacks = () => {
       [name]: parsedValue
     }));
 
-    // 🧠 Filtrar hoteles cuando cambia la ciudad destino
     if (name === 'ciudad_destino') {
       const hotelesEnCiudad = hoteles.filter(hotel => hotel.ciudad === parseInt(value));
       setHotelesFiltrados(hotelesEnCiudad);
-      setForm(prev => ({ ...prev, hotel: '' })); // Limpiar selección anterior
+      setForm(prev => ({ ...prev, hotel: '' }));
     }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem('access');
+    setIsLoading(true); // 🌀 Activamos loading
 
     fetch('http://127.0.0.1:8000/crear_paquete/', {
       method: 'POST',
@@ -255,6 +256,7 @@ const CreatePacks = () => {
       body: JSON.stringify(form)
     })
       .then(res => {
+        setIsLoading(false); // ✅ Finaliza loading
         if (res.status === 201) {
           alert('Paquete creado correctamente');
           navigate('/staff/paquetes/lista');
@@ -266,7 +268,9 @@ const CreatePacks = () => {
         }
       })
       .catch(err => {
+        setIsLoading(false);
         console.error('Error al enviar datos:', err);
+        alert('Ocurrió un error al enviar los datos');
       });
   };
 
@@ -345,8 +349,17 @@ const CreatePacks = () => {
           </select>
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-          <div className="create-button">Guardar +</div>
+        <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+          <div className="create-button">
+            {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Guardando...
+              </>
+            ) : (
+              'Guardar +'
+            )}
+          </div>
         </button>
       </form>
     </div>
@@ -354,3 +367,4 @@ const CreatePacks = () => {
 };
 
 export default CreatePacks;
+

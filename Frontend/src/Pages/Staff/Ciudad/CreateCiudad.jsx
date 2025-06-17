@@ -13,6 +13,7 @@ const CreateCiudad = () => {
   });
 
   const [paises, setPaises] = useState([]);
+  const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -39,6 +40,8 @@ const CreateCiudad = () => {
     e.preventDefault();
     const token = localStorage.getItem('access');
 
+    setIsLoading(true); // ⏳ Activar loading
+
     fetch('http://127.0.0.1:8000/crear_ciudad/', {
       method: 'POST',
       headers: {
@@ -48,6 +51,7 @@ const CreateCiudad = () => {
       body: JSON.stringify(form),
     })
       .then(res => {
+        setIsLoading(false); // ✅ Finalizar loading
         if (res.status === 201) {
           alert('Ciudad creada correctamente');
           navigate('/staff/Ciudad/ListCiudad');
@@ -59,7 +63,9 @@ const CreateCiudad = () => {
         }
       })
       .catch(err => {
+        setIsLoading(false);
         console.error('Error al enviar datos:', err);
+        alert('Ocurrió un error al enviar los datos');
       });
   };
 
@@ -121,8 +127,17 @@ const CreateCiudad = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-          <div className="create-button">Guardar +</div>
+        <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+          <div className="create-button">
+            {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Guardando...
+              </>
+            ) : (
+              'Guardar +'
+            )}
+          </div>
         </button>
       </form>
     </div>

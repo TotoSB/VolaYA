@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Form, Button } from 'react-bootstrap';
+import { Container, Form, Button, Spinner } from 'react-bootstrap';
 import '../../../styles/Staff/Create.css';
 
 const CreateCars = () => {
@@ -7,9 +7,11 @@ const CreateCars = () => {
   const [modelo, setModelo] = useState('');
   const [color, setColor] = useState('');
   const [precioDia, setPrecioDia] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // Nuevo estado para loading
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const token = localStorage.getItem('access');
 
@@ -28,6 +30,7 @@ const CreateCars = () => {
     });
 
     const data = await response.json();
+    setIsLoading(false); // Se detiene el loading al recibir respuesta
 
     if (response.ok) {
       alert('Auto creado correctamente');
@@ -65,8 +68,17 @@ const CreateCars = () => {
           <Form.Control type="number" value={precioDia} onChange={(e) => setPrecioDia(e.target.value)} required />
         </div>
 
-        <Button variant="primary" type="submit" className="w-100">
-          <div className="create-button">Guardar +</div>
+        <Button variant="primary" type="submit" className="create-button w-100" disabled={isLoading}>
+          <div className='create-button'>
+          {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Guardando...
+              </>
+          ) : (
+            <div className="create-button">Guardar +</div>
+          )}
+          </div>
         </Button>
       </Form>
     </Container>

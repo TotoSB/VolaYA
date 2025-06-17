@@ -9,6 +9,8 @@ const CreatePais = () => {
     nombre: '',
   });
 
+  const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({
@@ -20,6 +22,7 @@ const CreatePais = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem('access');
+    setIsLoading(true); // 🌀 Inicia el loading
 
     fetch('http://127.0.0.1:8000/crear_pais/', {
       method: 'POST',
@@ -30,6 +33,7 @@ const CreatePais = () => {
       body: JSON.stringify(form),
     })
       .then(res => {
+        setIsLoading(false); // ✅ Finaliza loading
         if (res.status === 201) {
           alert('País creado correctamente');
           navigate('/staff/paises/lista');
@@ -41,7 +45,9 @@ const CreatePais = () => {
         }
       })
       .catch(err => {
+        setIsLoading(false);
         console.error('Error al enviar datos:', err);
+        alert('Ocurrió un error al enviar los datos');
       });
   };
 
@@ -61,8 +67,17 @@ const CreatePais = () => {
           />
         </div>
 
-        <button type="submit" className="btn btn-primary w-100">
-          <div className="create-button">Guardar +</div>
+        <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>
+          <div className="create-button">
+            {isLoading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Guardando...
+              </>
+            ) : (
+              'Guardar +'
+            )}
+          </div>
         </button>
       </form>
     </div>

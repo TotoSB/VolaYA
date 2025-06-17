@@ -101,7 +101,7 @@ const SidebarStaff = () => {
 
            <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('ciudades')}>
-              <i className='bx bx-globe'></i> Ciudades
+              <i className='bx bx-buildings'></i> Ciudades
               <i className={`bx bx-chevron-${openMenu === 'Ciudades' ? 'up' : 'down'}`}></i>
             </button>
             {openMenu === 'ciudades' && (
