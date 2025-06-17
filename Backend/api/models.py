@@ -78,23 +78,6 @@ class Hoteles(models.Model):
     def __str__(self):
         return f"{self.nombre} - {self.ciudad.nombre} (${self.precio_noche}/noche)"
 
-class Paquetes(models.Model):
-    id = models.AutoField(primary_key=True)
-    id_usuario = models.ForeignKey(Usuarios, on_delete=models.DO_NOTHING, related_name='paquetes')
-    descripcion = models.TextField(null=True, blank=True)
-    personas = models.IntegerField(null=False, blank=False)
-    fecha_salida = models.DateTimeField(null=False, blank=False)
-    fecha_regreso = models.DateTimeField(null=False, blank=False)
-    ciudad_destino = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='paquetes_destino')
-    ciudad_salida = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='paquetes_salida')
-    hora_salida = models.TimeField(null=False, blank=False)
-    auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
-    hotel = models.ForeignKey(Hoteles, on_delete=models.DO_NOTHING, null=True, blank=True)
-    pagado = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=True)
-
-    def __str__(self):
-        return f"Paquete {self.id} - Destino: {self.ciudad_destino.nombre} - {self.ciudad_salida} ({self.fecha_salida} a {self.fecha_regreso})"
 
 class Personas(models.Model):
     id = models.AutoField(primary_key=True)
@@ -110,6 +93,46 @@ class Personas(models.Model):
 
     def __str__(self):
         return f"{self.nombre} {self.apellido} ({self.tipo_documento}: {self.documento})"
+
+class Aviones(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100, null=False, blank=True)
+    costo_km_general = models.IntegerField(null=False)
+    costo_km_vip = models.IntegerField(null=False)
+    capacidad_avion = models.IntegerField(min=1)
+    capacidad_vip = models.IntegerField()
+    capacidad_general = models.IntegerField() 
+
+class Vuelos(models.Model):
+    id = models.IntegerField(primary_key=True)
+    avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='vuelos')
+    fecha = models.DateTimeField(null=True, blank=False)
+    origen = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_orig')
+    destino = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_destino')
+
+class Asientos(models.Model):
+    id = models.AutoField(primary_key=True)
+    vip = models.BooleanField(default=False)
+    reservado = models.BooleanField(default=False)
+    vuelo = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='asientos')
+
+
+class Paquetes(models.Model):
+    id = models.AutoField(primary_key=True)
+    id_usuario = models.ForeignKey(Usuarios, on_delete=models.DO_NOTHING, related_name='paquetes')
+    descripcion = models.TextField(null=True, blank=True)
+    personas = models.IntegerField(null=False, blank=False)
+
+    vuelo_ida = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_ida')
+    vuelo_vuelta = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_vuelta')
+
+    auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
+    hotel = models.ForeignKey(Hoteles, on_delete=models.DO_NOTHING, null=True, blank=True)
+    pagado = models.BooleanField(default=False)
+    total = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=True)
+
+    def __str__(self):
+        return f"Paquete {self.id} - Destino: {self.ciudad_destino.nombre} - {self.ciudad_salida} ({self.fecha_salida} a {self.fecha_regreso})"
 
 class Carritos(models.Model):
     id = models.AutoField(primary_key=True)

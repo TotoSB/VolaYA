@@ -20,8 +20,6 @@ import mercadopago
 
 sdk = mercadopago.SDK("TEST-6677338736055594-061201-ec6608dc36251133dd3b1718995d2dc4-292453564")
 
-
-
 #Funciones
 def calcular_distancia_km(lat1, lon1, lat2, lon2):
     R = 6371  # Radio de la Tierra en km
