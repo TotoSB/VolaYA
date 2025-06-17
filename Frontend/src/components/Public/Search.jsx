@@ -158,8 +158,8 @@ function Search() {
             fechaVuelta,
             origenId,
             destinoId,
-            origen,            // 👈 añadí esto
-            destino,           // 👈 y esto
+            origen,            
+            destino,           
             autoSeleccionadoId
           }
         });

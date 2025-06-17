@@ -503,12 +503,8 @@ def get_paquetes_en_venta(request):
 def buscar_hoteles(request):
     search = request.GET.get('search', '').strip()
 
-    if not search:
-        return Response({"error": "Debe proporcionar un término de búsqueda."}, status=status.HTTP_400_BAD_REQUEST)
-
     ciudades = Ciudades.objects.filter(
-        Q(nombre__icontains=search) | Q(pais__nombre__icontains=search),
-        hoteles__isnull=False  # Asegura que haya al menos un hotel en esa ciudad
+        Q(nombre__icontains=search) | Q(pais__nombre__icontains=search)
     ).select_related('pais').distinct()
 
     resultado = []
