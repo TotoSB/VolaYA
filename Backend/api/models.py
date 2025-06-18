@@ -108,6 +108,8 @@ class Vuelos(models.Model):
     avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='vuelos')
     origen = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_orig')
     destino = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_destino')
+    fecha = models.DateTimeField(null=True, blank=True)
+  
 
 class Asientos(models.Model):
     id = models.AutoField(primary_key=True)
@@ -126,8 +128,7 @@ class Paquetes(models.Model):
     vuelo_ida = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_ida')
     vuelo_vuelta = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_vuelta')
 
-    fecha_salida = models.DateTimeField(null=True, blank=True)
-    fecha_regreso = models.DateTimeField(null=True, blank=True)
+   
 
     auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
     hotel = models.ForeignKey(Hoteles, on_delete=models.DO_NOTHING, null=True, blank=True)
