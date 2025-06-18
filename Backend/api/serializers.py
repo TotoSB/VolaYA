@@ -112,7 +112,7 @@ class VueloSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Vuelos
-        fields = ['id', 'avion', 'origen', 'origen_nombre', 'destino', 'destino_nombre']
+        fields = ['id', 'avion', 'origen', 'origen_nombre', 'destino', 'destino_nombre','fecha']
 
 class AsientoSerializer(serializers.ModelSerializer):
     vuelo_info = serializers.StringRelatedField(source='vuelo', read_only=True)

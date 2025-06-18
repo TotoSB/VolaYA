@@ -128,6 +128,8 @@ class Paquetes(models.Model):
     vuelo_ida = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_ida')
     vuelo_vuelta = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_vuelta')
 
+    fecha_salida = models.DateTimeField(null=True, blank=True)
+    fecha_regreso = models.DateTimeField(null=True, blank=True)
    
 
     auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
