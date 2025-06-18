@@ -238,8 +238,12 @@ def crear_paquete(request):
     serializer = PaqueteSerializer(data=request.data)
 
     if serializer.is_valid():
-        ciudad_salida = serializer.validated_data['ciudad_salida']
-        ciudad_destino = serializer.validated_data['ciudad_destino']
+        vuelo_ida = serializer.validated_data['vuelo_ida']
+        vuelo_vuelta = serializer.validated_data['vuelo_vuelta']
+
+        ciudad_salida = vuelo_ida.origen
+        ciudad_destino = vuelo_ida.destino
+
 
         lat1 = float(ciudad_salida.latitud)
         lon1 = float(ciudad_salida.longitud)

@@ -101,11 +101,31 @@ class HotelSerializer(serializers.ModelSerializer):
             'pais_nombre',
         ]
 
+class AvionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Aviones
+        fields = '__all__'
+
+class VueloSerializer(serializers.ModelSerializer):
+    origen_nombre = serializers.CharField(source='origen.nombre', read_only=True)
+    destino_nombre = serializers.CharField(source='destino.nombre', read_only=True)
+    
+    class Meta:
+        model = Vuelos
+        fields = ['id', 'avion', 'origen', 'origen_nombre', 'destino', 'destino_nombre']
+
+class AsientoSerializer(serializers.ModelSerializer):
+    vuelo_info = serializers.StringRelatedField(source='vuelo', read_only=True)
+
+    class Meta:
+        model = Asientos
+        fields = ['id', 'vip', 'reservado', 'vuelo', 'vuelo_info']
+
 
 
 class PaqueteSerializer(serializers.ModelSerializer):
-    ciudad_salida_nombre = serializers.CharField(source='ciudad_salida.nombre', read_only=True)
-    ciudad_destino_nombre = serializers.CharField(source='ciudad_destino.nombre', read_only=True)
+    vuelo_ida_info = serializers.SerializerMethodField()
+    vuelo_vuelta_info = serializers.SerializerMethodField()
     auto_nombre = serializers.CharField(source='auto.modelo', read_only=True)
     hotel_nombre = serializers.CharField(source='hotel.nombre', read_only=True)
 
@@ -117,11 +137,10 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'personas',
             'fecha_salida',
             'fecha_regreso',
-            'ciudad_salida',
-            'ciudad_salida_nombre',
-            'ciudad_destino',
-            'ciudad_destino_nombre',
-            'hora_salida',
+            'vuelo_ida',
+            'vuelo_ida_info',
+            'vuelo_vuelta',
+            'vuelo_vuelta_info',
             'auto',
             'auto_nombre',
             'hotel',
@@ -130,9 +149,13 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'total',
             'id_usuario',
         ]
-        read_only_fields = ['id_usuario', 'pagado', 'total']
+        read_only_fields = ['pagado', 'total']
 
+    def get_vuelo_ida_info(self, obj):
+        return str(obj.vuelo_ida)
 
+    def get_vuelo_vuelta_info(self, obj):
+        return str(obj.vuelo_vuelta)
 
 class CotizarPaqueteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -141,11 +164,12 @@ class CotizarPaqueteSerializer(serializers.ModelSerializer):
             'personas',
             'fecha_salida',
             'fecha_regreso',
-            'ciudad_destino',
-            'ciudad_salida',
+            'vuelo_ida',
+            'vuelo_vuelta',
             'auto',
         ]
         read_only_fields = ['total']
+
 
 
 class PersonaSerializer(serializers.ModelSerializer):
@@ -184,3 +208,13 @@ class FacturaSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         factura = Facturas.objects.create(**validated_data)
         return factura
+    
+class PagoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Pagos
+        fields = ['id', 'paquete', 'fecha_pago', 'monto', 'estado']
+
+class HistoricaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Historica
+        fields = ['id', 'paquete', 'fecha', 'pago', 'factura']

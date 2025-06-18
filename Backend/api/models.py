@@ -86,7 +86,7 @@ class Personas(models.Model):
     apellido = models.CharField(max_length=100, null=False, blank=False)
     tipo_documento = models.CharField(max_length=20, null=False, blank=False)
     documento = models.CharField(max_length=20, unique=True, null=False, blank=False)
-    telefono = models.IntegerField(null=True, blank=True)
+    telefono = models.CharField(max_length=20, null=True, blank=True)
     fecha_nacimiento = models.DateField(null=True, blank=True)
     genero = models.CharField(max_length=10, null=True, blank=True)
     dueno = models.BooleanField(default=False)
@@ -106,7 +106,6 @@ class Aviones(models.Model):
 class Vuelos(models.Model):
     id = models.IntegerField(primary_key=True)
     avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='vuelos')
-    fecha = models.DateTimeField(null=True, blank=False)
     origen = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_orig')
     destino = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_destino')
 
@@ -126,13 +125,16 @@ class Paquetes(models.Model):
     vuelo_ida = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_ida')
     vuelo_vuelta = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_vuelta')
 
+    fecha_salida = models.DateTimeField(null=True, blank=True)
+    fecha_regreso = models.DateTimeField(null=True, blank=True)
+
     auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
     hotel = models.ForeignKey(Hoteles, on_delete=models.DO_NOTHING, null=True, blank=True)
     pagado = models.BooleanField(default=False)
     total = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=True)
 
     def __str__(self):
-        return f"Paquete {self.id} - Destino: {self.ciudad_destino.nombre} - {self.ciudad_salida} ({self.fecha_salida} a {self.fecha_regreso})"
+        return f"Paquete {self.id} - Destino: {self.vuelo_ida.nombre} - {self.vuelo_vuelta} ({self.fecha_salida} a {self.fecha_regreso})"
 
 class Carritos(models.Model):
     id = models.AutoField(primary_key=True)
