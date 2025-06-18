@@ -119,6 +119,7 @@ class Asientos(models.Model):
 class Paquetes(models.Model):
     id = models.AutoField(primary_key=True)
     id_usuario = models.ForeignKey(Usuarios, on_delete=models.DO_NOTHING, related_name='paquetes')
+    id_avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='paquetes')
     descripcion = models.TextField(null=True, blank=True)
     personas = models.IntegerField(null=False, blank=False)
 

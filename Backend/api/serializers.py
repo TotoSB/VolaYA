@@ -148,6 +148,7 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'pagado',
             'total',
             'id_usuario',
+            'id_avion',
         ]
         read_only_fields = ['pagado', 'total']
 
