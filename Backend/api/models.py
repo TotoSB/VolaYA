@@ -95,21 +95,26 @@ class Personas(models.Model):
         return f"{self.nombre} {self.apellido} ({self.tipo_documento}: {self.documento})"
 
 class Aviones(models.Model):
-    id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100, null=False, blank=True)
+    id = models.AutoField(primary_key=True, null = False)
+    nombre = models.CharField(max_length=100, null=False)
     costo_km_general = models.IntegerField(null=False)
     costo_km_vip = models.IntegerField(null=False)
-    capacidad_avion = models.IntegerField(min=1)
+    capacidad_avion = models.IntegerField(default=1)
     capacidad_vip = models.IntegerField()
     capacidad_general = models.IntegerField() 
 
+    def __str__(self):
+        return f"{self.nombre} - Capacidad: {self.capacidad_avion} (VIP: {self.capacidad_vip}, General: {self.capacidad_general})"
+
 class Vuelos(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.AutoField(primary_key=True)
     avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='vuelos')
     origen = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_orig')
     destino = models.ForeignKey(Ciudades, on_delete=models.DO_NOTHING, related_name='vuelos_destino')
     fecha = models.DateTimeField(null=True, blank=True)
   
+    def __str__(self):
+        return f"Vuelo {self.id} - {self.origen.nombre} a {self.destino.nombre}"
 
 class Asientos(models.Model):
     id = models.AutoField(primary_key=True)
@@ -117,11 +122,14 @@ class Asientos(models.Model):
     reservado = models.BooleanField(default=False)
     vuelo = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='asientos')
 
+    def __str__(self):
+        return f"Asiento {self.id} - {'VIP' if self.vip else 'General'} - {'Reservado' if self.reservado else 'Disponible'} - Vuelo: {self.vuelo.id}"
+
 
 class Paquetes(models.Model):
     id = models.AutoField(primary_key=True)
     id_usuario = models.ForeignKey(Usuarios, on_delete=models.DO_NOTHING, related_name='paquetes')
-    id_avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='paquetes')
+    id_avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='paquetes', default=0)
     descripcion = models.TextField(null=True, blank=True)
     personas = models.IntegerField(null=False, blank=False)
 

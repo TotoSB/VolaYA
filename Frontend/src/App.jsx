@@ -11,11 +11,15 @@ import HotelesDisponibles from './Pages/HotelesDisponibles';
 import ProtectedRoute from './components/ProtectedRoute'; // 👈 Asegurate de tener esto
 import 'boxicons/css/boxicons.min.css';
 import Carrito from './Pages/Carrito';
-import ListPais from './Pages/Staff/Pais/ListPais';
-import CreatePais from './Pages/Staff/Pais/Createpais';
-import ListCiudad from './Pages/Staff/Ciudad/ListCiudad';
-import CreateCiudad from './Pages/Staff/Ciudad/CreateCiudad';
+import ListPais from './Pages/Staff/Paises/ListPais';
+import CreatePais from './Pages/Staff/Paises/Createpais';
+import ListCiudad from './Pages/Staff/Ciudades/ListCiudad';
+import CreateCiudad from './Pages/Staff/Ciudades/CreateCiudad';
 import ListPedidosPendientes from './Pages/Staff/Pendientes/ListPedidosPendientes';
+import ListAviones from './Pages/Staff/Aviones/ListAviones';
+import CreateAviones from './Pages/Staff/Aviones/CreateAviones';
+import ListVuelo from './Pages/Staff/Vuelos/ListVuelo';
+import CreateVuelo from './Pages/Staff/Vuelos/CreateVuelo';
 
 function App() {
   return (
@@ -44,6 +48,10 @@ function App() {
         <Route path="ciudad/lista" element={<ListCiudad />} />
         <Route path="ciudad/crear" element={<CreateCiudad/>} />
         <Route path="paquetes_pendientes" element={<ListPedidosPendientes/>} />
+        <Route path="vuelos/lista" element={<ListVuelo/>} />
+        <Route path="vuelos/crear" element={<CreateVuelo />} />
+        <Route path="aviones/lista" element={<ListAviones />} />
+        <Route path="aviones/crear" element={<CreateAviones />} />
       </Route>
     </Routes>
   );

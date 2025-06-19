@@ -233,6 +233,93 @@ def crear_hotel(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
+def crear_avion(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+    capacidad_vip = request.data.get('capacidad_vip', 0)
+    capacidad_general = request.data.get('capacidad_general', 0)
+
+    try:
+        capacidad_vip = int(capacidad_vip)
+        capacidad_general = int(capacidad_general)
+    except ValueError:
+        return Response({"error": "Los campos de capacidad deben ser enteros."}, status=status.HTTP_400_BAD_REQUEST)
+
+    capacidad_total = capacidad_vip + capacidad_general
+
+    data = request.data.copy()
+    data['capacidad_avion'] = capacidad_total
+
+    serializer = AvionSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Avión creado correctamente."}, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def crear_vuelo(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+    data = request.data
+
+    try:
+        # Recuperar objetos relacionados
+        avion = Aviones.objects.get(id=data['avion'])
+        origen = Ciudades.objects.get(id=data['origen'])
+        destino = Ciudades.objects.get(id=data['destino'])
+
+        # Crear el vuelo manualmente
+        vuelo = Vuelos.objects.create(
+            avion=avion,
+            origen=origen,
+            destino=destino,
+            fecha=data.get('fecha')
+        )
+
+        # Crear asientos VIP
+        for _ in range(avion.capacidad_vip):
+            Asientos.objects.create(vuelo=vuelo, vip=True)
+
+        # Crear asientos Generales
+        for _ in range(avion.capacidad_general):
+            Asientos.objects.create(vuelo=vuelo, vip=False)
+
+        return Response({"message": "Vuelo y asientos creados correctamente."}, status=status.HTTP_201_CREATED)
+
+    except KeyError as e:
+        return Response({"error": f"Falta el campo requerido: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+    except Aviones.DoesNotExist:
+        return Response({"error": "El avión especificado no existe."}, status=status.HTTP_400_BAD_REQUEST)
+    except Ciudades.DoesNotExist:
+        return Response({"error": "La ciudad de origen o destino no existe."}, status=status.HTTP_400_BAD_REQUEST)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def crear_asiento(request):
+    if not request.user.is_staff:
+            return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+    serializer = AsientoSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Asientos creado correctamente."}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def crear_paquete(request):
     serializer = PaqueteSerializer(data=request.data)
@@ -477,6 +564,52 @@ def get_hoteles(request):
     if request.method == 'GET':
         hoteles = Hoteles.objects.all()
         serializer = HotelSerializer(hoteles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_vuelos(request):
+    if request.method == 'GET':
+        vuelos = Vuelos.objects.all()
+        serializer = VueloListSerializer(vuelos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_asientos_vuelo(request, vuelo_id):
+    if request.method == 'GET':
+        asientos = Asientos.objects.filter(vuelo_id=vuelo_id)
+        serializer = AsientoSerializer(asientos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_aviones(request):
+    if request.method == 'GET':
+        aviones = Aviones.objects.all()
+        serializer = AvionSerializer(aviones, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_asientos(request):
+    if request.method == 'GET':
+        asientos = Asientos.objects.all()
+        serializer = AsientoSerializer(asientos, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_pagos(request):
+    if request.method == 'GET':
+        pagos = Pagos.objects.all()
+        serializer = PagoSerializer(pagos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 

@@ -21,6 +21,9 @@ urlpatterns = [
     path('crear_ciudad/', views.crear_ciudad, name='crear_ciudad'),
     path('crear_auto/', views.crear_auto, name='crear_auto'),
     path('crear_hotel/', views.crear_hotel, name='crear_hotel'),
+    path('crear_avion/', views.crear_avion, name='crear_avion'),
+    path('crear_vuelo/', views.crear_vuelo, name='crear_vuelo'),
+    path('crear_asiento/', views.crear_asiento, name='crear_asiento'),
     path('anular_pedido/<int:paquete_id>/', views.anular_pedido, name='anular_pedido'),
 
     # POST Mercado Pago
@@ -55,5 +58,6 @@ urlpatterns = [
     path('conseguir_aviones/', views.get_aviones, name='conseguir_aviones'),
     path('conseguir_asientos/', views.get_asientos, name='conseguir_asientos'),
     path('conseguir_pagos/', views.get_pagos, name='conseguir_pagos'),
-    path('conseguir_facturas_completas/', views.get_facturas_completas, name='conseguir_facturas_completas'),
+    path('conseguir_asientos_vuelo/<int:id>/', views.get_asientos_vuelo, name='conseguir_asientos_vuelos')
+   # path('conseguir_facturas_completas/', views.get_facturas_completas, name='conseguir_facturas_completas'),
 ]

@@ -28,7 +28,7 @@ const SidebarStaff = () => {
                 </li>
                 <li>
                   <Link to="/staff/pais/crear">
-                    <i className="bx bx-plus"></i> Crear Pais
+                    <i className="bx bx-plus"></i> Agregar Pais
                   </Link>
                 </li>
               </ul>
@@ -49,7 +49,7 @@ const SidebarStaff = () => {
                 </li>
                 <li>
                   <Link to="/staff/ciudad/crear">
-                    <i className="bx bx-plus"></i> Crear Ciudad
+                    <i className="bx bx-plus"></i> Agregar Ciudad
                   </Link>
                 </li>
               </ul>
@@ -117,6 +117,51 @@ const SidebarStaff = () => {
               </ul>
             )}
           </li>
+
+         <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('aviones')}>
+              <i className='bx bx-paper-plane'></i> Aviones
+              <i className={`bx bx-chevron-${openMenu === 'aviones' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'aviones' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/Aviones/lista">
+                    <i className="bx bx-list-ul"></i> Listar Aviones
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/Aviones/crear">
+                    <i className="bx bx-plus"></i> Agregar Aviones
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+           <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('Vuelos')}>
+              < i className='bx  bx-calendar-week'  ></i> Vuelos
+              <i className={`bx bx-chevron-${openMenu === 'Vuelos' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'Vuelos' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/Vuelos/lista">
+                    <i className="bx bx-list-ul"></i> Listar Vuelos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/Vuelos/crear">
+                    <i className="bx bx-plus"></i> Agregar Vuelos
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+          
+
+
 
           <li>
             <button
