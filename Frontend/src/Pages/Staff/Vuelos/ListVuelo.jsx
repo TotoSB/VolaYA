@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import '../../../styles/Staff/Create.css';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 
 const ListVuelo = () => {
   const [vuelos, setVuelos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -22,10 +25,9 @@ const ListVuelo = () => {
       });
   }, []);
 
-  const handleAsientos = (vueloId) => {
-    // Aquí puedes implementar la lógica para manejar los asientos del vuelo
-    console.log(`Manejando asientos para el vuelo con ID: ${vueloId}`);
-  }
+  const handleAsientos = (vuelo) => {
+    navigate(`/staff/asientos/${vuelo.id}`, { state: { vuelo } });
+  };
 
   return (
     <div className="container mt-4">
@@ -58,7 +60,7 @@ const ListVuelo = () => {
                   <td>{vuelo.origen}</td>
                   <td>{vuelo.destino}</td>
                   <td>{new Date(vuelo.fecha).toLocaleString()}</td>
-                  <td><button className="btn btn-primary" onClick={() => handleAsientos(vuelo.id)}>< i className='bx  bx-chair'></i> </button></td>
+                  <td><button className="btn btn-primary" onClick={() => handleAsientos(vuelo)}>< i className='bx  bx-chair'></i> </button></td>
                 </tr>
               ))}
             </tbody>

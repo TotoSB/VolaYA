@@ -41,6 +41,7 @@ urlpatterns = [
     path('conseguir_paquetes_en_venta/', views.get_paquetes_en_venta, name='conseguir_paquetes_en_venta'),
     path('buscar_hoteles/', views.buscar_hoteles, name='buscar_hoteles'),
     path('obtener_paquetes_search/', views.obtener_paquetes_search, name='obtener_paquetes_search'),
+    path('obtener_vuelos_personalizados/', views.get_vuelos_personalizados, name='get_vuelos_personalizados'),
 
     # GET Jefe de ventas
     path('conseguir_personas/', views.get_personas, name='conseguir_personas'),
@@ -58,6 +59,6 @@ urlpatterns = [
     path('conseguir_aviones/', views.get_aviones, name='conseguir_aviones'),
     path('conseguir_asientos/', views.get_asientos, name='conseguir_asientos'),
     path('conseguir_pagos/', views.get_pagos, name='conseguir_pagos'),
-    path('conseguir_asientos_vuelo/<int:id>/', views.get_asientos_vuelo, name='conseguir_asientos_vuelos')
+    path('conseguir_asientos_vuelo/<int:vuelo_id>/', views.get_asientos_vuelo, name='conseguir_asientos_vuelos')
    # path('conseguir_facturas_completas/', views.get_facturas_completas, name='conseguir_facturas_completas'),
 ]

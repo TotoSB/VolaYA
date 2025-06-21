@@ -120,6 +120,7 @@ class Asientos(models.Model):
     id = models.AutoField(primary_key=True)
     vip = models.BooleanField(default=False)
     reservado = models.BooleanField(default=False)
+    numero = models.IntegerField(null=False, blank=False, default=0)
     vuelo = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='asientos')
 
     def __str__(self):

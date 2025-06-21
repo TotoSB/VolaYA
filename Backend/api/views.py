@@ -15,7 +15,7 @@ import math
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 
-from django.db.models import Q, F
+from django.db.models import Q, Count
 import mercadopago
 
 sdk = mercadopago.SDK("TEST-6677338736055594-061201-ec6608dc36251133dd3b1718995d2dc4-292453564")
@@ -275,7 +275,7 @@ def crear_vuelo(request):
         origen = Ciudades.objects.get(id=data['origen'])
         destino = Ciudades.objects.get(id=data['destino'])
 
-        # Crear el vuelo manualmente
+        # Crear el vuelo
         vuelo = Vuelos.objects.create(
             avion=avion,
             origen=origen,
@@ -283,13 +283,18 @@ def crear_vuelo(request):
             fecha=data.get('fecha')
         )
 
+        # Inicializamos contador de número de asiento
+        numero_asiento = 1
+
         # Crear asientos VIP
         for _ in range(avion.capacidad_vip):
-            Asientos.objects.create(vuelo=vuelo, vip=True)
+            Asientos.objects.create(vuelo=vuelo, vip=True, numero=numero_asiento)
+            numero_asiento += 1
 
         # Crear asientos Generales
         for _ in range(avion.capacidad_general):
-            Asientos.objects.create(vuelo=vuelo, vip=False)
+            Asientos.objects.create(vuelo=vuelo, vip=False, numero=numero_asiento)
+            numero_asiento += 1
 
         return Response({"message": "Vuelo y asientos creados correctamente."}, status=status.HTTP_201_CREATED)
 
@@ -301,7 +306,6 @@ def crear_vuelo(request):
         return Response({"error": "La ciudad de origen o destino no existe."}, status=status.HTTP_400_BAD_REQUEST)
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 
@@ -575,6 +579,51 @@ def get_vuelos(request):
         serializer = VueloListSerializer(vuelos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def get_vuelos_personalizados(request):
+    fecha_ida = request.data.get('fecha_ida')
+    fecha_vuelta = request.data.get('fecha_vuelta')
+    destino_id = request.data.get('destino')
+    origen_id = request.data.get('origen')
+    personas = int(request.data.get('personas', 1))
+
+    if not fecha_ida or not fecha_vuelta or not destino_id or not origen_id:
+        return Response({"error": "Faltan datos requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Vuelos de ida con al menos 'personas' asientos disponibles
+        vuelos_ida = Vuelos.objects.annotate(
+            asientos_disponibles=Count('asientos', filter=Q(asientos__reservado=False))
+        ).filter(
+            fecha__date=fecha_ida,
+            origen__id=origen_id,
+            destino__id=destino_id,
+            asientos_disponibles__gte=personas
+        )
+
+
+        vuelos_vuelta = Vuelos.objects.annotate(
+            asientos_disponibles=Count('asientos', filter=Q(asientos__reservado=False))
+        ).filter(
+            fecha__date=fecha_vuelta,
+            origen__id=destino_id,
+            destino__id=origen_id,
+            asientos_disponibles__gte=personas
+        )
+
+        vuelos_ida_serialized = VueloListSerializer(vuelos_ida, many=True).data
+        vuelos_vuelta_serialized = VueloListSerializer(vuelos_vuelta, many=True).data
+
+        return Response({
+            "vuelos_ida": vuelos_ida_serialized,
+            "vuelos_vuelta": vuelos_vuelta_serialized
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

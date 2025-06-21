@@ -126,52 +126,53 @@ function Search() {
     setError('');
     console.log('Formulario válido');
 
-    const buscarDestinos = async () => {
-      try {
-        const res = await fetch(`http://127.0.0.1:8000/obtener_paquetes_search/`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            personas,
-            fecha_salida: fechaSalida,
-            fecha_regreso: fechaVuelta,
-            ciudad_destino: destinoId,
-            ciudad_salida: origenId,
-            auto: autoSeleccionadoId,
-          }),
-        });
+const buscarDestinos = async () => {
+  try {
+    const res = await fetch(`http://127.0.0.1:8000/obtener_vuelos_personalizados/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        personas,
+        fecha_ida: fechaSalida,
+        fecha_vuelta: fechaVuelta,
+        destino: destinoId,
+        origen: origenId
+      }),
+    });
 
-        if (!res.ok) {
-          throw new Error('Error en la búsqueda');
-        }
+    if (!res.ok) {
+      throw new Error('Error en la búsqueda');
+    }
 
-        const data = await res.json();
-        console.log(data);
-        const autoSeleccionado = autos.find(a => a.id === parseInt(autoSeleccionadoId));
+    const data = await res.json();
+    console.log(data);
 
-        navigate('/hoteles-disponibles', {
-          state: {
-            hoteles: data.hoteles_disponibles,
-            costoTotal: data.costo_vuelo_y_servicios,
-            personas,
-            fechaSalida,
-            fechaVuelta,
-            origenId,
-            destinoId,
-            origen,
-            destino,
-            autoSeleccionadoId,
-            auto: autoSeleccionado || null
-          }
-        });
-        
-        } catch (err) {
-          console.error("Error al buscar paquetes:", err);
-          setError('Error al buscar hoteles disponibles.');
-        }
-    };
+    const autoSeleccionado = autos.find(a => a.id === parseInt(autoSeleccionadoId));
+
+    navigate('/vuelos-disponibles', {
+      state: {
+        vuelosIda: data.vuelos_ida,
+        vuelosVuelta: data.vuelos_vuelta,
+        personas,
+        fechaSalida,
+        fechaVuelta,
+        origenId,
+        destinoId,
+        origen,
+        destino,
+        autoSeleccionadoId,
+        auto: autoSeleccionado || null
+      }
+    });
+
+    } catch (err) {
+      console.error("Error al buscar vuelos:", err);
+      setError('Error al buscar vuelos disponibles.');
+    }
+  };
+
 
     buscarDestinos();
   };

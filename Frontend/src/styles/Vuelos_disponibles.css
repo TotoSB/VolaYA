@@ -151,6 +151,18 @@ p {
   background-color: #545b62;
 }
 
+.vuelos-list {
+  list-style: none;
+  padding: 0;
+}
+
+.vuelo-card {
+  background-color: #f4f4f4;
+  margin: 1rem 0;
+  padding: 1rem;
+  border-radius: 10px;
+}
+
 /* Loading */
 .loading {
   text-align: center;

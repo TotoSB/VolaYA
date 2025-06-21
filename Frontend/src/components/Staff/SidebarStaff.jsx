@@ -166,12 +166,12 @@ const SidebarStaff = () => {
           <li>
             <button
               className="sidebar-toggle"
-              onClick={() => toggleMenu('pendientes')} // 🔧 usamos 'pendientes' como clave
+              onClick={() => toggleMenu('pendientes')}
             >
               <i className='bx bx-time-five'></i> Paquetes pendientes
             </button>
 
-            {openMenu === 'pendientes' && ( // ✅ comprobamos contra la misma clave
+            {openMenu === 'pendientes' && (
               <ul className="sidebar-submenu">
                 <li>
                   <Link to="/staff/paquetes_pendientes">

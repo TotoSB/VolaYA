@@ -7,8 +7,7 @@ import ListPacks from './Pages/Staff/Packs/ListPacks';
 import CreateCars from './Pages/Staff/Cars/CreateCars';
 import CreateHotels from './Pages/Staff/Hotels/CreateHotels';
 import CreatePacks from './Pages/Staff/Packs/CreatePacks';
-import HotelesDisponibles from './Pages/HotelesDisponibles';
-import ProtectedRoute from './components/ProtectedRoute'; // 👈 Asegurate de tener esto
+import ProtectedRoute from './components/ProtectedRoute';
 import 'boxicons/css/boxicons.min.css';
 import Carrito from './Pages/Carrito';
 import ListPais from './Pages/Staff/Paises/ListPais';
@@ -20,12 +19,14 @@ import ListAviones from './Pages/Staff/Aviones/ListAviones';
 import CreateAviones from './Pages/Staff/Aviones/CreateAviones';
 import ListVuelo from './Pages/Staff/Vuelos/ListVuelo';
 import CreateVuelo from './Pages/Staff/Vuelos/CreateVuelo';
+import ListAsientos from './Pages/Staff/Asientos/LIstAsientos';
+import VuelosDisponibles from './Pages/VuelosDisponibles';
 
 function App() {
   return (
     <Routes>
       <Route path="/*" element={<Home />} />
-      <Route path="/hoteles-disponibles" element={<HotelesDisponibles />} />
+      <Route path="/vuelos-disponibles" element={<VuelosDisponibles />} />
       <Route path="/carrito" element={<Carrito />} />
 
       <Route
@@ -52,6 +53,7 @@ function App() {
         <Route path="vuelos/crear" element={<CreateVuelo />} />
         <Route path="aviones/lista" element={<ListAviones />} />
         <Route path="aviones/crear" element={<CreateAviones />} />
+        <Route path="asientos/:id" element={<ListAsientos />} />
       </Route>
     </Routes>
   );
