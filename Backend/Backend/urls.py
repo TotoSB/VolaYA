@@ -42,6 +42,8 @@ urlpatterns = [
     path('buscar_hoteles/', views.buscar_hoteles, name='buscar_hoteles'),
     path('obtener_paquetes_search/', views.obtener_paquetes_search, name='obtener_paquetes_search'),
     path('obtener_vuelos_personalizados/', views.get_vuelos_personalizados, name='get_vuelos_personalizados'),
+    path('cotizar_vuelo/', views.calcular_cotizacion_vuelo),
+    path('conseguir_hotel_ciudad/', views.get_hotel_ciudad, name='conseguir_hotel_ciudad'),
 
     # GET Jefe de ventas
     path('conseguir_personas/', views.get_personas, name='conseguir_personas'),
@@ -50,6 +52,7 @@ urlpatterns = [
 
     # PUTS generales
     path('modificar_paquete/<int:paquete_id>/', views.modificar_paquete, name='modificar_paquete'),
+
 
     # DELETE generales
     path('eliminar_paquete/<int:paquete_id>/', views.eliminar_paquete, name='eliminar_paquete'),

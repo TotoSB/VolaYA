@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Form, Button, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Register.css";
+import { useAuth } from "../context/AuthContext"; 
 
 function Register() {
   const navigate = useNavigate();
@@ -11,7 +12,9 @@ function Register() {
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [errorMensaje, setErrorMensaje] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // Nuevo estado para loading
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { setIsAuthenticated, setUserData } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,18 +47,38 @@ function Register() {
         setErrorMensaje(errores || "Error en el registro. Verifica los datos.");
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       setErrorMensaje("Error del servidor. Intenta más tarde.");
     } finally {
       setIsLoading(false);
     }
   };
+
   useEffect(() => {
-  const token = localStorage.getItem("access");
-  if (token) {
-    navigate("/"); // Redirecciona al home si ya está logueado
-  }
-}, [navigate]);
+    const token = localStorage.getItem("access");
+
+    if (token) {
+      fetch("http://127.0.0.1:8000/conseguir_mi_usuario/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          if (!res.ok) throw new Error("Token inválido");
+          return res.json();
+        })
+        .then((userData) => {
+          setIsAuthenticated(true);
+          setUserData(userData);
+          navigate(userData.is_staff ? "/Staff" : "/");
+        })
+        .catch(() => {
+          setIsAuthenticated(false);
+          localStorage.removeItem("access");
+        });
+    }
+  }, [navigate, setIsAuthenticated, setUserData]);
 
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>

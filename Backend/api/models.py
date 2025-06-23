@@ -130,16 +130,14 @@ class Asientos(models.Model):
 class Paquetes(models.Model):
     id = models.AutoField(primary_key=True)
     id_usuario = models.ForeignKey(Usuarios, on_delete=models.DO_NOTHING, related_name='paquetes')
-    id_avion = models.ForeignKey(Aviones, on_delete=models.DO_NOTHING, related_name='paquetes', default=0)
     descripcion = models.TextField(null=True, blank=True)
     personas = models.IntegerField(null=False, blank=False)
 
+    asiento_ida = models.ManyToManyField(Asientos, related_name='paquetes_asiento_ida', null=True, blank=True)
+    asiento_vuelta = models.ManyToManyField(Asientos, related_name='paquetes_asiento_vuelta', null=True, blank=True)
+
     vuelo_ida = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_ida')
     vuelo_vuelta = models.ForeignKey(Vuelos, on_delete=models.DO_NOTHING, related_name='paquetes_vuelta')
-
-    fecha_salida = models.DateTimeField(null=True, blank=True)
-    fecha_regreso = models.DateTimeField(null=True, blank=True)
-   
 
     auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
     hotel = models.ForeignKey(Hoteles, on_delete=models.DO_NOTHING, null=True, blank=True)
@@ -147,7 +145,7 @@ class Paquetes(models.Model):
     total = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=True)
 
     def __str__(self):
-        return f"Paquete {self.id} - Destino: {self.vuelo_ida.nombre} - {self.vuelo_vuelta} ({self.fecha_salida} a {self.fecha_regreso})"
+        return f"Paquete {self.id} - Destino: {self.vuelo_ida.nombre} - {self.vuelo_vuelta} "
 
 class Carritos(models.Model):
     id = models.AutoField(primary_key=True)

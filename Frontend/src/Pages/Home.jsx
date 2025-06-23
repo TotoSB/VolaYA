@@ -9,6 +9,8 @@ import InsertarCodigo from "./InsertCode";
 import "../styles/Home.css";
 import Perfil from "./Perfil";
 import Search from "../components/Public/Search";
+import ReservarAsiento from "./ReservasAsiento";
+import HotelesDisponibles from "./HotelesDisponibles";
 
 function Home() {
   return (
@@ -21,7 +23,11 @@ function Home() {
           <Route path="/register" element={<Register />} />
           <Route path="/paquetes" element={<Package />} />
           <Route path="/codigo" element={<InsertarCodigo />} />
-          <Route path="/perfil" element={<Perfil />} /></Routes>
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/reservar_asientos/" element={<ReservarAsiento />} />
+          <Route path="/hoteles-disponibles" element={<HotelesDisponibles />} />
+        </Routes>
+
       </Container>
     </>
   );

@@ -36,6 +36,33 @@ def calcular_distancia_km(lat1, lon1, lat2, lon2):
     print(f"Distancia calculada: {distancia} km")
     return distancia
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def calcular_cotizacion_vuelo(request):
+    try:
+        vuelo_id = request.data.get('vuelo_id')
+        asientos_ids = request.data.get('asientos_ids', [])
+
+        vuelo = Vuelos.objects.select_related('avion', 'origen', 'destino').get(id=vuelo_id)
+        asientos = Asientos.objects.filter(id__in=asientos_ids, vuelo=vuelo)
+
+        lat1, lon1 = vuelo.origen.latitud, vuelo.origen.longitud
+        lat2, lon2 = vuelo.destino.latitud, vuelo.destino.longitud
+
+        distancia = calcular_distancia_km(lat1, lon1, lat2, lon2)
+
+        total = 0
+        for asiento in asientos:
+            if asiento.vip:
+                total += vuelo.avion.costo_km_vip * distancia
+            else:
+                total += vuelo.avion.costo_km_general * distancia
+
+        return Response({'costo': round(total, 2), 'distancia': round(distancia, 2)})
+
+    except Exception as e:
+        return Response({'error': str(e)}, status=400)
+
 @csrf_exempt  # Mercado Pago no enviará CSRF token
 @api_view(['POST'])
 def mercado_pago_webhook(request):
@@ -329,46 +356,26 @@ def crear_paquete(request):
     serializer = PaqueteSerializer(data=request.data)
 
     if serializer.is_valid():
-        vuelo_ida = serializer.validated_data['vuelo_ida']
-        vuelo_vuelta = serializer.validated_data['vuelo_vuelta']
+        paquete = serializer.save(id_usuario=request.user)
 
-        ciudad_salida = vuelo_ida.origen
-        ciudad_destino = vuelo_ida.destino
+        # Agregar los asientos ManyToMany
+        paquete.asiento_ida.set(serializer.validated_data['asiento_ida'])
+        paquete.asiento_vuelta.set(serializer.validated_data['asiento_vuelta'])
 
-
-        lat1 = float(ciudad_salida.latitud)
-        lon1 = float(ciudad_salida.longitud)
-        lat2 = float(ciudad_destino.latitud)
-        lon2 = float(ciudad_destino.longitud)
-
-        distancia_km = calcular_distancia_km(lat1, lon1, lat2, lon2)
-        precio_por_km = 2000
-        costo_total = distancia_km * precio_por_km
-
-        auto = serializer.validated_data.get('auto')
-        hotel = serializer.validated_data.get('hotel')
-
-        dias = (serializer.validated_data['fecha_regreso'] - serializer.validated_data['fecha_salida']).days
-        if auto:
-            costo_total += auto.precio_dia * dias
-        costo_total += hotel.precio_noche * dias
-
-        serializer.save(total=costo_total, id_usuario=request.user)
-
-        # Si no es staff, guardás la reserva y actualizás el carrito
+        # Actualizar carrito y reservas si no es staff
         if not request.user.is_staff:
             carrito = Carritos.objects.get(id_usuario=request.user)
-            carrito.total += Decimal(str(costo_total))
+            carrito.total += Decimal(str(paquete.total))
             carrito.save()
 
             Reservas_usuario.objects.create(
                 usuario=request.user,
-                paquete=serializer.instance
+                paquete=paquete
             )
 
         return Response({
             "message": "Paquete creado exitosamente",
-            "costo_total": round(costo_total, 2)
+            "costo_total": float(paquete.total)
         }, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -514,6 +521,67 @@ def obtener_paquetes_search(request):
             })
         return Response(serializer.errors, status=400)
 
+@api_view(['POST']) 
+@permission_classes([AllowAny])
+def get_vuelos_personalizados(request):
+    fecha_ida = request.data.get('fecha_ida')
+    fecha_vuelta = request.data.get('fecha_vuelta')
+    destino_id = request.data.get('destino')
+    origen_id = request.data.get('origen')
+    personas = int(request.data.get('personas', 1))
+
+    if not fecha_ida or not fecha_vuelta or not destino_id or not origen_id:
+        return Response({"error": "Faltan datos requeridos"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        # Vuelos de ida con al menos 'personas' asientos disponibles
+        vuelos_ida = Vuelos.objects.annotate(
+            asientos_disponibles=Count('asientos', filter=Q(asientos__reservado=False))
+        ).filter(
+            fecha__date=fecha_ida,
+            origen__id=origen_id,
+            destino__id=destino_id,
+            asientos_disponibles__gte=personas
+        )
+
+
+        vuelos_vuelta = Vuelos.objects.annotate(
+            asientos_disponibles=Count('asientos', filter=Q(asientos__reservado=False))
+        ).filter(
+            fecha__date=fecha_vuelta,
+            origen__id=destino_id,
+            destino__id=origen_id,
+            asientos_disponibles__gte=personas
+        )
+
+        vuelos_ida_serialized = VueloListSerializer(vuelos_ida, many=True).data
+        vuelos_vuelta_serialized = VueloListSerializer(vuelos_vuelta, many=True).data
+
+        return Response({
+            "vuelos_ida": vuelos_ida_serialized,
+            "vuelos_vuelta": vuelos_vuelta_serialized
+        }, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def get_hotel_ciudad (request):
+    ciudad_id = request.data.get('ciudad_id')
+    personas = request.data.get('personas', 1)
+
+    if not ciudad_id:
+        return Response({"error": "Ciudad ID es requerido"}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        ciudad = Ciudades.objects.get(id=ciudad_id)
+        hoteles = Hoteles.objects.filter(ciudad=ciudad, personas__gte=personas)
+        serializer = HotelSerializer(hoteles, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Ciudades.DoesNotExist:
+        return Response({"error": "Ciudad no encontrada"}, status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_personas(request):
@@ -580,49 +648,7 @@ def get_vuelos(request):
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-def get_vuelos_personalizados(request):
-    fecha_ida = request.data.get('fecha_ida')
-    fecha_vuelta = request.data.get('fecha_vuelta')
-    destino_id = request.data.get('destino')
-    origen_id = request.data.get('origen')
-    personas = int(request.data.get('personas', 1))
 
-    if not fecha_ida or not fecha_vuelta or not destino_id or not origen_id:
-        return Response({"error": "Faltan datos requeridos"}, status=status.HTTP_400_BAD_REQUEST)
-
-    try:
-        # Vuelos de ida con al menos 'personas' asientos disponibles
-        vuelos_ida = Vuelos.objects.annotate(
-            asientos_disponibles=Count('asientos', filter=Q(asientos__reservado=False))
-        ).filter(
-            fecha__date=fecha_ida,
-            origen__id=origen_id,
-            destino__id=destino_id,
-            asientos_disponibles__gte=personas
-        )
-
-
-        vuelos_vuelta = Vuelos.objects.annotate(
-            asientos_disponibles=Count('asientos', filter=Q(asientos__reservado=False))
-        ).filter(
-            fecha__date=fecha_vuelta,
-            origen__id=destino_id,
-            destino__id=origen_id,
-            asientos_disponibles__gte=personas
-        )
-
-        vuelos_ida_serialized = VueloListSerializer(vuelos_ida, many=True).data
-        vuelos_vuelta_serialized = VueloListSerializer(vuelos_vuelta, many=True).data
-
-        return Response({
-            "vuelos_ida": vuelos_ida_serialized,
-            "vuelos_vuelta": vuelos_vuelta_serialized
-        }, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

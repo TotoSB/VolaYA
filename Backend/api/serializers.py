@@ -129,43 +129,26 @@ class AsientoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Asientos
         fields = ['id', 'vip', 'reservado', 'vuelo', 'vuelo_info', 'numero']
-
+        
 
 
 class PaqueteSerializer(serializers.ModelSerializer):
-    vuelo_ida_info = serializers.SerializerMethodField()
-    vuelo_vuelta_info = serializers.SerializerMethodField()
-    auto_nombre = serializers.CharField(source='auto.modelo', read_only=True)
-    hotel_nombre = serializers.CharField(source='hotel.nombre', read_only=True)
+    asiento_ida = serializers.PrimaryKeyRelatedField(queryset=Asientos.objects.all(), many=True)
+    asiento_vuelta = serializers.PrimaryKeyRelatedField(queryset=Asientos.objects.all(), many=True)
 
     class Meta:
         model = Paquetes
         fields = [
-            'id',
-            'descripcion',
             'personas',
-            'fecha_salida',
-            'fecha_regreso',
             'vuelo_ida',
-            'vuelo_ida_info',
             'vuelo_vuelta',
-            'vuelo_vuelta_info',
-            'auto',
-            'auto_nombre',
+            'asiento_ida',
+            'asiento_vuelta',
             'hotel',
-            'hotel_nombre',
-            'pagado',
-            'total',
-            'id_usuario',
-            'id_avion',
+            'auto',
+            'total'
         ]
-        read_only_fields = ['pagado', 'total']
 
-    def get_vuelo_ida_info(self, obj):
-        return str(obj.vuelo_ida)
-
-    def get_vuelo_vuelta_info(self, obj):
-        return str(obj.vuelo_vuelta)
 
 class CotizarPaqueteSerializer(serializers.ModelSerializer):
     class Meta:
