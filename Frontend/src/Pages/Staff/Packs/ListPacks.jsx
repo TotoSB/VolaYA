@@ -62,10 +62,10 @@ const ListPacks = () => {
                   <td>{pack.id}</td>
                   <td>{pack.descripcion}</td>
                   <td>{pack.personas}</td>
-                  <td>{pack.vuelo_ida_nombre || "—"}</td>
-                  <td>{pack.vuelo_vuelta_nombre || "—"}</td>
-                  <td>{pack.auto_nombre || "—"}</td>
-                  <td>{pack.hotel_nombre || "—"}</td>
+                  <td>{pack.vuelo_ida || "—"}</td>
+                  <td>{pack.vuelo_vuelta || "—"}</td>
+                  <td>{pack.auto || "—"}</td>
+                  <td>{pack.hotel || "—"}</td>
                   <td>{pack.total}</td>
                   <td>
                     <div className="d-flex justify-content-center gap-3">

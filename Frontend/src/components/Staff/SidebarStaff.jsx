@@ -181,6 +181,26 @@ const SidebarStaff = () => {
               </ul>
             )}
          </li>
+
+          <li>
+            <button
+              className="sidebar-toggle"
+              onClick={() => toggleMenu('facturas')}
+            >
+              <i className='bx bx-book'></i> Facturas
+            </button>
+
+            {openMenu === 'facturas' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/facturas">
+                    <i className='bx bx-list-ul'></i> Listar Facturas
+                  </Link>
+                </li>
+              </ul>
+            )}
+         </li>
+         
         </ul>
       </nav>
     </aside>

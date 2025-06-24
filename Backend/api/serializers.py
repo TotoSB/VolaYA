@@ -149,11 +149,21 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'total'
         ]
 
+
 class AdminPaqueteSerializer(serializers.ModelSerializer):
     vuelo_ida = serializers.CharField(source='vuelo_ida.avion', read_only=True)
-    vuelo_vuelta= serializers.CharField(source='vuelo_vuelta.avion', read_only=True)
-    auto = serializers.CharField(source='auto.nombre', read_only = True)
-    hotel = serializers.CharField(source='hotel.nombre', read_only = True)
+    vuelo_ida_fecha = serializers.DateTimeField(source='vuelo_ida.fecha', read_only=True)
+    vuelo_vuelta = serializers.CharField(source='vuelo_vuelta.avion', read_only=True)
+    vuelo_vuelta_fecha = serializers.DateTimeField(source='vuelo_vuelta.fecha', read_only=True)
+
+    vuelo_ida_obj = VueloSerializer(source='vuelo_ida', read_only=True)
+    vuelo_vuelta_obj = VueloSerializer(source='vuelo_vuelta', read_only=True)
+
+    auto = serializers.CharField(source='auto.modelo', read_only=True)
+    hotel = serializers.CharField(source='hotel.nombre', read_only=True)
+
+    asiento_ida = AsientoSerializer(many=True, read_only=True)
+    asiento_vuelta = AsientoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Paquetes
@@ -162,11 +172,22 @@ class AdminPaqueteSerializer(serializers.ModelSerializer):
             'descripcion',
             'personas',
             'vuelo_ida',
+            'vuelo_ida_fecha',
             'vuelo_vuelta',
+            'vuelo_vuelta_fecha',
+            'vuelo_ida_obj',  
+            'vuelo_vuelta_obj', 
             'hotel',
             'auto',
-            'total'
+            'total',
+            'asiento_ida',
+            'asiento_vuelta',
+            'id_usuario',
         ]
+
+    extra_kwargs = {
+        'id_usuario': {'write_only': True}
+    }
 
 
 class CotizarPaqueteSerializer(serializers.ModelSerializer):
@@ -212,14 +233,74 @@ class ReservaUsuarioSerializer(serializers.ModelSerializer):
         model = Reservas_usuario
         fields = ['id', 'usuario', 'paquete', 'total_paquete']
 
+
+class ReservaDetalleSerializer(serializers.ModelSerializer):
+    vuelo_ida = serializers.SerializerMethodField()
+    vuelo_vuelta = serializers.SerializerMethodField()
+    hotel = serializers.CharField(source='hotel.nombre', default=None)
+    auto = serializers.SerializerMethodField()
+    asiento_ida = serializers.SerializerMethodField()
+    asiento_vuelta = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Paquetes
+        fields = [
+            'id',
+            'descripcion',
+            'personas',
+            'vuelo_ida',
+            'vuelo_vuelta',
+            'hotel',
+            'auto',
+            'asiento_ida',
+            'asiento_vuelta',
+            'total',
+            'pagado',
+        ]
+
+    def get_vuelo_ida(self, obj):
+        return f"{obj.vuelo_ida.avion.nombre} - {obj.vuelo_ida.origen.nombre} a {obj.vuelo_ida.destino.nombre}"
+
+    def get_vuelo_vuelta(self, obj):
+        return f"{obj.vuelo_vuelta.avion.nombre} - {obj.vuelo_vuelta.origen.nombre} a {obj.vuelo_vuelta.destino.nombre}"
+
+    def get_auto(self, obj):
+        if obj.auto:
+            return f"{obj.auto.marca} {obj.auto.modelo} ({obj.auto.color}) - ${obj.auto.precio_dia}/día"
+        return None
+
+    def get_asiento_ida(self, obj):
+        return [f"Asiento {a.numero} - {'VIP' if a.vip else 'General'}" for a in obj.asiento_ida.all()]
+
+    def get_asiento_vuelta(self, obj):
+        return [f"Asiento {a.numero} - {'VIP' if a.vip else 'General'}" for a in obj.asiento_vuelta.all()]
+
+
 class FacturaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Facturas
-        fields = ['id', 'paquete', 'fecha_emision', 'total', 'detalles']
+        fields = [
+            'id',
+            'pago',
+            'fecha_factura',
+            'razon_social',
+            'cuil',
+            'provincia',
+            'ciudad',
+            'calle',
+            'numero_calle',
+            'piso',
+            'departamento'
+        ]
+        read_only_fields = ['fecha_factura']
 
-    def create(self, validated_data):
-        factura = Facturas.objects.create(**validated_data)
-        return factura
+class FacturaPendienteSerializer(serializers.ModelSerializer):
+    cliente = serializers.CharField(source='id_usuario.nombre_usuario')
+    total = serializers.DecimalField(max_digits=50, decimal_places=2)
+    
+    class Meta:
+        model = Paquetes
+        fields = ['id', 'cliente', 'total']
     
 class PagoSerializer(serializers.ModelSerializer):
     class Meta:

@@ -63,25 +63,6 @@ def calcular_cotizacion_vuelo(request):
     except Exception as e:
         return Response({'error': str(e)}, status=400)
 
-@csrf_exempt  # Mercado Pago no enviará CSRF token
-@api_view(['POST'])
-def mercado_pago_webhook(request):
-    if request.method == 'POST':
-        payment_id = request.data.get('data', {}).get('id', None)
-        payment_type = request.data.get('type', None)
-
-        if payment_type == "payment" and payment_id:
-            payment_info = sdk.payment().get(payment_id)
-            status_mp = payment_info["response"]["status"]
-            paquete_id = payment_info["response"]["metadata"].get("paquete_id")
-
-            # Validar si el pago fue aprobado
-            if status_mp == "approved" and paquete_id:
-                # Acá llamás a tu función directamente o replicás la lógica
-                return pago_paquete_aprobado_directo(paquete_id)
-
-    return Response({"message": "Evento recibido"}, status=status.HTTP_200_OK)
-
 
 #POST
 
@@ -385,30 +366,37 @@ def crear_paquete(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def admin_crear_paquete(request):
+    if not request.user.is_staff:
+        return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
+
+    # Asegúrate de que los IDs de los vuelos se están pasando correctamente
+    print("Datos recibidos:", request.data)
+    
     serializer = AdminPaqueteSerializer(data=request.data)
     if serializer.is_valid():
-        paquete = serializer.save(id_usuario=request.user)
-   
-        if not request.user.is_staff:
-            try:
-                carrito = Carritos.objects.get(id_usuario=request.user)
-            except Carritos.DoesNotExist:
-                return Response({"error": "Carrito no encontrado."}, status=status.HTTP_404_NOT_FOUND)
-
-            carrito.total += Decimal(str(paquete.total))
-            carrito.save()
-
-            Reservas_usuario.objects.create(
-                usuario=request.user,
-                paquete=paquete
+        try:
+            # Crea el paquete manualmente si es necesario
+            paquete = Paquetes.objects.create(
+                id_usuario=request.user,
+                descripcion=request.data.get('descripcion'),
+                personas=request.data.get('personas'),
+                vuelo_ida_id=request.data.get('vuelo_ida'),
+                vuelo_vuelta_id=request.data.get('vuelo_vuelta'),
+                hotel_id=request.data.get('hotel'),
+                auto_id=request.data.get('auto'),
+                total=request.data.get('total')
             )
-
-        return Response({
-            "message": "Paquete creado exitosamente",
-            "total": float(paquete.total)
-        }, status=status.HTTP_201_CREATED)
-
+            return Response(
+                {"message": "Paquete creado exitosamente.", "id": paquete.id},
+                status=status.HTTP_201_CREATED
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Error al guardar el paquete: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -441,36 +429,6 @@ def asignar_reserva_a_usuario(request, reserva_id):
 
 
     return Response({"message": "Reserva asignada al usuario correctamente"}, status=status.HTTP_200_OK)
-
-
-def pago_paquete_aprobado_directo(paquete_id):
-    try:
-        paquete = Paquetes.objects.get(id=paquete_id)
-    except Paquetes.DoesNotExist:
-        return Response({"error": "Paquete no encontrado"}, status=status.HTTP_404_NOT_FOUND)
-
-    if paquete.pagado:
-        return Response({"error": "El paquete ya ha sido pagado"}, status=status.HTTP_400_BAD_REQUEST)
-
-    paquete.pagado = True
-    paquete.save()
-
-    carrito = Carritos.objects.get(id_usuario=paquete.id_usuario)
-    carrito.total -= Decimal(str(paquete.total))
-    carrito.save()
-
-    factura_pago = Pagos.objects.create(
-        paquete=paquete,
-        monto=paquete.total,
-        estado='COMPLETADO'
-    )
-
-    Historica.objects.create(
-        paquete=paquete,
-        pago=factura_pago
-    )
-
-    return Response({"message": "Pago procesado correctamente"}, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -647,7 +605,7 @@ def get_reservas_usuario(request):
 def get_paquetes_pendientes_usuario(request):
     if request.method == 'GET':
         paquetes = Paquetes.objects.filter(id_usuario=request.user, pagado=False)
-        serializer = PaqueteSerializer(paquetes, many=True)
+        serializer = AdminPaqueteSerializer(paquetes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -737,12 +695,16 @@ def get_ciudades(request):
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@permission_classes([AllowAny])  # Mejor usar autenticación
 def get_paquetes_en_venta(request):
     if request.method == 'GET':
-        paquetes = Paquetes.objects.filter(id_usuario__is_staff=True)
-        serializer = PaqueteSerializer(paquetes, many=True)
+        paquetes = Paquetes.objects.filter(
+            id_usuario__is_staff=True,
+            descripcion__isnull=False
+        ).exclude(descripcion='')
+        serializer = AdminPaqueteSerializer(paquetes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 @api_view(['GET'])
@@ -770,7 +732,7 @@ def get_paquetes_pendientes(request):
         if not request.user.is_staff:
             return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
         paquetes = Paquetes.objects.filter(pagado=False)
-        serializer = PaqueteSerializer(paquetes, many=True)
+        serializer = AdminPaqueteSerializer(paquetes, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
@@ -782,15 +744,30 @@ def ver_facturas_a_cobrar(request):
 
     ordenar_por = request.GET.get('ordenar_por', '').lower()
 
-    facturas = Facturas.objects.filter(pago__estado='PENDIENTE')
+    # 1. Facturas pagadas (facturas reales)
+    facturas_pagadas = Facturas.objects.select_related('pago__paquete__id_usuario')
+
+    facturas_a_cobrar = Paquetes.objects.filter(
+        pagado=False,
+        id_usuario__is_staff=False 
+    )
 
     if ordenar_por == 'fecha':
-        facturas = facturas.order_by('-fecha_factura')
+        facturas_pagadas = facturas_pagadas.order_by('-fecha_factura')
+        facturas_a_cobrar = facturas_a_cobrar.order_by('-id')
     elif ordenar_por == 'cliente':
-        facturas = facturas.order_by('pago__paquete__id_usuario__nombre_usuario')
+        facturas_pagadas = facturas_pagadas.order_by('pago__paquete__id_usuario__nombre_usuario')
+        facturas_a_cobrar = facturas_a_cobrar.order_by('id_usuario__nombre_usuario')
 
-    serializer = FacturaSerializer(facturas, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
+    # Serializar resultados
+    serializer_pagadas = FacturaSerializer(facturas_pagadas, many=True)
+    serializer_pendientes = FacturaPendienteSerializer(facturas_a_cobrar, many=True)
+
+    return Response({
+        "facturas_pagadas": serializer_pagadas.data,
+        "facturas_a_cobrar": serializer_pendientes.data
+    }, status=status.HTTP_200_OK)
+
 
 
 #Puts
@@ -843,3 +820,119 @@ def conseguir_paquetes_en_venta(request):
 
 
 
+def generar_mensaje_factura(usuario, paquete, factura):
+    return f"""
+                Hola {usuario.nombre_usuario},
+
+                Gracias por tu compra. Te enviamos los detalles de tu factura:
+
+                --- PAQUETE ---
+                Descripción: {paquete.descripcion or 'Sin descripción'}
+                Personas: {paquete.personas}
+                Vuelo Ida: {paquete.vuelo_ida}
+                Vuelo Vuelta: {paquete.vuelo_vuelta}
+                Hotel: {paquete.hotel or 'Sin hotel'}
+                Auto: {paquete.auto or 'Sin auto'}
+                Total: ${paquete.total}
+
+                --- FACTURA ---
+                Razón social: {factura.razon_social}
+                CUIL: {factura.cuil}
+                Dirección: {factura.calle} {factura.numero_calle}, Piso {factura.piso or '-'}, Dpto {factura.departamento or '-'}
+                Ciudad: {factura.ciudad}
+                Provincia: {factura.provincia}
+                Fecha: {factura.fecha_factura.strftime('%Y-%m-%d %H:%M')}
+
+                Gracias por confiar en nosotros.
+
+                Tu Agencia de Viajes
+                """
+
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def realizar_pago(request):
+    usuario = request.user
+    paquete_id = request.data.get('reserva_id')  # Aquí usás el id del paquete
+    factura_data = {
+        key: request.data.get(key)
+        for key in ['razon_social', 'cuil', 'provincia', 'ciudad', 'calle', 'numero_calle', 'piso', 'departamento']
+    }
+
+    # Validar que exista el paquete_id
+    if not paquete_id:
+        return Response({'error': 'Falta el ID del paquete'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Validar que todos los datos de factura estén presentes (si querés validar que no falte ninguno)
+    if any(value is None for value in factura_data.values()):
+        return Response({'error': 'Faltan datos de la factura'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Buscar el paquete correspondiente y que pertenezca al usuario
+    try:
+        paquete = Paquetes.objects.get(id=paquete_id, id_usuario=usuario.id)
+    except Paquetes.DoesNotExist:
+        return Response({'error': 'Paquete no encontrado para este usuario'}, status=status.HTTP_404_NOT_FOUND)
+
+    # Crear el pago
+    pago = Pagos.objects.create(
+        paquete=paquete,
+        monto=paquete.total,
+        estado='COMPLETADO'
+    )
+
+    # Crear la factura usando el serializer (asumiendo que FacturaSerializer está bien definido)
+    factura_serializer = FacturaSerializer(data={**factura_data, 'pago': pago.id})
+    if not factura_serializer.is_valid():
+        return Response(factura_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    factura = factura_serializer.save()
+
+    # Marcar los asientos como reservados
+    for asiento in paquete.asiento_ida.all():
+        asiento.reservado = True
+        asiento.save()
+    for asiento in paquete.asiento_vuelta.all():
+        asiento.reservado = True
+        asiento.save()
+
+    # Marcar el paquete como pagado
+    paquete.pagado = True
+    paquete.save()
+
+    # Descontar del carrito
+    try:
+        carrito = Carritos.objects.get(id_usuario=usuario)
+        carrito.total -= paquete.total
+        if carrito.total < 0:
+            carrito.total = 0
+        carrito.save()
+    except Carritos.DoesNotExist:
+        pass
+
+    # Registrar en historial
+    Historica.objects.create(
+        paquete=paquete,
+        pago=pago,
+        factura=factura
+    )
+
+    # Enviar correo al usuario con la factura
+    try:
+        mensaje = generar_mensaje_factura(usuario, paquete, factura)
+        send_mail(
+            subject='Factura de tu compra - Agencia de Viajes',
+            message=mensaje,
+            from_email=None,
+            recipient_list=[usuario.correo],
+            fail_silently=False
+        )
+    except Exception as e:
+        return Response({'error': f'Error al enviar el email: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    return Response({'success': 'Pago realizado, factura emitida y correo enviado.'}, status=status.HTTP_200_OK)

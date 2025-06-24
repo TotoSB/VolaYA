@@ -15,7 +15,7 @@ urlpatterns = [
     path('crear_persona/', views.crear_persona, name='crear_persona'),
     path('crear_paquete/', views.crear_paquete, name='crear_paquete'),
     path('admin_crear_paquete/', views.admin_crear_paquete, name='admin_crear_paquete'),
-    path('pago_aprobado/', views.pago_paquete_aprobado_directo, name='pago_aprobado'),
+    path('hacer_pago/', views.realizar_pago, name='hacer_pago'),
 
     # POST Jefe de ventas
     path('crear_pais/', views.crear_pais, name='crear_pais'),
@@ -26,9 +26,6 @@ urlpatterns = [
     path('crear_vuelo/', views.crear_vuelo, name='crear_vuelo'),
     path('crear_asiento/', views.crear_asiento, name='crear_asiento'),
     path('anular_pedido/<int:paquete_id>/', views.anular_pedido, name='anular_pedido'),
-
-    # POST Mercado Pago
-    path('mercado-pago/webhook/', views.mercado_pago_webhook, name='mercado_pago_webhook'),
 
     # GET generales
     path('conseguir_mi_usuario/', views.get_my_user, name='conseguir_mi_usuario'),

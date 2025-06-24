@@ -3,7 +3,8 @@ import { useLocation } from 'react-router-dom';
 
 function HotelesDisponibles() {
   const location = useLocation();
-    const {
+
+  const {
     costoTotal,
     costoIda,
     costoVuelta,
@@ -14,9 +15,10 @@ function HotelesDisponibles() {
     fechaSalida,
     fechaVuelta,
     seleccionIda,
-    seleccionVuelta
-    } = location.state || {};
-
+    seleccionVuelta,
+    auto,
+    autoSeleccionadoId
+  } = location.state || {};
 
   const [hoteles, setHoteles] = useState([]);
 
@@ -27,7 +29,6 @@ function HotelesDisponibles() {
       minimumFractionDigits: 0
     }).format(valor);
 
-  // Calcular cantidad de noches
   const calcularNoches = () => {
     const salida = new Date(fechaSalida);
     const vuelta = new Date(fechaVuelta);
@@ -37,6 +38,7 @@ function HotelesDisponibles() {
   };
 
   const noches = calcularNoches();
+  const totalAuto = auto ? auto.precio_dia * noches : 0;
 
   useEffect(() => {
     const fetchHoteles = async () => {
@@ -64,63 +66,78 @@ function HotelesDisponibles() {
 
   const handleAgregarAlCarrito = async (hotel) => {
     try {
-        const totalHotel = hotel.precio_noche * noches;
+      const totalHotel = hotel.precio_noche * noches;
+      const totalFinal = Number((costoTotal + totalHotel + totalAuto).toFixed(2));
 
-        const data = {
+      const data = {
         personas,
         vuelo_ida: vueloIda.id,
         vuelo_vuelta: vueloVuelta.id,
         hotel: hotel.id,
-        total: Number((costoTotal + totalHotel).toFixed(2)),
+        total: totalFinal,
         asiento_ida: seleccionIda.map(a => a.id),
-        asiento_vuelta: seleccionVuelta.map(a => a.id)
-        };
+        asiento_vuelta: seleccionVuelta.map(a => a.id),
+        auto: autoSeleccionadoId || null
+      };
 
-        const res = await fetch('http://127.0.0.1:8000/crear_paquete/', {
+      const res = await fetch('http://127.0.0.1:8000/crear_paquete/', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('access')}`
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access')}`
         },
         body: JSON.stringify(data)
-        });
+      });
 
-        const result = await res.json();
-        if (res.ok) {
+      const result = await res.json();
+      if (res.ok) {
         alert(`Paquete creado: ${result.message} - Total: ${formatoPesos(result.costo_total)}`);
-        } else {
+      } else {
         alert('Error al crear paquete: ' + JSON.stringify(result));
-        }
+      }
     } catch (err) {
-        console.error('Error al agregar paquete:', err);
+      console.error('Error al agregar paquete:', err);
     }
-    };
-
-
+  };
 
   return (
     <div className="contenedor-hotel">
-      <h3>Total vuelos: {formatoPesos(costoTotal)}</h3>
+      <h3>💸 Total del paquete: {formatoPesos(costoTotal + totalAuto)}</h3>
       <p>🛫 Ida ({vueloIda.origen} → {vueloIda.destino}): {formatoPesos(costoIda)}</p>
       <p>🔙 Vuelta ({vueloVuelta.origen} → {vueloVuelta.destino}): {formatoPesos(costoVuelta)}</p>
       <p>👥 Personas: {personas}</p>
       <p>🛏️ Noches de estadía: {noches}</p>
 
+      {auto && (
+        <>
+          <p>🚗 Auto seleccionado: {auto.marca} {auto.modelo}</p>
+          <p>🧾 Total auto: {formatoPesos(totalAuto)}</p>
+        </>
+      )}
+
       <h4>🏨 Hoteles disponibles en {hoteles[0]?.ciudad_nombre || 'el destino'}</h4>
       <ul>
         {hoteles.length > 0 ? (
-          hoteles.map((hotel) => (
-            <li key={hotel.id} style={{ marginBottom: '2rem', borderBottom: '1px solid #ccc', paddingBottom: '1rem' }}>
-              <h5>{hotel.nombre}</h5>
-              <p><strong>Descripción:</strong> {hotel.descripcion}</p>
-              <p><strong>Dirección:</strong> {hotel.direccion}</p>
-              <p><strong>Ciudad:</strong> {hotel.ciudad_nombre}, {hotel.pais_nombre}</p>
-              <p><strong>Capacidad:</strong> {hotel.personas} personas</p>
-              <p><strong>Precio por noche:</strong> {formatoPesos(hotel.precio_noche)}</p>
-              <p><strong>Total ({noches} noches):</strong> {formatoPesos(hotel.precio_noche * noches)}</p>
-                <button className="btn btn-success mt-2" onClick={() => handleAgregarAlCarrito(hotel)}>Agregar al carrito</button>
-            </li>
-          ))
+          hoteles.map((hotel) => {
+            const totalHotel = hotel.precio_noche * noches;
+            const totalFinal = costoTotal + totalHotel + totalAuto;
+
+            return (
+              <li key={hotel.id} style={{ marginBottom: '2rem', borderBottom: '1px solid #ccc', paddingBottom: '1rem' }}>
+                <h5>{hotel.nombre}</h5>
+                <p><strong>Descripción:</strong> {hotel.descripcion}</p>
+                <p><strong>Dirección:</strong> {hotel.direccion}</p>
+                <p><strong>Ciudad:</strong> {hotel.ciudad_nombre}, {hotel.pais_nombre}</p>
+                <p><strong>Capacidad:</strong> {hotel.personas} personas</p>
+                <p><strong>Precio por noche:</strong> {formatoPesos(hotel.precio_noche)}</p>
+                <p><strong>Total hotel ({noches} noches):</strong> {formatoPesos(totalHotel)}</p>
+                <p><strong>💵 Total paquete con este hotel:</strong> {formatoPesos(totalFinal)}</p>
+                <button className="btn btn-success mt-2" onClick={() => handleAgregarAlCarrito(hotel)}>
+                  Agregar al carrito
+                </button>
+              </li>
+            );
+          })
         ) : (
           <p>No hay hoteles disponibles.</p>
         )}

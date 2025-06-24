@@ -142,7 +142,7 @@ class Paquetes(models.Model):
     auto = models.ForeignKey(Autos, on_delete=models.DO_NOTHING, null=True, blank=True)
     hotel = models.ForeignKey(Hoteles, on_delete=models.DO_NOTHING, null=True, blank=True)
     pagado = models.BooleanField(default=False)
-    total = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=True)
+    total = models.DecimalField(max_digits=50, decimal_places=2, null=False, blank=True)
 
     def __str__(self):
         return f"Paquete {self.id} - Destino: {self.vuelo_ida.nombre} - {self.vuelo_vuelta} "

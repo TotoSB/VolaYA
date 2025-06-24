@@ -19,7 +19,9 @@ function VuelosDisponibles() {
     fechaSalida,
     fechaVuelta,
     personas,
-    destinoId
+    destinoId,
+    autoSeleccionadoId,
+    auto
   } = location.state || {};
 
   const handleSeleccionVuelo = (vuelo) => {
@@ -47,6 +49,9 @@ function VuelosDisponibles() {
           <p><strong>Fecha de salida:</strong> {fechaSalida}</p>
           <p><strong>Fecha de regreso:</strong> {fechaVuelta}</p>
           <p><strong>Personas:</strong> {personas}</p>
+          {auto && (
+              <p><strong>Auto:</strong> {auto.marca} - {auto.modelo}</p>
+          )}
         </section>
 
         <section className="vuelos-section">
@@ -93,14 +98,16 @@ function VuelosDisponibles() {
         <button
           className="btn btn-primary"
           onClick={() =>
-            navigate(`/reservar_asientos`, {
-              state: {
-                vueloIda: vueloIdaSeleccionado,
-                vueloVuelta: vueloVueltaSeleccionado,
-                personas,
-                destinoId
-              }
-            })
+              navigate(`/reservar_asientos`, {
+                state: {
+                  vueloIda: vueloIdaSeleccionado,
+                  vueloVuelta: vueloVueltaSeleccionado,
+                  personas,
+                  destinoId,
+                  autoSeleccionadoId,
+                  auto
+                }
+              })
           }
         >
           Continuar a selección de asientos

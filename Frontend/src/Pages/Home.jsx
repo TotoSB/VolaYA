@@ -11,6 +11,7 @@ import Perfil from "./Perfil";
 import Search from "../components/Public/Search";
 import ReservarAsiento from "./ReservasAsiento";
 import HotelesDisponibles from "./HotelesDisponibles";
+import Pagar from "./Pagar";
 
 function Home() {
   return (
@@ -26,6 +27,7 @@ function Home() {
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/reservar_asientos/" element={<ReservarAsiento />} />
           <Route path="/hoteles-disponibles" element={<HotelesDisponibles />} />
+          <Route path="/pagar" element={<Pagar />} />
         </Routes>
 
       </Container>

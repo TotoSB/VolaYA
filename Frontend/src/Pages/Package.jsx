@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Package() {
   const [paquetes, setPaquetes] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPaquetes = async () => {
@@ -20,6 +23,14 @@ function Package() {
     fetchPaquetes();
   }, []);
 
+  const formatearFecha = (fechaISO) => {
+    const fecha = new Date(fechaISO);
+    return fecha.toLocaleString('es-AR', {
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
+  };
+
   return (
     <div className="container mt-5">
       <h2 className="text-center mb-4">🌍 Explora Nuestros Paquetes</h2>
@@ -35,24 +46,36 @@ function Package() {
               <div className="card shadow-sm h-100 border-0">
                 <div className="card-body">
                   <h5 className="card-title text-primary">
-                    <i className='bx bxs-plane-take-off me-2'></i>
-                    {paquete.descripcion}
+                    {paquete.descripcion || `Paquete #${paquete.id}`}
                   </h5>
                   <ul className="list-unstyled">
-                    <li><i className='bx bx-map me-2'></i><strong>Origen:</strong> {paquete.ciudad_salida_nombre}</li>
-                    <li><i className='bx bx-map-pin me-2'></i><strong>Destino:</strong> {paquete.ciudad_destino_nombre}</li>
-                    <li><i className='bx bx-calendar me-2'></i><strong>Salida:</strong> {new Date(paquete.fecha_salida).toLocaleDateString()}</li>
-                    <li><i className='bx bx-calendar-check me-2'></i><strong>Regreso:</strong> {new Date(paquete.fecha_regreso).toLocaleDateString()}</li>
-                    <li><i className='bx bx-hotel me-2'></i><strong>Hotel:</strong> {paquete.hotel_nombre}</li>
-                    <li><i className='bx bx-car me-2'></i><strong>Auto:</strong> {paquete.auto_nombre || 'Sin auto'}</li>
-                    <li><i className='bx bx-user me-2'></i><strong>Personas:</strong> {paquete.personas}</li>
-                    <li><i className='bx bx-money me-2'></i><strong>Total:</strong> ${paquete.total}</li>
+                    <li><strong>Personas:</strong> {paquete.personas}</li>
+                    <li><strong>Vuelo ida:</strong> {formatearFecha(paquete.vuelo_ida_fecha)} - {paquete.vuelo_ida}</li>
+                    <li><strong>Vuelo vuelta:</strong> {formatearFecha(paquete.vuelo_vuelta_fecha)} - {paquete.vuelo_vuelta}</li>
+                    <li><strong>Hotel:</strong> {paquete.hotel}</li>
+                    <li><strong>Auto:</strong> {paquete.auto || 'Sin auto'}</li>
+                    <li><strong>Total:</strong> ${parseFloat(paquete.total).toLocaleString()}</li>
                   </ul>
                 </div>
                 <div className="card-footer bg-transparent border-0 text-end">
-                  <button className="btn btn-outline-primary btn-sm">
-                    <i className='bx bx-info-circle me-1'></i>Ver más
-                  </button>
+                <button
+                  className="btn btn-outline-primary btn-sm"
+                  onClick={() =>
+                    navigate('/reservar_asientos', {
+                      state: {
+                        vueloIda: paquete.vuelo_ida_obj,
+                        vueloVuelta: paquete.vuelo_vuelta_obj,
+                        personas: paquete.personas,
+                        destinoId: paquete.destino_id,
+                        auto: paquete.auto,
+                        autoSeleccionadoId: paquete.auto_id,
+                        desdePaquete: true,
+                      }
+                    })
+                  }
+                >
+                  Elegir asientos
+                </button>
                 </div>
               </div>
             </div>

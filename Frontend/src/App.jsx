@@ -21,6 +21,7 @@ import ListVuelo from './Pages/Staff/Vuelos/ListVuelo';
 import CreateVuelo from './Pages/Staff/Vuelos/CreateVuelo';
 import ListAsientos from './Pages/Staff/Asientos/LIstAsientos';
 import VuelosDisponibles from './Pages/VuelosDisponibles';
+import ListFacturas from './Pages/Staff/Facturas/ListFacturas';
 
 function App() {
   return (
@@ -54,6 +55,7 @@ function App() {
         <Route path="aviones/lista" element={<ListAviones />} />
         <Route path="aviones/crear" element={<CreateAviones />} />
         <Route path="asientos/:id" element={<ListAsientos />} />
+        <Route path="facturas" element={<ListFacturas />} />
       </Route>
     </Routes>
   );
