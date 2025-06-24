@@ -149,6 +149,25 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'total'
         ]
 
+class AdminPaqueteSerializer(serializers.ModelSerializer):
+    vuelo_ida = serializers.CharField(source='vuelo_ida.avion', read_only=True)
+    vuelo_vuelta= serializers.CharField(source='vuelo_vuelta.avion', read_only=True)
+    auto = serializers.CharField(source='auto.nombre', read_only = True)
+    hotel = serializers.CharField(source='hotel.nombre', read_only = True)
+
+    class Meta:
+        model = Paquetes
+        fields = [
+            'id',
+            'descripcion',
+            'personas',
+            'vuelo_ida',
+            'vuelo_vuelta',
+            'hotel',
+            'auto',
+            'total'
+        ]
+
 
 class CotizarPaqueteSerializer(serializers.ModelSerializer):
     class Meta:

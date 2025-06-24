@@ -380,6 +380,36 @@ def crear_paquete(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def admin_crear_paquete(request):
+    serializer = AdminPaqueteSerializer(data=request.data)
+    if serializer.is_valid():
+        paquete = serializer.save(id_usuario=request.user)
+   
+        if not request.user.is_staff:
+            try:
+                carrito = Carritos.objects.get(id_usuario=request.user)
+            except Carritos.DoesNotExist:
+                return Response({"error": "Carrito no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+
+            carrito.total += Decimal(str(paquete.total))
+            carrito.save()
+
+            Reservas_usuario.objects.create(
+                usuario=request.user,
+                paquete=paquete
+            )
+
+        return Response({
+            "message": "Paquete creado exitosamente",
+            "total": float(paquete.total)
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def crear_persona(request):
@@ -800,3 +830,16 @@ def eliminar_paquete(request, paquete_id):
 
     paquete.delete()
     return Response({"message": "Paquete eliminado correctamente"}, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def conseguir_paquetes_en_venta(request):
+
+    if request.method == 'GET':
+        paquetes = Paquetes.objects.all()
+        serializer = AdminPaqueteSerializer(paquetes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response({"error": "Método no permitido"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+

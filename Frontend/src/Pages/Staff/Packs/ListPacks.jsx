@@ -7,7 +7,7 @@ const ListPacks = () => {
   useEffect(() => {
     const token = localStorage.getItem("access");
 
-    fetch("http://127.0.0.1:8000/conseguir_paquetes_en_venta/", {
+    fetch("http://127.0.0.1:8000/conseguir_paquetes_lista/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -27,9 +27,15 @@ const ListPacks = () => {
 
   return (
     <div className="container mt-4">
-      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize:"25px" }}>
-        <i className="bx bx-package" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
-          Lista De Paquetes
+      <div
+        className="d-flex align-items-center mb-3 fw-bold gap-2"
+        style={{ color: "#0d6efd", fontSize: "25px" }}
+      >
+        <i
+          className="bx bx-package"
+          style={{ fontSize: "2rem", color: "#0d6efd" }}
+        ></i>
+        Lista De Paquetes
       </div>
       <div
         className="table-responsive"
@@ -42,13 +48,11 @@ const ListPacks = () => {
                 <th>ID</th>
                 <th>Descripción</th>
                 <th>Personas</th>
-                <th>Fecha Salida</th>
-                <th>Fecha Regreso</th>
-                <th>Hora Salida</th>
-                <th>Ciudad Salida</th>
-                <th>Ciudad Destino</th>
+                <th>Vuelo Ida</th>
+                <th>Vuelo Vuelta</th>
                 <th>Auto</th>
                 <th>Hotel</th>
+                <th>Total</th>
                 <th>Acciones</th>
               </tr>
             </thead>
@@ -58,13 +62,11 @@ const ListPacks = () => {
                   <td>{pack.id}</td>
                   <td>{pack.descripcion}</td>
                   <td>{pack.personas}</td>
-                  <td>{new Date(pack.fecha_salida).toLocaleString()}</td>
-                  <td>{new Date(pack.fecha_regreso).toLocaleString()}</td>
-                  <td>{pack.hora_salida}</td>
-                  <td>{pack.ciudad_salida_nombre}</td>
-                  <td>{pack.ciudad_destino_nombre}</td>
+                  <td>{pack.vuelo_ida_nombre || "—"}</td>
+                  <td>{pack.vuelo_vuelta_nombre || "—"}</td>
                   <td>{pack.auto_nombre || "—"}</td>
                   <td>{pack.hotel_nombre || "—"}</td>
+                  <td>{pack.total}</td>
                   <td>
                     <div className="d-flex justify-content-center gap-3">
                       <Link

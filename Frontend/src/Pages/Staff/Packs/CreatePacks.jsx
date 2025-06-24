@@ -179,20 +179,17 @@ const CreatePacks = () => {
   const [form, setForm] = useState({
     descripcion: '',
     personas: 1,
-    fecha_salida: '',
-    fecha_regreso: '',
-    hora_salida: '',
-    ciudad_salida: '',
-    ciudad_destino: '',
-    auto: '',
+    vuelo_ida: 0,
+    vuelo_vuelta: 0,
     hotel: '',
+    auto: '',
+    total: 0,
   });
 
-  const [ciudades, setCiudades] = useState([]);
+  const [vuelos, setVuelos] = useState([]);
   const [autos, setAutos] = useState([]);
   const [hoteles, setHoteles] = useState([]);
-  const [hotelesFiltrados, setHotelesFiltrados] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -203,19 +200,19 @@ const CreatePacks = () => {
 
     const fetchData = async () => {
       try {
-        const [ciudadesRes, autosRes, hotelesRes] = await Promise.all([
-          fetch('http://127.0.0.1:8000/conseguir_ciudades/', { headers }),
+        const [vuelosRes, autosRes, hotelesRes] = await Promise.all([
+          fetch('http://127.0.0.1:8000/conseguir_vuelos/', { headers }),
           fetch('http://127.0.0.1:8000/conseguir_autos/', { headers }),
           fetch('http://127.0.0.1:8000/conseguir_hoteles/', { headers }),
         ]);
 
-        const [ciudadesData, autosData, hotelesData] = await Promise.all([
-          ciudadesRes.json(),
+        const [vuelosData, autosData, hotelesData] = await Promise.all([
+          vuelosRes.json(),
           autosRes.json(),
           hotelesRes.json()
         ]);
 
-        setCiudades(ciudadesData);
+        setVuelos(vuelosData);
         setAutos(autosData);
         setHoteles(hotelesData);
       } catch (error) {
@@ -228,26 +225,20 @@ const CreatePacks = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const parsedValue = name === 'personas' ? parseInt(value) : value;
+    const parsedValue = ['personas', 'total'].includes(name) ? parseFloat(value) : value;
 
     setForm(prev => ({
       ...prev,
       [name]: parsedValue
     }));
-
-    if (name === 'ciudad_destino') {
-      const hotelesEnCiudad = hoteles.filter(hotel => hotel.ciudad === parseInt(value));
-      setHotelesFiltrados(hotelesEnCiudad);
-      setForm(prev => ({ ...prev, hotel: '' }));
-    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const token = localStorage.getItem('access');
-    setIsLoading(true); // 🌀 Activamos loading
+    setIsLoading(true);
 
-    fetch('http://127.0.0.1:8000/crear_paquete/', {
+    fetch('http://127.0.0.1:8000/admin_crear_paquete/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -256,7 +247,7 @@ const CreatePacks = () => {
       body: JSON.stringify(form)
     })
       .then(res => {
-        setIsLoading(false); // ✅ Finaliza loading
+        setIsLoading(false);
         if (res.status === 201) {
           alert('Paquete creado correctamente');
           navigate('/staff/paquetes/lista');
@@ -289,36 +280,21 @@ const CreatePacks = () => {
         </div>
 
         <div className="mb-3">
-          <label className="create-label">Fecha de salida</label>
-          <input type="date" className="form-control" name="fecha_salida" value={form.fecha_salida} onChange={handleChange} required />
-        </div>
-
-        <div className="mb-3">
-          <label className="create-label">Fecha de regreso</label>
-          <input type="date" className="form-control" name="fecha_regreso" value={form.fecha_regreso} onChange={handleChange} required />
-        </div>
-
-        <div className="mb-3">
-          <label className="create-label">Hora de salida</label>
-          <input type="time" className="form-control" name="hora_salida" value={form.hora_salida} onChange={handleChange} required />
-        </div>
-
-        <div className="mb-3">
-          <label className="create-label">Ciudad de salida</label>
-          <select className="form-control" name="ciudad_salida" value={form.ciudad_salida} onChange={handleChange} required>
-            <option value="">Seleccionar ciudad</option>
-            {ciudades.map(ciudad => (
-              <option key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</option>
+          <label className="create-label">Vuelo de ida</label>
+          <select className="form-control" name="vuelo_ida" value={form.vuelo_ida} onChange={handleChange} required>
+            <option value="">Seleccionar vuelo</option>
+            {vuelos.map(vuelo => (
+              <option key={vuelo.id} value={vuelo.id}>{vuelo.origen}-{vuelo.destino}</option>
             ))}
           </select>
         </div>
 
         <div className="mb-3">
-          <label className="create-label">Ciudad de destino</label>
-          <select className="form-control" name="ciudad_destino" value={form.ciudad_destino} onChange={handleChange} required>
-            <option value="">Seleccionar ciudad</option>
-            {ciudades.map(ciudad => (
-              <option key={ciudad.id} value={ciudad.id}>{ciudad.nombre}</option>
+          <label className="create-label">Vuelo de vuelta</label>
+          <select className="form-control" name="vuelo_vuelta" value={form.vuelo_vuelta} onChange={handleChange} required>
+            <option value="">Seleccionar vuelo</option>
+            {vuelos.map(vuelo => (
+              <option key={vuelo.id} value={vuelo.id}>{vuelo.origen}-{vuelo.destino}</option>
             ))}
           </select>
         </div>
@@ -333,20 +309,28 @@ const CreatePacks = () => {
           </select>
         </div>
 
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="create-label">Hotel (opcional)</label>
-          <select
-            className="form-control"
-            name="hotel"
-            value={form.hotel}
-            onChange={handleChange}
-            disabled={!form.ciudad_destino}
-          >
+          <select className="form-control" name="hotel" value={form.hotel} onChange={handleChange}>
             <option value="">Ninguno</option>
-            {hotelesFiltrados.map(hotel => (
+            {hoteles.map(hotel => (
               <option key={hotel.id} value={hotel.id}>{hotel.nombre}</option>
             ))}
           </select>
+        </div>
+
+        <div className="mb-4">
+          <label className="create-label">Total</label>
+          <input
+            type="number"
+            className="form-control"
+            name="total"
+            value={form.total}
+            onChange={handleChange}
+            min="0"
+            step="0.01"
+            required
+          />
         </div>
 
         <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>

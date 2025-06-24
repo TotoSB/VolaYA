@@ -14,6 +14,7 @@ urlpatterns = [
     # Crear datos
     path('crear_persona/', views.crear_persona, name='crear_persona'),
     path('crear_paquete/', views.crear_paquete, name='crear_paquete'),
+    path('admin_crear_paquete/', views.admin_crear_paquete, name='admin_crear_paquete'),
     path('pago_aprobado/', views.pago_paquete_aprobado_directo, name='pago_aprobado'),
 
     # POST Jefe de ventas
@@ -39,6 +40,7 @@ urlpatterns = [
     path('conseguir_paises/', views.get_paises, name='conseguir_paises'),
     path('conseguir_ciudades/', views.get_ciudades, name='conseguir_ciudades'),
     path('conseguir_paquetes_en_venta/', views.get_paquetes_en_venta, name='conseguir_paquetes_en_venta'),
+    path('conseguir_paquetes_lista/', views.conseguir_paquetes_en_venta, name='conseguir_paquetes_lista'),
     path('buscar_hoteles/', views.buscar_hoteles, name='buscar_hoteles'),
     path('obtener_paquetes_search/', views.obtener_paquetes_search, name='obtener_paquetes_search'),
     path('obtener_vuelos_personalizados/', views.get_vuelos_personalizados, name='get_vuelos_personalizados'),
@@ -64,4 +66,7 @@ urlpatterns = [
     path('conseguir_pagos/', views.get_pagos, name='conseguir_pagos'),
     path('conseguir_asientos_vuelo/<int:vuelo_id>/', views.get_asientos_vuelo, name='conseguir_asientos_vuelos')
    # path('conseguir_facturas_completas/', views.get_facturas_completas, name='conseguir_facturas_completas'),
+
+
+
 ]
