@@ -129,7 +129,7 @@ const CreatePacks = () => {
 
               return (
                 <option key={vuelo.id} value={vuelo.id}>
-                  Fecha: {fechaFormateada} - <b>{vuelo.origen}</b> a <b>{vuelo.destino}</b>
+                  Fecha: {fechaFormateada} - {vuelo.origen} a {vuelo.destino}
                 </option>
               );
             })}
@@ -166,7 +166,7 @@ const CreatePacks = () => {
 
                   return (
                     <option key={vuelo.id} value={vuelo.id}>
-                      Fecha: {fechaFormateada} - <b>{vuelo.origen}</b> a <b>{vuelo.destino}</b>
+                      Fecha: {fechaFormateada} - {vuelo.origen} a {vuelo.destino}
                     </option>
                   );
               })}

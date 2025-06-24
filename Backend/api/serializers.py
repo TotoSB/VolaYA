@@ -186,7 +186,7 @@ class AdminPaqueteSerializer(serializers.ModelSerializer):
         ]
 
     extra_kwargs = {
-        'id_usuario': {'write_only': True}
+        'id_usuario': {'read_only': True}
     }
 
 

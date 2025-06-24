@@ -4,6 +4,34 @@ import { Link } from "react-router-dom";
 const ListPacks = () => {
   const [paquetes, setPaquetes] = useState([]);
 
+  const handleDelete = (paqueteId) => {
+    const token = localStorage.getItem("access");
+
+    if (!window.confirm("¿Estás seguro de que querés eliminar este paquete?")) return;
+
+    fetch(`http://127.0.0.1:8000/eliminar_paquete/${paqueteId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo eliminar el paquete");
+        return res.json();
+      })
+      .then((data) => {
+        alert(data.message || "Paquete eliminado");
+        // Filtrar el paquete eliminado de la lista
+        setPaquetes((prev) => prev.filter((p) => p.id !== paqueteId));
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Error al eliminar el paquete");
+      });
+  };
+
+
   useEffect(() => {
     const token = localStorage.getItem("access");
 
@@ -90,9 +118,7 @@ const ListPacks = () => {
                           borderColor: "#dc3545",
                         }}
                         title="Eliminar"
-                        onClick={() => {
-                          console.log("Eliminar paquete:", pack.id);
-                        }}
+                          onClick={() => handleDelete(pack.id)}
                       >
                         <i
                           className="bx bx-trash"

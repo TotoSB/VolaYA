@@ -369,33 +369,30 @@ def admin_crear_paquete(request):
     if not request.user.is_staff:
         return Response({"error": "No tenés permisos para realizar esta acción."}, status=status.HTTP_403_FORBIDDEN)
 
-    # Asegúrate de que los IDs de los vuelos se están pasando correctamente
     print("Datos recibidos:", request.data)
-    
-    serializer = AdminPaqueteSerializer(data=request.data)
-    if serializer.is_valid():
-        try:
-            # Crea el paquete manualmente si es necesario
-            paquete = Paquetes.objects.create(
-                id_usuario=request.user,
-                descripcion=request.data.get('descripcion'),
-                personas=request.data.get('personas'),
-                vuelo_ida_id=request.data.get('vuelo_ida'),
-                vuelo_vuelta_id=request.data.get('vuelo_vuelta'),
-                hotel_id=request.data.get('hotel'),
-                auto_id=request.data.get('auto'),
-                total=request.data.get('total')
-            )
-            return Response(
-                {"message": "Paquete creado exitosamente.", "id": paquete.id},
-                status=status.HTTP_201_CREATED
-            )
-        except Exception as e:
-            return Response(
-                {"error": f"Error al guardar el paquete: {str(e)}"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        paquete = Paquetes.objects.create(
+            id_usuario=request.user,
+            descripcion=request.data.get('descripcion'),
+            personas=request.data.get('personas'),
+            vuelo_ida_id=request.data.get('vuelo_ida'),
+            vuelo_vuelta_id=request.data.get('vuelo_vuelta'),
+            hotel_id=request.data.get('hotel') or None,
+            auto_id=request.data.get('auto') or None,
+            total=request.data.get('total')
+        )
+
+        return Response(
+            {"message": "Paquete creado exitosamente.", "id": paquete.id},
+            status=status.HTTP_201_CREATED
+        )
+    except Exception as e:
+        return Response(
+            {"error": f"Error al guardar el paquete: {str(e)}"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
 
 
 @api_view(['POST'])
@@ -804,6 +801,18 @@ def eliminar_paquete(request, paquete_id):
 
     if paquete.pagado:
         return Response({"error": "No se puede eliminar un paquete que ya fue pagado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Si el usuario no es staff, restar el total del carrito
+    if not request.user.is_staff:
+        try:
+            carrito = Carritos.objects.get(id_usuario=request.user)
+            if carrito.total >= paquete.total:
+                carrito.total -= paquete.total
+            else:
+                carrito.total = 0
+            carrito.save()
+        except Carritos.DoesNotExist:
+            pass  # Si no tiene carrito, simplemente lo ignoramos
 
     paquete.delete()
     return Response({"message": "Paquete eliminado correctamente"}, status=status.HTTP_200_OK)

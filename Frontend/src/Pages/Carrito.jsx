@@ -21,6 +21,33 @@ const Carrito = () => {
     });
   };
 
+  const handleDelete = (paqueteId) => {
+    const token = localStorage.getItem("access");
+
+    if (!window.confirm("¿Estás seguro de que querés eliminar este paquete?")) return;
+
+    fetch(`http://127.0.0.1:8000/eliminar_paquete/${paqueteId}/`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("No se pudo eliminar el paquete");
+        return res.json();
+      })
+      .then((data) => {
+        alert(data.message || "Paquete eliminado");
+        // Filtrar el paquete eliminado de la lista
+        setPaquetes((prev) => prev.filter((p) => p.id !== paqueteId));
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Error al eliminar el paquete");
+      });
+  };
+
   useEffect(() => {
     const token = localStorage.getItem('access');
 
@@ -130,6 +157,9 @@ const Carrito = () => {
                 onClick={() => navigate('/pagar', { state: { reservaId: reserva.id, total: reserva.total } })}
               >
                 Pagar
+              </button>
+              <button onClick={() => handleDelete(reserva.id)}>
+                Eliminar 
               </button>
             </div>
           ))

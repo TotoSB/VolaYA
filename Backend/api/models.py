@@ -158,14 +158,14 @@ class Carritos(models.Model):
 class Reservas_usuario(models.Model):
     id = models.AutoField(primary_key=True)
     usuario = models.ForeignKey(Usuarios, on_delete=models.DO_NOTHING, related_name='reservas_usuario')
-    paquete = models.ForeignKey(Paquetes, on_delete=models.DO_NOTHING, related_name='paquete')
+    paquete = models.ForeignKey(Paquetes, on_delete=models.CASCADE, related_name='paquete')
 
     def __str__(self):
         return f"Reserva {self.id} - Usuario: {self.usuario.nombre_usuario} - Paquete: {self.paquete.id}"
 
 class Pagos(models.Model):
     id = models.AutoField(primary_key=True)
-    paquete = models.ForeignKey(Paquetes, on_delete=models.DO_NOTHING, related_name='pagos')
+    paquete = models.ForeignKey(Paquetes, on_delete=models.CASCADE, related_name='pagos')
     fecha_pago = models.DateTimeField(auto_now_add=True)
     monto = models.DecimalField(max_digits=10, decimal_places=2, null=False, blank=False)
     estado = models.CharField(max_length=20, choices=[
@@ -178,7 +178,7 @@ class Pagos(models.Model):
         return f"Pago {self.id} - Paquete: {self.paquete.id} - Monto: ${self.monto} - Estado: {self.estado}"
 
 class Historica(models.Model):
-    paquete = models.ForeignKey(Paquetes, on_delete=models.DO_NOTHING, related_name='historica')
+    paquete = models.ForeignKey(Paquetes, on_delete=models.CASCADE, related_name='historica')
     fecha = models.DateTimeField(auto_now_add=True)
     pago = models.ForeignKey(Pagos, on_delete=models.DO_NOTHING, related_name='historica')
     factura = models.ForeignKey('Facturas', on_delete=models.DO_NOTHING, related_name='historica')
