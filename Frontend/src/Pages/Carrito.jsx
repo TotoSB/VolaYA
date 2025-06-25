@@ -9,7 +9,6 @@ const Carrito = () => {
   const [totalCarrito, setTotalCarrito] = useState(null);
   const [reservasPendientes, setReservasPendientes] = useState([]);
 
-  // Función para formatear fecha ISO a formato legible en español
   const formatFecha = (fechaISO) => {
     if (!fechaISO) return 'Sin fecha';
     return new Date(fechaISO).toLocaleString('es-AR', {
@@ -39,8 +38,7 @@ const Carrito = () => {
       })
       .then((data) => {
         alert(data.message || "Paquete eliminado");
-        // Filtrar el paquete eliminado de la lista
-        setPaquetes((prev) => prev.filter((p) => p.id !== paqueteId));
+        setReservasPendientes((prev) => prev.filter((p) => p.id !== paqueteId));
       })
       .catch((err) => {
         console.error(err);
@@ -102,69 +100,63 @@ const Carrito = () => {
       });
   }, [navigate]);
 
-  if (isValidating) return <p>Cargando...</p>;
+  if (isValidating) return <div className="loading">Cargando...</div>;
 
   return (
     <>
       <Header />
       <div className="carrito-contenido">
-        <h2>
-          Total del carrito:{' '}
-          {new Intl.NumberFormat('es-AR', {
+        <h2 className="carrito-total">
+          Total del carrito: {new Intl.NumberFormat('es-AR', {
             style: 'currency',
             currency: 'ARS',
           }).format(totalCarrito)}
         </h2>
 
-        <h3>Reservas pendientes: {reservasPendientes.length}</h3>
+        <h3 className="reservas-title">Reservas pendientes: {reservasPendientes.length}</h3>
         {reservasPendientes.length === 0 ? (
-          <p>No tenés reservas pendientes.</p>
+          <p className="sin-reservas">No tenés reservas pendientes.</p>
         ) : (
-          reservasPendientes.map(reserva => (
-            <div
-              key={reserva.id}
-              className="reserva-item"
-              style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px' }}
-            >
-              <p><strong>Descripción:</strong> {reserva.descripcion || 'Sin descripción'}</p>
-              <p><strong>Personas:</strong> {reserva.personas}</p>
+          <div className="reservas-lista">
+            {reservasPendientes.map(reserva => (
+              <div key={reserva.id} className="reserva-item">
+                <p><strong>Descripción:</strong> {reserva.descripcion || 'Sin descripción'}</p>
+                <p><strong>Personas:</strong> {reserva.personas}</p>
+                <p><strong>Vuelo Ida:</strong> {reserva.vuelo_ida_obj?.origen_nombre} → {reserva.vuelo_ida_obj?.destino_nombre}</p>
+                <p><strong>Fecha Vuelo Ida:</strong> {formatFecha(reserva.vuelo_ida_fecha)}</p>
+                <p><strong>Vuelo Vuelta:</strong> {reserva.vuelo_vuelta_obj?.origen_nombre} → {reserva.vuelo_vuelta_obj?.destino_nombre}</p>
+                <p><strong>Fecha Vuelo Vuelta:</strong> {formatFecha(reserva.vuelo_vuelta_fecha)}</p>
+                <p><strong>Hotel:</strong> {reserva.hotel || 'Sin hotel'}</p>
+                <p><strong>Auto:</strong> {reserva.auto || 'Sin auto'}</p>
+                <p><strong>Asientos Ida:</strong> {
+                  reserva.asiento_ida?.length > 0
+                    ? reserva.asiento_ida.map(a => `#${a.numero} ${a.vip ? '(VIP)' : ''}`).join(', ')
+                    : 'Sin asientos'
+                }</p>
+                <p><strong>Asientos Vuelta:</strong> {
+                  reserva.asiento_vuelta?.length > 0
+                    ? reserva.asiento_vuelta.map(a => `#${a.numero} ${a.vip ? '(VIP)' : ''}`).join(', ')
+                    : 'Sin asientos'
+                }</p>
+                <p><strong>Total:</strong> {
+                  new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(parseFloat(reserva.total))
+                }</p>
 
-              <p><strong>Vuelo Ida:</strong> {reserva.vuelo_ida_obj?.origen_nombre} → {reserva.vuelo_ida_obj?.destino_nombre}</p>
-              <p><strong>Fecha Vuelo Ida:</strong> {formatFecha(reserva.vuelo_ida_fecha)}</p>
-
-              <p><strong>Vuelo Vuelta:</strong> {reserva.vuelo_vuelta_obj?.origen_nombre} → {reserva.vuelo_vuelta_obj?.destino_nombre}</p>
-              <p><strong>Fecha Vuelo Vuelta:</strong> {formatFecha(reserva.vuelo_vuelta_fecha)}</p>
-
-              <p><strong>Hotel:</strong> {reserva.hotel || 'Sin hotel'}</p>
-              <p><strong>Auto:</strong> {reserva.auto || 'Sin auto'}</p>
-
-              <p><strong>Asientos Ida:</strong> {
-                reserva.asiento_ida && reserva.asiento_ida.length > 0
-                  ? reserva.asiento_ida.map(a => `#${a.numero} ${a.vip ? '(VIP)' : ''}`).join(', ')
-                  : 'Sin asientos'
-              }</p>
-
-              <p><strong>Asientos Vuelta:</strong> {
-                reserva.asiento_vuelta && reserva.asiento_vuelta.length > 0
-                  ? reserva.asiento_vuelta.map(a => `#${a.numero} ${a.vip ? '(VIP)' : ''}`).join(', ')
-                  : 'Sin asientos'
-              }</p>
-
-              <p><strong>Total:</strong> {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(parseFloat(reserva.total))}</p>
-
-              <button
-                className="btn-pagar"
-                onClick={() => navigate('/pagar', { state: { reservaId: reserva.id, total: reserva.total } })}
-              >
-                Pagar
-              </button>
-              <button onClick={() => handleDelete(reserva.id)}>
-                Eliminar 
-              </button>
-            </div>
-          ))
+                <div className="reserva-botones">
+                  <button
+                    className="btn-pagar"
+                    onClick={() => navigate('/pagar', { state: { reservaId: reserva.id, total: reserva.total } })}
+                  >
+                    💳 Pagar ahora
+                  </button>
+                  <button className="btn-eliminar" onClick={() => handleDelete(reserva.id)}>
+                    🗑 Eliminar
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
-
       </div>
     </>
   );

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import "../styles/Package.css";
 
 function Package() {
   const [paquetes, setPaquetes] = useState([]);
@@ -32,8 +33,8 @@ function Package() {
   };
 
   return (
-    <div className="container mt-5">
-      <h2 className="text-center mb-4">🌍 Explora Nuestros Paquetes</h2>
+    <div className="container paquetes-container">
+      <h2 className="titulo-principal">Explora Nuestros Paquetes</h2>
 
       {loading ? (
         <p className="text-center">Cargando paquetes...</p>
@@ -43,39 +44,39 @@ function Package() {
         <div className="row g-4">
           {paquetes.map((paquete) => (
             <div key={paquete.id} className="col-md-6 col-lg-4">
-              <div className="card shadow-sm h-100 border-0">
+              <div className="card paquete-card shadow h-100">
                 <div className="card-body">
-                  <h5 className="card-title text-primary">
+                  <h5 className="card-title text-primary fw-bold mb-3">
                     {paquete.descripcion || `Paquete #${paquete.id}`}
                   </h5>
-                  <ul className="list-unstyled">
-                    <li><strong>Personas:</strong> {paquete.personas}</li>
-                    <li><strong>Vuelo ida:</strong> {formatearFecha(paquete.vuelo_ida_fecha)} - {paquete.vuelo_ida}</li>
-                    <li><strong>Vuelo vuelta:</strong> {formatearFecha(paquete.vuelo_vuelta_fecha)} - {paquete.vuelo_vuelta}</li>
-                    <li><strong>Hotel:</strong> {paquete.hotel}</li>
-                    <li><strong>Auto:</strong> {paquete.auto || 'Sin auto'}</li>
-                    <li><strong>Total:</strong> ${parseFloat(paquete.total).toLocaleString()}</li>
+                  <ul className="list-unstyled paquete-list">
+                    <li><i className="bx bx-user"></i> <strong>Personas:</strong> {paquete.personas}</li>
+                    <li><i className="bx bx-plane-alt"></i> <strong>Vuelo ida:</strong> {formatearFecha(paquete.vuelo_ida_fecha)} - {paquete.vuelo_ida}</li>
+                    <li><i className="bx bx-plane-alt"></i> <strong>Vuelo vuelta:</strong> {formatearFecha(paquete.vuelo_vuelta_fecha)} - {paquete.vuelo_vuelta}</li>
+                    <li><i className="bx bx-building-house"></i> <strong>Hotel:</strong> {paquete.hotel}</li>
+                    <li><i className="bx bx-car"></i> <strong>Auto:</strong> {paquete.auto || 'Sin auto'}</li>
+                    <li><i className="bx bx-dollar-circle"></i> <strong>Total:</strong> ${parseFloat(paquete.total).toLocaleString()}</li>
                   </ul>
                 </div>
-                <div className="card-footer bg-transparent border-0 text-end">
-                <button
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={() =>
-                    navigate('/reservar_asientos', {
-                      state: {
-                        vueloIda: paquete.vuelo_ida_obj,
-                        vueloVuelta: paquete.vuelo_vuelta_obj,
-                        personas: paquete.personas,
-                        destinoId: paquete.destino_id,
-                        auto: paquete.auto,
-                        autoSeleccionadoId: paquete.auto_id,
-                        desdePaquete: true,
-                      }
-                    })
-                  }
-                >
-                  Elegir asientos
-                </button>
+                <div className="card-footer text-end bg-transparent border-0">
+                  <button
+                    className="btn btn-outline-primary btn-sm boton-reserva"
+                    onClick={() =>
+                      navigate('/reservar_asientos', {
+                        state: {
+                          vueloIda: paquete.vuelo_ida_obj,
+                          vueloVuelta: paquete.vuelo_vuelta_obj,
+                          personas: paquete.personas,
+                          destinoId: paquete.destino_id,
+                          auto: paquete.auto,
+                          autoSeleccionadoId: paquete.auto_id,
+                          desdePaquete: true,
+                        }
+                      })
+                    }
+                  >
+                    Elegir asientos
+                  </button>
                 </div>
               </div>
             </div>

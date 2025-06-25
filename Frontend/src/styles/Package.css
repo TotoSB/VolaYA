@@ -1,0 +1,68 @@
+.paquetes-container {
+  padding: 4rem 1rem;
+}
+
+.titulo-principal {
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #0d6efd;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.paquete-card {
+  border: none;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  background: #f9fcff;
+}
+
+.paquete-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.paquete-card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 4px;
+  background: #0d6efd;
+  transition: width 0.3s ease;
+}
+
+.paquete-card:hover::after {
+  width: 90%;
+}
+
+.paquete-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.paquete-list i {
+  margin-right: 6px;
+  color: #0d6efd;
+}
+
+.boton-reserva {
+  transition: all 0.3s ease;
+}
+
+.boton-reserva:hover {
+  transform: scale(1.05);
+  background-color: #0d6efd;
+  color: white;
+  border-color: #0d6efd;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,26 +1,29 @@
-
-
-/* Estilo general de la bienvenida */
 .welcome {
   text-align: center;
-  padding: 4rem 1rem;
+  padding: 5rem 1rem;
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f4ff 100%);
 }
 
-/* Título principal */
 .welcome__title {
-  font-size: 3rem;
-  font-weight: 700;
+  font-size: 3.2rem;
+  font-weight: 800;
   margin-bottom: 1rem;
+  color: #1e90ff;
 }
 
-/* Párrafo principal */
+.welcome__title .highlight {
+  color: #0d6efd;
+}
+
 .welcome__subtitle {
-  font-size: 1.25rem;
-  color: #555;
-  margin-bottom: 2rem;
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 3rem;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* Botones */
 .welcome__buttons a {
   margin: 0 0.5rem;
   transition: transform 0.3s ease;
@@ -30,26 +33,48 @@
   transform: scale(1.05);
 }
 
-/* Cards */
 .welcome__card {
   border: none;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   padding: 2rem 1rem;
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome__card::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  height: 4px;
+  background: #0d6efd;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.welcome__card:hover::after {
+  width: 100%;
 }
 
 .welcome__card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
 }
 
-/* Íconos */
+.welcome__icon-wrap {
+  margin-bottom: 1.2rem;
+}
+
 .welcome__icon {
-  font-size: 80px;
+  font-size: 72px;
   color: #0d6efd;
   transition: transform 0.3s ease;
 }
 
 .welcome__card:hover .welcome__icon {
-  transform: scale(1.2) rotate(5deg);
+  transform: scale(1.1) rotate(3deg);
 }

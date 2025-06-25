@@ -3,7 +3,7 @@ import Header from "../components/Public/Header";
 import Login from "./Login";
 import Register from "./Register";
 import { Container } from "react-bootstrap";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Package from "./Package";
 import InsertarCodigo from "./InsertCode";
 import "../styles/Home.css";
@@ -29,19 +29,17 @@ function Home() {
           <Route path="/hoteles-disponibles" element={<HotelesDisponibles />} />
           <Route path="/pagar" element={<Pagar />} />
         </Routes>
-
       </Container>
     </>
   );
 }
 
-
-
 function Welcome() {
   return (
     <div className="welcome">
       <h1 className="welcome__title">
-        Bienvenido a VolaYA <i className="bx bx-paper-plane" style={{ color: "#0d6efd" }}></i>
+        Bienvenido a <span className="highlight">VolaYA</span>{" "}
+        <i className="bx bx-paper-plane" style={{ color: "#0d6efd" }}></i>
       </h1>
 
       <p className="welcome__subtitle">
@@ -55,7 +53,7 @@ function Welcome() {
       <div className="row row-cols-1 row-cols-md-3 g-4">
         <div className="col">
           <div className="card welcome__card h-100 text-center">
-            <div className="mb-3">
+            <div className="welcome__icon-wrap">
               <i className="bx bx-map-alt welcome__icon"></i>
             </div>
             <div className="card-body">
@@ -67,7 +65,7 @@ function Welcome() {
 
         <div className="col">
           <div className="card welcome__card h-100 text-center">
-            <div className="mb-3">
+            <div className="welcome__icon-wrap">
               <i className="bx bx-hotel welcome__icon"></i>
             </div>
             <div className="card-body">
@@ -79,7 +77,7 @@ function Welcome() {
 
         <div className="col">
           <div className="card welcome__card h-100 text-center">
-            <div className="mb-3">
+            <div className="welcome__icon-wrap">
               <i className="bx bx-gift welcome__icon"></i>
             </div>
             <div className="card-body">
@@ -92,12 +90,5 @@ function Welcome() {
     </div>
   );
 }
-
-
-
-
-
-
-
 
 export default Home;
