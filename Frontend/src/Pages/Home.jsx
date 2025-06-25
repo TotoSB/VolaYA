@@ -50,44 +50,9 @@ function Welcome() {
         <Search />
       </div>
 
-      <div className="row row-cols-1 row-cols-md-3 g-4">
-        <div className="col">
-          <div className="card welcome__card h-100 text-center">
-            <div className="welcome__icon-wrap">
-              <i className="bx bx-map-alt welcome__icon"></i>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">Aventuras</h5>
-              <p className="card-text">Descubrí experiencias únicas en destinos exóticos y naturales.</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card welcome__card h-100 text-center">
-            <div className="welcome__icon-wrap">
-              <i className="bx bx-hotel welcome__icon"></i>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">Alojamiento</h5>
-              <p className="card-text">Hospedate en hoteles increíbles y al mejor precio garantizado.</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card welcome__card h-100 text-center">
-            <div className="welcome__icon-wrap">
-              <i className="bx bx-gift welcome__icon"></i>
-            </div>
-            <div className="card-body">
-              <h5 className="card-title">Ofertas</h5>
-              <p className="card-text">Aprovechá nuestras promociones y descuentos limitados.</p>
-            </div>
-          </div>
-        </div>
       </div>
-    </div>
+      
+   
   );
 }
 

@@ -54,7 +54,7 @@ urlpatterns = [
 
 
     # DELETE generales
-    path('eliminar_paquete/<int:paquete_id>/', views.eliminar_paquete, name='eliminar_paquete'),
+
 
     # NUEVAS rutas de modelos agregados
     path('conseguir_vuelos/', views.get_vuelos, name='conseguir_vuelos'),

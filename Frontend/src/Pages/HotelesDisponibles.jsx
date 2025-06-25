@@ -30,12 +30,24 @@ function HotelesDisponibles() {
     }).format(valor);
 
   const calcularNoches = () => {
-    const salida = new Date(fechaSalida);
-    const vuelta = new Date(fechaVuelta);
+    if (!vueloIda?.fecha || !vueloVuelta?.fecha) return 1;
+
+    const salida = new Date(vueloIda.fecha);
+    const vuelta = new Date(vueloVuelta.fecha);
+
+    salida.setHours(0, 0, 0, 0);
+    vuelta.setHours(0, 0, 0, 0);
+
     const diferenciaMs = vuelta - salida;
-    const noches = Math.ceil(diferenciaMs / (1000 * 60 * 60 * 24));
+    const noches = diferenciaMs / (1000 * 60 * 60 * 24);
+
+    console.log("📅 Fecha salida (desde vueloIda):", vueloIda.fecha);
+    console.log("📅 Fecha vuelta (desde vueloVuelta):", vueloVuelta.fecha);
+    console.log("🛏️ Noches calculadas:", noches);
+
     return noches > 0 ? noches : 1;
   };
+
 
   const noches = calcularNoches();
   const totalAuto = auto ? auto.precio_dia * noches : 0;
