@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal';
 
 const CreateVuelo = () => {
   const navigate = useNavigate();
@@ -11,6 +12,16 @@ const CreateVuelo = () => {
     fecha: '',
   });
 
+  const [showModal, setShowModal] = useState(false);
+    
+    const handleSuccess = () => {
+      setShowModal(true);
+    };
+    
+    const handleCloseModal = () => {
+      setShowModal(false);
+      navigate('/staff/Vuelos/crear');
+    };
   const [aviones, setAviones] = useState([]);
   const [ciudades, setCiudades] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -54,8 +65,7 @@ const CreateVuelo = () => {
       .then(res => {
         setLoading(false);
         if (res.status === 201) {
-          alert('Vuelo creado correctamente');
-          navigate('/staff/Vuelos/crear');
+          setShowModal(true)
           setForm({
             avion: '',
             origen: '',
@@ -135,6 +145,12 @@ const CreateVuelo = () => {
           </div>
         </button>
       </form>
+          {showModal && (
+            <SuccessModal
+              message="¡Vuelo agregado correctamente!"
+              onClose={handleCloseModal}
+            />
+          )}
     </div>
   );
 };

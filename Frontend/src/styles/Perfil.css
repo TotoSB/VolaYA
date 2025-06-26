@@ -1,9 +1,7 @@
 .perfil-wrapper {
-  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to right, #f0f8ff, #e0f7ff);
   padding: 2rem;
 }
 
@@ -14,8 +12,6 @@
   min-width: 320px;
   max-width: 420px;
   width: 100%;
-  background: #ffffff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   animation: fadeIn 0.8s ease;
 }
 
@@ -43,10 +39,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background-color: #f7faff;
   padding: 0.75rem 1rem;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
 
 .perfil-info i {

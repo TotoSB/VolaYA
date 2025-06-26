@@ -1,10 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal';
 
 const CreateCiudad = () => {
   const navigate = useNavigate();
 
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSuccess = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/staff/ciudad/crear');
+  };
   const [form, setForm] = useState({
     nombre: '',
     pais: '',
@@ -90,8 +101,7 @@ const CreateCiudad = () => {
       .then(res => {
         setIsLoading(false); // ✅ Finalizar loading
         if (res.status === 201) {
-          alert('Ciudad creada correctamente');
-          navigate('/staff/ciudad/crear');
+          setShowModal(true)
           setForm({
             nombre: '',
             pais: '',
@@ -187,6 +197,12 @@ const CreateCiudad = () => {
           </div>
         </button>
       </form>
+          {showModal && (
+            <SuccessModal
+            message="¡Cuidad agregada correctamente!"
+            onClose={handleCloseModal}
+            />
+          )}
     </div>
   );
 };

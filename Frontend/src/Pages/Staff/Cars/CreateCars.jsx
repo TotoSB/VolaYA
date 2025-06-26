@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Spinner } from 'react-bootstrap';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal';
 
 const CreateCars = () => {
   const [marca, setMarca] = useState('');
@@ -8,6 +9,17 @@ const CreateCars = () => {
   const [color, setColor] = useState('');
   const [precioDia, setPrecioDia] = useState('');
   const [isLoading, setIsLoading] = useState(false); // Nuevo estado para loading
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSuccess = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/staff/autos/agregar');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +45,7 @@ const CreateCars = () => {
     setIsLoading(false); // Se detiene el loading al recibir respuesta
 
     if (response.ok) {
-      alert('Auto creado correctamente');
+      setShowModal(true)
       setMarca('');
       setModelo('');
       setColor('');
@@ -80,6 +92,12 @@ const CreateCars = () => {
           )}
           </div>
         </Button>
+          {showModal && (
+            <SuccessModal
+            message="¡Auto agregado correctamente!"
+            onClose={handleCloseModal}
+            />
+          )}
       </Form>
     </Container>
   );

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal';
 
 const CreatePacks = () => {
   const navigate = useNavigate();
@@ -14,6 +15,17 @@ const CreatePacks = () => {
     auto: '',
     total: 0,
   });
+
+  const [showModal, setShowModal] = useState(false);
+    
+    const handleSuccess = () => {
+      setShowModal(true);
+    };
+    
+    const handleCloseModal = () => {
+      setShowModal(false);
+      navigate('/staff/paquetes/crear');
+    };
 
   const [vuelos, setVuelos] = useState([]);
   const [autos, setAutos] = useState([]);
@@ -83,8 +95,7 @@ const CreatePacks = () => {
       .then(res => {
         setIsLoading(false);
         if (res.status === 201) {
-          alert('Paquete creado correctamente');
-          navigate('/staff/paquetes/crear');
+          setShowModal(true)
           setForm({
             descripcion: '',
             personas: 1,
@@ -238,6 +249,12 @@ const CreatePacks = () => {
           </div>
         </button>
       </form>
+          {showModal && (
+            <SuccessModal
+              message="¡Paquete creado correctamente!"
+              onClose={handleCloseModal}
+            />
+          )}
     </div>
   );
 };

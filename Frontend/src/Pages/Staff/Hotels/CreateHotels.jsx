@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal';
 
 const CreateHotels = () => {
   const navigate = useNavigate();
+  
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSuccess = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/staff/hoteles/agregar');
+  };
 
   const [form, setForm] = useState({
     nombre: '',
@@ -51,8 +63,7 @@ const CreateHotels = () => {
       .then(res => {
         setIsLoading(false); // ✅ Finalizamos el loading
         if (res.status === 201) {
-          alert('Hotel creado correctamente');
-          navigate('/staff/hoteles/agregar');
+          setShowModal(true)
           setForm({
             nombre: '',
             ciudad: '',
@@ -134,6 +145,12 @@ const CreateHotels = () => {
             )}
           </div>
         </button>
+          {showModal && (
+            <SuccessModal
+              message="¡Hotel agregado correctamente!"
+              onClose={handleCloseModal}
+            />
+          )}
       </form>
     </div>
   );

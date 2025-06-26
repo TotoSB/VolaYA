@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal';
 
 const CreateAviones = () => {
   const navigate = useNavigate();
+
+  const [showModal, setShowModal] = useState(false);
+  
+    const handleSuccess = () => {
+      setShowModal(true);
+    };
+  
+    const handleCloseModal = () => {
+      setShowModal(false);
+      navigate('/staff/aviones/crear');
+    };
 
   const [form, setForm] = useState({
     nombre: '',
@@ -39,8 +51,7 @@ const CreateAviones = () => {
       .then(res => {
         setIsLoading(false);
         if (res.status === 201) {
-          alert('Avión creado correctamente');
-          navigate('/staff/Aviones/crear');
+          setShowModal(true)
           setForm({
             nombre: '',
             costo_km_general: '',
@@ -140,6 +151,12 @@ const CreateAviones = () => {
           </div>
         </button>
       </form>
+          {showModal && (
+            <SuccessModal
+              message="¡Avion agregado correctamente!"
+              onClose={handleCloseModal}
+            />
+          )}
     </div>
   );
 };

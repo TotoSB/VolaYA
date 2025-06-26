@@ -94,7 +94,7 @@ const CreatePais = () => {
       </form>
         {showModal && (
           <SuccessModal
-            message="Pais Agregado"
+            message="¡Pais agregado correctamente!"
             onClose={handleCloseModal}
           />
         )}
