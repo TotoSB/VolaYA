@@ -14,6 +14,10 @@ const CreateCiudad = () => {
 
   const [paises, setPaises] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
+  const [errors, setErrors] = useState({
+    latitud: '',
+    longitud: '',
+  });
 
   useEffect(() => {
     const token = localStorage.getItem('access');
@@ -36,10 +40,43 @@ const CreateCiudad = () => {
     }));
   };
 
+  const validateCoordinates = () => {
+    let valid = true;
+    let newErrors = { latitud: '', longitud: '' };
+
+    const lat = parseFloat(form.latitud);
+    const lon = parseFloat(form.longitud);
+
+    // Validación de latitud
+    if (lat < -90 || lat > 90) {
+      newErrors.latitud = 'La latitud debe estar entre -90 y 90 grados.';
+      valid = false;
+    } else {
+      // Asegurarse de que la latitud tiene 6 decimales
+      form.latitud = lat.toFixed(6);
+    }
+
+    // Validación de longitud
+    if (lon < -180 || lon > 180) {
+      newErrors.longitud = 'La longitud debe estar entre -180 y 180 grados.';
+      valid = false;
+    } else {
+      // Asegurarse de que la longitud tiene 6 decimales
+      form.longitud = lon.toFixed(6);
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('access');
 
+    if (!validateCoordinates()) {
+      return; // Si las coordenadas son inválidas, no enviar el formulario
+    }
+
+    const token = localStorage.getItem('access');
     setIsLoading(true); // ⏳ Activar loading
 
     fetch('http://127.0.0.1:8000/crear_ciudad/', {
@@ -60,7 +97,7 @@ const CreateCiudad = () => {
             pais: '',
             latitud: '',
             longitud: ''
-          })
+          });
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);
@@ -108,29 +145,33 @@ const CreateCiudad = () => {
         </div>
 
         <div className="mb-4">
-          <label className="create-label">Latitud</label>
+          <label className="create-label">Latitud (Formato: -34.603722)</label>
           <input
-            className="form-control"
+            className={`form-control ${errors.latitud ? 'is-invalid' : ''}`}
             type="number"
             step="0.000001"
             name="latitud"
             value={form.latitud}
             onChange={handleChange}
+            placeholder="-34.603722"
             required
           />
+          {errors.latitud && <div className="invalid-feedback">{errors.latitud}</div>}
         </div>
 
         <div className="mb-4">
-          <label className="create-label">Longitud</label>
+          <label className="create-label">Longitud (Formato -58.381592)</label>
           <input
-            className="form-control"
+            className={`form-control ${errors.longitud ? 'is-invalid' : ''}`}
             type="number"
             step="0.000001"
             name="longitud"
             value={form.longitud}
             onChange={handleChange}
+            placeholder="-58.381592"
             required
           />
+          {errors.longitud && <div className="invalid-feedback">{errors.longitud}</div>}
         </div>
 
         <button type="submit" className="btn btn-primary w-100" disabled={isLoading}>

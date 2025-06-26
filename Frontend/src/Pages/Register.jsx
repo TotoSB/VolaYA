@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Container, Form, Button, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Register.css";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
 
 function Register() {
   const navigate = useNavigate();
@@ -13,6 +13,7 @@ function Register() {
   const [password2, setPassword2] = useState("");
   const [errorMensaje, setErrorMensaje] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [passwordLengthError, setPasswordLengthError] = useState(false); // Nuevo estado para la validación
 
   const { setIsAuthenticated, setUserData } = useAuth();
 
@@ -51,6 +52,17 @@ function Register() {
       setErrorMensaje("Error del servidor. Intenta más tarde.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setPassword(value);
+    // Validación en tiempo real de la longitud de la contraseña
+    if (value.length < 6) {
+      setPasswordLengthError(true);
+    } else {
+      setPasswordLengthError(false);
     }
   };
 
@@ -131,10 +143,13 @@ function Register() {
               type="password"
               placeholder="Crea una contraseña"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange} // Cambié el evento a handlePasswordChange
               required
             />
           </InputGroup>
+          {passwordLengthError && (
+            <small className="text-danger">La contraseña debe tener al menos 6 caracteres.</small>
+          )}
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formPassword2">
@@ -153,7 +168,7 @@ function Register() {
           </InputGroup>
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100 mt-4" disabled={isLoading}>
+        <Button variant="primary" type="submit" className="w-100 mt-4" disabled={isLoading || passwordLengthError}>
           <div className="register-button">
             {isLoading ? (
               <>

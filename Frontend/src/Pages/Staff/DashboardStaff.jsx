@@ -77,53 +77,6 @@ return (
   <div className="staff-layout">
     <div className="staff-content">
 
-      {/* Dashboard */}
-      <h2 className="dashboard-title">Resumen del sistema</h2>
-      {loading ? (
-        <p>Cargando...</p>
-      ) : data ? (
-        <div className="dashboard-grid">
-          <div className="card card-usuarios">
-            <i className='bx bxs-user-detail icon'></i>
-            <h3>Usuarios registrados</h3>
-            <p>{data.total_usuarios}</p>
-          </div>
-          <div className="card card-paquetes">
-            <i className='bx bxs-package icon'></i>
-            <h3>Total de paquetes</h3>
-            <p>{data.total_paquetes}</p>
-          </div>
-          <div className="card card-pagados">
-            <i className='bx bxs-check-circle icon'></i>
-            <h3>Paquetes pagados</h3>
-            <p>{data.paquetes_pagados}</p>
-          </div>
-          <div className="card card-ingresos">
-            <i className='bx bxs-dollar-circle icon'></i>
-            <h3>Ingresos totales</h3>
-            <p>${data.ingresos_totales.toLocaleString('es-AR')}</p>
-          </div>
-          <div className="card card-hoteles">
-            <i className='bx bxs-building-house icon'></i>
-            <h3>Total de hoteles</h3>
-            <p>{data.total_hoteles}</p>
-          </div>
-          <div className="card card-autos">
-            <i className='bx bxs-car icon'></i>
-            <h3>Total de autos</h3>
-            <p>{data.total_autos}</p>
-          </div>
-          <div className="card card-aviones">
-            <i className='bx bxs-plane-alt icon'></i>
-            <h3>Total de aviones</h3>
-            <p>{data.total_aviones}</p>
-          </div>
-        </div>
-
-      ) : (
-        <p>No se pudieron cargar los datos.</p>
-      )}
-
       <div className="busqueda-container">
         <input
           type="text"
@@ -134,7 +87,8 @@ return (
         />
       </div>
 
-      {/* Resultados de búsqueda */}
+
+            {/* Resultados de búsqueda */}
       {resultados && (
         <div className="busqueda-resultados">
           <h3>Resultados de búsqueda:</h3>
@@ -202,6 +156,53 @@ return (
             </>
           )}
         </div>
+      )}
+
+      {/* Dashboard */}
+      <h2 className="dashboard-title">Resumen del sistema</h2>
+      {loading ? (
+        <p>Cargando...</p>
+      ) : data ? (
+        <div className="dashboard-grid">
+          <div className="card card-usuarios">
+            <i className='bx bxs-user-detail icon'></i>
+            <h3>Usuarios registrados</h3>
+            <p>{data.total_usuarios}</p>
+          </div>
+          <div className="card card-paquetes">
+            <i className='bx bxs-package icon'></i>
+            <h3>Total de paquetes</h3>
+            <p>{data.total_paquetes}</p>
+          </div>
+          <div className="card card-pagados">
+            <i className='bx bxs-check-circle icon'></i>
+            <h3>Paquetes pagados</h3>
+            <p>{data.paquetes_pagados}</p>
+          </div>
+          <div className="card card-ingresos">
+            <i className='bx bxs-dollar-circle icon'></i>
+            <h3>Ingresos totales</h3>
+            <p>${data.ingresos_totales.toLocaleString('es-AR')}</p>
+          </div>
+          <div className="card card-hoteles">
+            <i className='bx bxs-building-house icon'></i>
+            <h3>Total de hoteles</h3>
+            <p>{data.total_hoteles}</p>
+          </div>
+          <div className="card card-autos">
+            <i className='bx bxs-car icon'></i>
+            <h3>Total de autos</h3>
+            <p>{data.total_autos}</p>
+          </div>
+          <div className="card card-aviones">
+            <i className='bx bxs-plane-alt icon'></i>
+            <h3>Total de aviones</h3>
+            <p>{data.total_aviones}</p>
+          </div>
+        </div>
+
+      ) : (
+        <p>No se pudieron cargar los datos.</p>
       )}
     </div>
 

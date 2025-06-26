@@ -1,3 +1,18 @@
+:root {
+  --primary-color: #0d6efd;
+  --bg-light: #f8f9fa;
+  --text-color: #333;
+  --border-radius: 14px;
+  --box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--bg-light);
+  margin: 0;
+  padding: 0;
+}
+
 .main-container {
   max-width: 1100px;
   margin: 0 auto 4rem;
@@ -5,76 +20,64 @@
   animation: fadeIn 0.6s ease;
 }
 
-.section-title {
-  font-size: 2rem;
-  font-weight: 800;
-  color: #0d6efd;
-  margin-bottom: 1.2rem;
-  text-align: center;
+.vuelos-section {
+  margin-bottom: 3rem;
 }
 
-.datos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 14px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
-  margin-bottom: 2.5rem;
-  transition: all 0.3s ease;
-}
-
-.datos-grid p {
-  margin: 0.3rem 0;
-  font-size: 1.05rem;
-  color: #444;
+.vuelos-section h2 {
+  font-size: 1.4rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  border-left: 5px solid var(--primary-color);
+  padding-left: 10px;
 }
 
 .vuelos-list {
   list-style: none;
   padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
 }
 
 .vuelo-card {
   background: #ffffff;
-  padding: 1.6rem;
-  border-radius: 16px;
-  margin-bottom: 2rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-  position: relative;
+  padding: 1.4rem;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: 0.3s;
+  border: 2px solid transparent;
 }
 
 .vuelo-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  border-color: var(--primary-color);
 }
 
 .vuelo-card.seleccionado {
-  border: 2px solid #0d6efd;
-  background: linear-gradient(to right, #e3f2fd, #ffffff);
+  border: 2px solid var(--primary-color);
+  background-color: #0b5dd742;
 }
 
 .vuelo-card p {
   margin: 0.5rem 0;
-  font-size: 1.05rem;
+  font-size: 1rem;
+  color: var(--text-color);
 }
 
-.btn-seleccionar {
+.vuelo-card button {
   margin-top: 1rem;
-  background-color: #0d6efd;
+  background-color: var(--primary-color);
   color: white;
-  padding: 0.6rem 1.3rem;
+  padding: 0.5rem 1.2rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-.btn-seleccionar:hover {
+.vuelo-card button:hover {
   background-color: #0b5ed7;
   transform: scale(1.05);
 }
@@ -88,38 +91,26 @@
   font-size: 1.1rem;
   padding: 0.7rem 2rem;
   border-radius: 10px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  box-shadow: var(--box-shadow);
 }
 
-.no-vuelos {
+.btn-continuar .btn:hover {
+  background-color: #0b5ed7;
+  transform: scale(1.05);
+}
+
+.text-center {
   text-align: center;
-  color: #888;
-  font-style: italic;
-  margin-bottom: 2rem;
 }
 
 .text-center .btn-secondary {
   background-color: #6c757d;
-  border: none;
   padding: 0.6rem 1.4rem;
   font-size: 1rem;
-  border-radius: 10px;
-  color: white;
-  transition: all 0.3s ease;
-}
-
-.text-center .btn-secondary:hover {
-  background-color: #5a6268;
-  transform: scale(1.05);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  border-radius: 10px
 }

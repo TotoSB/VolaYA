@@ -35,3 +35,8 @@
 .register-cuenta {
   font-weight: bold;
 }
+
+input[type="password"] + .text-danger {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}

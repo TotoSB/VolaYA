@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import '../styles/HotelesDisponibles.css'; // Asegúrate de crear este archivo para los estilos adicionales
 
 function HotelesDisponibles() {
   const location = useLocation();
+  const navigate = useNavigate(); // Hook para la navegación
 
   const {
     costoTotal,
@@ -41,13 +43,8 @@ function HotelesDisponibles() {
     const diferenciaMs = vuelta - salida;
     const noches = diferenciaMs / (1000 * 60 * 60 * 24);
 
-    // console.log("📅 Fecha salida (desde vueloIda):", vueloIda.fecha);
-    // console.log("📅 Fecha vuelta (desde vueloVuelta):", vueloVuelta.fecha);
-    // console.log("🛏️ Noches calculadas:", noches);
-
     return noches > 0 ? noches : 1;
   };
-
 
   const noches = calcularNoches();
   const totalAuto = auto ? auto.precio_dia * noches : 0;
@@ -104,6 +101,9 @@ function HotelesDisponibles() {
       const result = await res.json();
       if (res.ok) {
         alert(`Paquete creado: ${result.message} - Total: ${formatoPesos(result.costo_total)}`);
+        
+        // Redirigir al carrito
+        navigate('/carrito');
       } else {
         alert('Error al crear paquete: ' + JSON.stringify(result));
       }
@@ -113,29 +113,31 @@ function HotelesDisponibles() {
   };
 
   return (
-    <div className="contenedor-hotel">
-      <h3>💸 Total del paquete: {formatoPesos(costoTotal + totalAuto)}</h3>
-      <p>🛫 Ida ({vueloIda.origen} → {vueloIda.destino}): {formatoPesos(costoIda)}</p>
-      <p>🔙 Vuelta ({vueloVuelta.origen} → {vueloVuelta.destino}): {formatoPesos(costoVuelta)}</p>
-      <p>👥 Personas: {personas}</p>
-      <p>🛏️ Noches de estadía: {noches}</p>
+    <div className="hotel-container">
+      <div className="package-summary">
+        <h3>💸 Total del paquete: {formatoPesos(costoTotal + totalAuto)}</h3>
+        <p><strong>🛫 Ida:</strong> {vueloIda.origen} → {vueloIda.destino} | {formatoPesos(costoIda)}</p>
+        <p><strong>🔙 Vuelta:</strong> {vueloVuelta.origen} → {vueloVuelta.destino} | {formatoPesos(costoVuelta)}</p>
+        <p><strong>👥 Personas:</strong> {personas}</p>
+        <p><strong>🛏️ Noches de estadía:</strong> {noches}</p>
 
-      {auto && (
-        <>
-          <p>🚗 Auto seleccionado: {auto.marca} {auto.modelo}</p>
-          <p>🧾 Total auto: {formatoPesos(totalAuto)}</p>
-        </>
-      )}
+        {auto && (
+          <>
+            <p><strong>🚗 Auto seleccionado:</strong> {auto.marca} {auto.modelo}</p>
+            <p><strong>🧾 Total auto:</strong> {formatoPesos(totalAuto)}</p>
+          </>
+        )}
+      </div>
 
-      <h4>🏨 Hoteles disponibles en {hoteles[0]?.ciudad_nombre || 'el destino'}</h4>
-      <ul>
+      <h4 className="hotel-header">🏨 Hoteles disponibles en {hoteles[0]?.ciudad_nombre || 'el destino'}</h4>
+      <div className="hotel-list">
         {hoteles.length > 0 ? (
           hoteles.map((hotel) => {
             const totalHotel = hotel.precio_noche * noches;
             const totalFinal = costoTotal + totalHotel + totalAuto;
 
             return (
-              <li key={hotel.id} style={{ marginBottom: '2rem', borderBottom: '1px solid #ccc', paddingBottom: '1rem' }}>
+              <div key={hotel.id} className="hotel-card">
                 <h5>{hotel.nombre}</h5>
                 <p><strong>Descripción:</strong> {hotel.descripcion}</p>
                 <p><strong>Dirección:</strong> {hotel.direccion}</p>
@@ -144,16 +146,16 @@ function HotelesDisponibles() {
                 <p><strong>Precio por noche:</strong> {formatoPesos(hotel.precio_noche)}</p>
                 <p><strong>Total hotel ({noches} noches):</strong> {formatoPesos(totalHotel)}</p>
                 <p><strong>💵 Total paquete con este hotel:</strong> {formatoPesos(totalFinal)}</p>
-                <button className="btn btn-success mt-2" onClick={() => handleAgregarAlCarrito(hotel)}>
+                <button className="btn-add-to-cart" onClick={() => handleAgregarAlCarrito(hotel)}>
                   Agregar al carrito
                 </button>
-              </li>
+              </div>
             );
           })
         ) : (
           <p>No hay hoteles disponibles.</p>
         )}
-      </ul>
+      </div>
     </div>
   );
 }

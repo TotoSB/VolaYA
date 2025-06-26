@@ -1,12 +1,13 @@
-
 import { useLocation, useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 import Header from '../components/Public/Header';
 import '../styles/Vuelos_disponibles.css';
+import { useAuth } from '../context/AuthContext'; // Importamos useAuth
 
 function VuelosDisponibles() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth(); // Obtenemos el estado de autenticación
 
   const [vueloIdaSeleccionado, setVueloIdaSeleccionado] = useState(null);
   const [vueloVueltaSeleccionado, setVueloVueltaSeleccionado] = useState(null);
@@ -24,12 +25,17 @@ function VuelosDisponibles() {
     auto
   } = location.state || {};
 
-  const handleSeleccionVuelo = (vuelo) => {
-    navigate(`/reservar_asientos/${vuelo.id}`, { state: { vuelo, personas } });
+  const handleSeleccionVueloIda = (vuelo) => {
+    setVueloIdaSeleccionado((prevVuelo) => 
+      prevVuelo && prevVuelo.id === vuelo.id ? null : vuelo
+    ); // Cambia el estado solo si el vuelo ya estaba seleccionado
   };
 
-
-
+  const handleSeleccionVueloVuelta = (vuelo) => {
+    setVueloVueltaSeleccionado((prevVuelo) => 
+      prevVuelo && prevVuelo.id === vuelo.id ? null : vuelo
+    ); // Cambia el estado solo si el vuelo ya estaba seleccionado
+  };
 
   const formatoPesos = (num) =>
     new Intl.NumberFormat('es-AR', {
@@ -37,6 +43,25 @@ function VuelosDisponibles() {
       currency: 'ARS',
       minimumFractionDigits: 0,
     }).format(num);
+
+  const handleContinuarSeleccionAsientos = () => {
+    if (isAuthenticated) {
+      navigate(`/reservar_asientos`, {
+        state: {
+          vueloIda: vueloIdaSeleccionado,
+          vueloVuelta: vueloVueltaSeleccionado,
+          personas,
+          destinoId,
+          autoSeleccionadoId,
+          auto
+        }
+      });
+    } else {
+      // Redirige al login si no está autenticado
+      alert("Por favor, inicie sesión para continuar con la reserva.");
+      navigate('/login');
+    }
+  };
 
   return (
     <>
@@ -61,13 +86,15 @@ function VuelosDisponibles() {
           ) : (
             <ul className="vuelos-list">
               {vuelosIda.map((vuelo) => (
-                <li key={vuelo.id} className="vuelo-card">
+                <li 
+                  key={vuelo.id} 
+                  className={`vuelo-card ${vueloIdaSeleccionado && vueloIdaSeleccionado.id === vuelo.id ? 'seleccionado' : ''}`}
+                >
                   <p><strong>Avión:</strong> {vuelo.avion}</p>
                   <p><strong>Origen:</strong> {vuelo.origen}</p>
                   <p><strong>Destino:</strong> {vuelo.destino}</p>
                   <p><strong>Fecha:</strong> {new Date(vuelo.fecha).toLocaleString()}</p>
-                  <button onClick={() => setVueloIdaSeleccionado(vuelo)}>Seleccionar vuelo de ida</button>
-
+                  <button onClick={() => handleSeleccionVueloIda(vuelo)}>Seleccionar vuelo de ida</button>
                 </li>
               ))}
             </ul>
@@ -81,13 +108,15 @@ function VuelosDisponibles() {
           ) : (
             <ul className="vuelos-list">
               {vuelosVuelta.map((vuelo) => (
-                <li key={vuelo.id} className="vuelo-card">
+                <li 
+                  key={vuelo.id} 
+                  className={`vuelo-card ${vueloVueltaSeleccionado && vueloVueltaSeleccionado.id === vuelo.id ? 'seleccionado' : ''}`}
+                >
                   <p><strong>Avión:</strong> {vuelo.avion}</p>
                   <p><strong>Origen:</strong> {vuelo.origen}</p>
                   <p><strong>Destino:</strong> {vuelo.destino}</p>
                   <p><strong>Fecha:</strong> {new Date(vuelo.fecha).toLocaleString()}</p>
-                  <button onClick={() => setVueloVueltaSeleccionado(vuelo)}>Seleccionar vuelo de vuelta</button>
-
+                  <button onClick={() => handleSeleccionVueloVuelta(vuelo)}>Seleccionar vuelo de vuelta</button>
                 </li>
               ))}
             </ul>
@@ -97,22 +126,11 @@ function VuelosDisponibles() {
         {vueloIdaSeleccionado && vueloVueltaSeleccionado && (
         <button
           className="btn btn-primary"
-          onClick={() =>
-              navigate(`/reservar_asientos`, {
-                state: {
-                  vueloIda: vueloIdaSeleccionado,
-                  vueloVuelta: vueloVueltaSeleccionado,
-                  personas,
-                  destinoId,
-                  autoSeleccionadoId,
-                  auto
-                }
-              })
-          }
+          onClick={handleContinuarSeleccionAsientos}
         >
           Continuar a selección de asientos
         </button>
-      )}
+        )}
 
         <div className="text-center mt-4">
           <button className="btn btn-secondary" onClick={() => navigate('/')}>
