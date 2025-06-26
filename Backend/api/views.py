@@ -15,7 +15,7 @@ import math
 from decimal import Decimal
 from django.views.decorators.csrf import csrf_exempt
 
-from django.db.models import Q, Count
+from django.db.models import Q, Count, Sum
 import mercadopago
 
 sdk = mercadopago.SDK("TEST-6677338736055594-061201-ec6608dc36251133dd3b1718995d2dc4-292453564")
@@ -945,3 +945,66 @@ def realizar_pago(request):
         return Response({'error': f'Error al enviar el email: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'success': 'Pago realizado, factura emitida y correo enviado.'}, status=status.HTTP_200_OK)
+
+
+#Ultimos detalles
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])  
+def admin_dashboard(request):
+    total_usuarios = Usuarios.objects.filter(is_staff=False).count()
+    total_paquetes = Paquetes.objects.count()
+    paquetes_pagados = Paquetes.objects.filter(pagado=True).count()
+    ingresos_totales = Pagos.objects.filter(estado='COMPLETADO').aggregate(total=Sum('monto'))['total'] or 0
+    total_hoteles = Hoteles.objects.count()
+    total_autos = Autos.objects.count()
+    total_aviones = Aviones.objects.count()
+
+    return Response({
+        'total_usuarios': total_usuarios,
+        'total_paquetes': total_paquetes,
+        'paquetes_pagados': paquetes_pagados,
+        'ingresos_totales': round(float(ingresos_totales), 2),
+        'total_hoteles': total_hoteles,
+        'total_autos': total_autos,
+        'total_aviones': total_aviones,
+    })
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def busqueda_general(request):
+    query = request.GET.get('q', '').strip()
+
+    if not query:
+        return Response({'error': 'Falta el parámetro de búsqueda'}, status=400)
+
+    # Ciudades
+    ciudades = Ciudades.objects.filter(
+        Q(nombre__icontains=query) | Q(pais__nombre__icontains=query)
+    ).select_related('pais')
+
+    # Hoteles
+    hoteles = Hoteles.objects.filter(
+        Q(ciudad__in=ciudades) | Q(nombre__icontains=query)
+    ).select_related('ciudad')
+
+    # Vuelos 
+    vuelos = Vuelos.objects.filter(
+        Q(origen__in=ciudades) | Q(destino__in=ciudades)
+    ).select_related('origen', 'destino', 'avion')
+
+    # Aviones
+    aviones = Aviones.objects.filter(
+        Q(vuelos__in=vuelos) | Q(nombre__icontains=query)
+    ).distinct()
+
+    # Paises
+    paises = Paises.objects.filter(id__in=ciudades.values_list('pais_id', flat=True)).distinct()
+
+    return Response({
+        'ciudades': CiudadSerializer(ciudades, many=True).data,
+        'paises': PaisSerializer(paises, many=True).data,
+        'hoteles': HotelSerializer(hoteles, many=True).data,
+        'vuelos': VueloListSerializer(vuelos, many=True).data,
+        'aviones': AvionSerializer(aviones, many=True).data,
+    }, status=200)

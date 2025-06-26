@@ -47,8 +47,9 @@ urlpatterns = [
     # GET Jefe de ventas
     path('conseguir_personas/', views.get_personas, name='conseguir_personas'),
     path('conseguir_paquetes_pendientes/', views.get_paquetes_pendientes, name='conseguir_paquetes_pendientes'),
-    path('conseguir_facturas/', views.ver_facturas_a_cobrar, name='conseguir_facturas'),
-
+    path('conseguir_facturas/', views.ver_facturas_a_cobrar, name='conseguir_facturas'), 
+    path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('busqueda/', views.busqueda_general, name='busqueda_general'),
     # PUTS generales
     path('modificar_paquete/<int:paquete_id>/', views.modificar_paquete, name='modificar_paquete'),
 
