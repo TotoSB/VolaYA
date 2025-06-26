@@ -41,9 +41,9 @@ function HotelesDisponibles() {
     const diferenciaMs = vuelta - salida;
     const noches = diferenciaMs / (1000 * 60 * 60 * 24);
 
-    console.log("📅 Fecha salida (desde vueloIda):", vueloIda.fecha);
-    console.log("📅 Fecha vuelta (desde vueloVuelta):", vueloVuelta.fecha);
-    console.log("🛏️ Noches calculadas:", noches);
+    // console.log("📅 Fecha salida (desde vueloIda):", vueloIda.fecha);
+    // console.log("📅 Fecha vuelta (desde vueloVuelta):", vueloVuelta.fecha);
+    // console.log("🛏️ Noches calculadas:", noches);
 
     return noches > 0 ? noches : 1;
   };

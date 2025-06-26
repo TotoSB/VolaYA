@@ -50,11 +50,10 @@ urlpatterns = [
     path('conseguir_facturas/', views.ver_facturas_a_cobrar, name='conseguir_facturas'), 
     path('admin_dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('busqueda/', views.busqueda_general, name='busqueda_general'),
-    # PUTS generales
-    path('modificar_paquete/<int:paquete_id>/', views.modificar_paquete, name='modificar_paquete'),
 
 
     # DELETE generales
+    path('eliminar_paquete/<int:paquete_id>/', views.eliminar_paquete, name='eliminar_paquete'),
 
 
     # NUEVAS rutas de modelos agregados

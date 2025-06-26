@@ -25,6 +25,9 @@ const Carrito = () => {
 
     if (!window.confirm("¿Estás seguro de que querés eliminar este paquete?")) return;
 
+    const paqueteAEliminar = reservasPendientes.find(p => p.id === paqueteId);
+    const totalPaquete = parseFloat(paqueteAEliminar?.total || 0);
+
     fetch(`http://127.0.0.1:8000/eliminar_paquete/${paqueteId}/`, {
       method: "DELETE",
       headers: {
@@ -38,13 +41,17 @@ const Carrito = () => {
       })
       .then((data) => {
         alert(data.message || "Paquete eliminado");
+
         setReservasPendientes((prev) => prev.filter((p) => p.id !== paqueteId));
+
+        setTotalCarrito((prevTotal) => Math.max(0, prevTotal - totalPaquete));
       })
       .catch((err) => {
         console.error(err);
         alert("Error al eliminar el paquete");
       });
   };
+
 
   useEffect(() => {
     const token = localStorage.getItem('access');

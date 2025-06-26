@@ -14,7 +14,23 @@ const SidebarStaff = () => {
       <h2>Panel Admin</h2>
       <nav>
         <ul>
-            <li>
+          <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('dashboard')}>
+              < i className='bx  bx-home-alt-2'  ></i>  Dashboard
+              <i className={`bx bx-transparentt-${openMenu === 'dashboard' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'dashboard' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/">
+                    <i className="bx bx-list-ul"></i> Abrir dashboard
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
+          <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('paises')}>
               <i className='bx bx-flag'></i> Paises
               <i className={`bx bx-chevron-${openMenu === 'paises' ? 'up' : 'down'}`}></i>
@@ -35,10 +51,10 @@ const SidebarStaff = () => {
             )}
           </li>
 
-           <li>
+          <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('ciudades')}>
               <i className='bx bx-buildings'></i> Ciudades
-              <i className={`bx bx-chevron-${openMenu === 'Ciudades' ? 'up' : 'down'}`}></i>
+              <i className={`bx bx-chevron-${openMenu === 'ciudades' ? 'up' : 'down'}`}></i>
             </button>
             {openMenu === 'ciudades' && (
               <ul className="sidebar-submenu">
@@ -55,6 +71,7 @@ const SidebarStaff = () => {
               </ul>
             )}
           </li>
+
           <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('autos')}>
               <i className='bx bx-car'></i> Autos
@@ -97,7 +114,7 @@ const SidebarStaff = () => {
             )}
           </li>
 
-         <li>
+          <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('aviones')}>
               <i className='bx bx-paper-plane'></i> Aviones
               <i className={`bx bx-chevron-${openMenu === 'aviones' ? 'up' : 'down'}`}></i>
@@ -105,33 +122,33 @@ const SidebarStaff = () => {
             {openMenu === 'aviones' && (
               <ul className="sidebar-submenu">
                 <li>
-                  <Link to="/staff/Aviones/lista">
+                  <Link to="/staff/aviones/lista">
                     <i className="bx bx-list-ul"></i> Listar Aviones
                   </Link>
                 </li>
                 <li>
-                  <Link to="/staff/Aviones/crear">
+                  <Link to="/staff/aviones/crear">
                     <i className="bx bx-plus"></i> Agregar Aviones
                   </Link>
                 </li>
               </ul>
             )}
           </li>
-          
-           <li>
-            <button className="sidebar-toggle" onClick={() => toggleMenu('Vuelos')}>
-              < i className='bx  bx-calendar-week'  ></i> Vuelos
-              <i className={`bx bx-chevron-${openMenu === 'Vuelos' ? 'up' : 'down'}`}></i>
+
+          <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('vuelos')}>
+              <i className='bx bx-calendar-week'></i> Vuelos
+              <i className={`bx bx-chevron-${openMenu === 'vuelos' ? 'up' : 'down'}`}></i>
             </button>
-            {openMenu === 'Vuelos' && (
+            {openMenu === 'vuelos' && (
               <ul className="sidebar-submenu">
                 <li>
-                  <Link to="/staff/Vuelos/lista">
+                  <Link to="/staff/vuelos/lista">
                     <i className="bx bx-list-ul"></i> Listar Vuelos
                   </Link>
                 </li>
                 <li>
-                  <Link to="/staff/Vuelos/crear">
+                  <Link to="/staff/vuelos/crear">
                     <i className="bx bx-plus"></i> Agregar Vuelos
                   </Link>
                 </li>
@@ -162,10 +179,9 @@ const SidebarStaff = () => {
 
           <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('pendientes')}>
-              <i className='bx bx-time-five'></i>Pedidos Pendientes
+              <i className='bx bx-time-five'></i> Pedidos Pendientes
               <i className={`bx bx-chevron-${openMenu === 'pendientes' ? 'up' : 'down'}`}></i>
             </button>
-
             {openMenu === 'pendientes' && (
               <ul className="sidebar-submenu">
                 <li>
@@ -182,7 +198,6 @@ const SidebarStaff = () => {
               <i className='bx bx-book'></i> Facturas
               <i className={`bx bx-chevron-${openMenu === 'facturas' ? 'up' : 'down'}`}></i>
             </button>
-
             {openMenu === 'facturas' && (
               <ul className="sidebar-submenu">
                 <li>

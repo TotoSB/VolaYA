@@ -124,7 +124,7 @@ function Search() {
     }
 
     setError('');
-    console.log('Formulario válido');
+    // console.log('Formulario válido');
 
 const buscarDestinos = async () => {
   try {
@@ -147,7 +147,7 @@ const buscarDestinos = async () => {
     }
 
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
 
     const autoSeleccionado = autos.find(a => a.id === parseInt(autoSeleccionadoId));
 

@@ -22,6 +22,7 @@ import CreateVuelo from './Pages/Staff/Vuelos/CreateVuelo';
 import ListAsientos from './Pages/Staff/Asientos/LIstAsientos';
 import VuelosDisponibles from './Pages/VuelosDisponibles';
 import ListFacturas from './Pages/Staff/Facturas/ListFacturas';
+import DashboardStaff from './Pages/Staff/DashboardStaff';
 
 function App() {
   return (
@@ -38,7 +39,7 @@ function App() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<p>Bienvenido al panel de administración</p>} />
+        <Route index element={<DashboardStaff />} />
         <Route path="autos/lista" element={<ListCars />} />
         <Route path="autos/agregar" element={<CreateCars />} />
         <Route path="hoteles/lista" element={<ListHotels />} />

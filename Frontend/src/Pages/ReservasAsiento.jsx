@@ -6,7 +6,7 @@ const ReservarAsiento = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { vueloIda, vueloVuelta, personas: personasRaw, destinoId, auto, autoSeleccionadoId } = location.state || {};
+  const { vueloIda, vueloVuelta, personas: personasRaw, destinoId, auto, autoSeleccionadoId, descripcion } = location.state || {};
   const personas = parseInt(personasRaw);
 
   const [asientosIda, setAsientosIda] = useState([]);
@@ -65,12 +65,12 @@ const ReservarAsiento = () => {
       const paqueteData = {
         vuelo_ida: vueloIda.id,
         vuelo_vuelta: vueloVuelta.id,
-        hotel: location.state?.hotel_id || null, // Opcional, depende de tu lógica
+        hotel: location.state?.hotel_id || null, 
         auto: autoSeleccionadoId || null,
         personas,
         asiento_ida: seleccionIda.map(a => a.id),
         asiento_vuelta: seleccionVuelta.map(a => a.id),
-        descripcion: location.state?.descripcion || '', // Por si lo querés mostrar
+        descripcion: location.state?.descripcion || '',
         total: cotizacionIda.costo + cotizacionVuelta.costo,
       };
 

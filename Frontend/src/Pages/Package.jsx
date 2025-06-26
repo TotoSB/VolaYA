@@ -192,6 +192,8 @@ function Package() {
                               destinoId: paquete.destino_id,
                               auto: paquete.auto,
                               autoSeleccionadoId: paquete.auto_id,
+                              hotel_id: paquete.hotel_id,
+                              descripcion: paquete.descripcion,
                               desdePaquete: true,
                             }
                           })

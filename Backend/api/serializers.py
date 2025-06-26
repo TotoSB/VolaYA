@@ -96,7 +96,7 @@ class HotelSerializer(serializers.ModelSerializer):
             'precio_noche',
             'direccion',
             'personas',
-            'ciudad',         # Necesario para que acepte el ID
+            'ciudad',         
             'ciudad_nombre',
             'pais_nombre',
         ]
@@ -135,6 +135,7 @@ class AsientoSerializer(serializers.ModelSerializer):
 class PaqueteSerializer(serializers.ModelSerializer):
     asiento_ida = serializers.PrimaryKeyRelatedField(queryset=Asientos.objects.all(), many=True)
     asiento_vuelta = serializers.PrimaryKeyRelatedField(queryset=Asientos.objects.all(), many=True)
+    descripcion = serializers.CharField(required=False, allow_blank=True) 
 
     class Meta:
         model = Paquetes
@@ -146,8 +147,10 @@ class PaqueteSerializer(serializers.ModelSerializer):
             'asiento_vuelta',
             'hotel',
             'auto',
-            'total'
+            'total',
+            'descripcion'
         ]
+
 
 
 class AdminPaqueteSerializer(serializers.ModelSerializer):
@@ -160,7 +163,10 @@ class AdminPaqueteSerializer(serializers.ModelSerializer):
     vuelo_vuelta_obj = VueloSerializer(source='vuelo_vuelta', read_only=True)
 
     auto = serializers.CharField(source='auto.modelo', read_only=True)
+    auto_id = serializers.IntegerField(source='auto.id', read_only=True)
+
     hotel = serializers.CharField(source='hotel.nombre', read_only=True)
+    hotel_id = serializers.IntegerField(source='hotel.id', read_only=True)
 
     asiento_ida = AsientoSerializer(many=True, read_only=True)
     asiento_vuelta = AsientoSerializer(many=True, read_only=True)
@@ -178,16 +184,17 @@ class AdminPaqueteSerializer(serializers.ModelSerializer):
             'vuelo_ida_obj',  
             'vuelo_vuelta_obj', 
             'hotel',
+            'hotel_id',
             'auto',
+            'auto_id',
             'total',
             'asiento_ida',
             'asiento_vuelta',
             'id_usuario',
         ]
-
-    extra_kwargs = {
-        'id_usuario': {'read_only': True}
-    }
+        extra_kwargs = {
+            'id_usuario': {'read_only': True}
+        }
 
 
 class CotizarPaqueteSerializer(serializers.ModelSerializer):
@@ -203,22 +210,6 @@ class CotizarPaqueteSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['total']
 
-
-
-class PersonaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Personas
-        fields = [
-            'id_usuario',
-            'nombre',
-            'apellido',
-            'tipo_documento',
-            'documento',
-            'telefono',
-            'fecha_nacimiento',
-            'genero',
-            'dueno'
-        ]
 
 
 class CarritoSerializer(serializers.ModelSerializer):

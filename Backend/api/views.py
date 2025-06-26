@@ -5,7 +5,7 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import *
-from .models import Usuarios, Personas, Carritos, Reservas_usuario
+from .models import Usuarios, Carritos, Reservas_usuario
 import random
 from django.core.mail import send_mail
 from django.http import HttpResponse
@@ -768,24 +768,6 @@ def ver_facturas_a_cobrar(request):
 
 
 #Puts
-
-@api_view(['PUT'])
-@permission_classes([IsAuthenticated])
-def modificar_paquete(request, paquete_id):
-    try:
-        paquete = Paquetes.objects.get(id=paquete_id, id_usuario=request.user)
-    except Paquetes.DoesNotExist:
-        return Response({"error": "Paquete no encontrado o no te pertenece"}, status=status.HTTP_404_NOT_FOUND)
-
-    if paquete.pagado:
-        return Response({"error": "No se puede modificar un paquete ya pagado"}, status=status.HTTP_400_BAD_REQUEST)
-
-    serializer = PaqueteSerializer(paquete, data=request.data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({"message": "Paquete actualizado correctamente", "paquete": serializer.data}, status=status.HTTP_200_OK)
-    else:
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 
@@ -802,17 +784,19 @@ def eliminar_paquete(request, paquete_id):
     if paquete.pagado:
         return Response({"error": "No se puede eliminar un paquete que ya fue pagado"}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Si el usuario no es staff, restar el total del carrito
     if not request.user.is_staff:
         try:
             carrito = Carritos.objects.get(id_usuario=request.user)
-            if carrito.total >= paquete.total:
-                carrito.total -= paquete.total
+            total_carrito = Decimal(carrito.total)
+            total_paquete = Decimal(paquete.total)
+            
+            if total_carrito >= total_paquete:
+                carrito.total = total_carrito - total_paquete
             else:
-                carrito.total = 0
+                carrito.total = Decimal('0.00')
             carrito.save()
         except Carritos.DoesNotExist:
-            pass  # Si no tiene carrito, simplemente lo ignoramos
+            pass 
 
     paquete.delete()
     return Response({"message": "Paquete eliminado correctamente"}, status=status.HTTP_200_OK)
@@ -861,48 +845,43 @@ def generar_mensaje_factura(usuario, paquete, factura):
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework import status
 from django.core.mail import send_mail
+
+from decimal import Decimal
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def realizar_pago(request):
     usuario = request.user
-    paquete_id = request.data.get('reserva_id')  # Aquí usás el id del paquete
+    paquete_id = request.data.get('reserva_id')
     factura_data = {
         key: request.data.get(key)
         for key in ['razon_social', 'cuil', 'provincia', 'ciudad', 'calle', 'numero_calle', 'piso', 'departamento']
     }
 
-    # Validar que exista el paquete_id
     if not paquete_id:
         return Response({'error': 'Falta el ID del paquete'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Validar que todos los datos de factura estén presentes (si querés validar que no falte ninguno)
     if any(value is None for value in factura_data.values()):
         return Response({'error': 'Faltan datos de la factura'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Buscar el paquete correspondiente y que pertenezca al usuario
     try:
         paquete = Paquetes.objects.get(id=paquete_id, id_usuario=usuario.id)
     except Paquetes.DoesNotExist:
         return Response({'error': 'Paquete no encontrado para este usuario'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Crear el pago
     pago = Pagos.objects.create(
         paquete=paquete,
         monto=paquete.total,
         estado='COMPLETADO'
     )
 
-    # Crear la factura usando el serializer (asumiendo que FacturaSerializer está bien definido)
     factura_serializer = FacturaSerializer(data={**factura_data, 'pago': pago.id})
     if not factura_serializer.is_valid():
         return Response(factura_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     factura = factura_serializer.save()
 
-    # Marcar los asientos como reservados
     for asiento in paquete.asiento_ida.all():
         asiento.reservado = True
         asiento.save()
@@ -910,28 +889,26 @@ def realizar_pago(request):
         asiento.reservado = True
         asiento.save()
 
-    # Marcar el paquete como pagado
     paquete.pagado = True
     paquete.save()
 
-    # Descontar del carrito
     try:
         carrito = Carritos.objects.get(id_usuario=usuario)
-        carrito.total -= paquete.total
-        if carrito.total < 0:
-            carrito.total = 0
+        total_carrito = Decimal(carrito.total)
+        total_paquete = Decimal(paquete.total)
+
+        nuevo_total = total_carrito - total_paquete
+        carrito.total = nuevo_total if nuevo_total >= 0 else Decimal('0.00')
         carrito.save()
     except Carritos.DoesNotExist:
         pass
 
-    # Registrar en historial
     Historica.objects.create(
         paquete=paquete,
         pago=pago,
         factura=factura
     )
 
-    # Enviar correo al usuario con la factura
     try:
         mensaje = generar_mensaje_factura(usuario, paquete, factura)
         send_mail(
@@ -945,6 +922,7 @@ def realizar_pago(request):
         return Response({'error': f'Error al enviar el email: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     return Response({'success': 'Pago realizado, factura emitida y correo enviado.'}, status=status.HTTP_200_OK)
+
 
 
 #Ultimos detalles
