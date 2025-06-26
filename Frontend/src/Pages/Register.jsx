@@ -3,6 +3,7 @@ import { Container, Form, Button, InputGroup } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/Register.css";
 import { useAuth } from "../context/AuthContext";
+import SuccessModal from '../components/SuccessModal.jsx';
 
 function Register() {
   const navigate = useNavigate();
@@ -13,9 +14,22 @@ function Register() {
   const [password2, setPassword2] = useState("");
   const [errorMensaje, setErrorMensaje] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [passwordLengthError, setPasswordLengthError] = useState(false); // Nuevo estado para la validación
+  const [passwordLengthError, setPasswordLengthError] = useState(false);
 
   const { setIsAuthenticated, setUserData } = useAuth();
+
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSuccess = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate("/login");
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -41,12 +55,12 @@ function Register() {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Cuenta creada con éxito. Inicia sesión para continuar");
-        navigate("/login");
+        setShowModal(true); 
       } else {
         const errores = Object.values(data).flat().join(" ");
         setErrorMensaje(errores || "Error en el registro. Verifica los datos.");
       }
+
     } catch (error) {
       console.log(error);
       setErrorMensaje("Error del servidor. Intenta más tarde.");
@@ -191,6 +205,13 @@ function Register() {
 
         {errorMensaje && (
           <div className="mt-4 alert alert-danger text-center">{errorMensaje}</div>
+        )}
+
+        {showModal && (
+          <SuccessModal
+            message="¡Cuenta creada con éxito! Serás redirigido al login."
+            onClose={handleCloseModal}
+          />
         )}
       </Form>
     </Container>

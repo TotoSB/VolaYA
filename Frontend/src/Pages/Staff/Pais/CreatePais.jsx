@@ -1,9 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal'; '../../../components/SuccessModal.jsx'
 
 const CreatePais = () => {
   const navigate = useNavigate();
+
+  const [showModal, setShowModal] = useState(false);
+
+  const handleSuccess = () => {
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/staff/pais/crear');
+  };
 
   const [form, setForm] = useState({
     nombre: '',
@@ -35,13 +47,12 @@ const CreatePais = () => {
       .then(res => {
         setIsLoading(false); // ✅ Finaliza loading
         if (res.status === 201) {
-          alert('País creado correctamente');
-          navigate('/staff/pais/crear');
+          setShowModal(true)
           setForm({nombre:''})
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);
-            alert('Error al crear país');
+            setShowModal(false)
           });
         }
       })
@@ -81,6 +92,12 @@ const CreatePais = () => {
           </div>
         </button>
       </form>
+        {showModal && (
+          <SuccessModal
+            message="Pais Agregado"
+            onClose={handleCloseModal}
+          />
+        )}
     </div>
   );
 };

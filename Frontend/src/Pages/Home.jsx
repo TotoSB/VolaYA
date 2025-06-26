@@ -12,6 +12,7 @@ import Search from "../components/Public/Search";
 import ReservarAsiento from "./ReservasAsiento";
 import HotelesDisponibles from "./HotelesDisponibles";
 import Pagar from "./Pagar";
+// import Footer from '../components/Public/Footer'
 
 function Home() {
   return (
@@ -49,8 +50,7 @@ function Welcome() {
       <div className="welcome__buttons d-flex justify-content-center align-items-center gap-3 mb-5">
         <Search />
       </div>
-
-      </div>
+    </div>
       
    
   );
