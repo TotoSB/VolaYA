@@ -1,6 +1,7 @@
 .register-form {
   padding: 50px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  width: 500px;
 }
 
 .register-volaya {

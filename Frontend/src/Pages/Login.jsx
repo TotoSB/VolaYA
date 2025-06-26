@@ -97,8 +97,8 @@ function Login() {
   }, [navigate, setIsAuthenticated, setUserData]);
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
-      <Form className="login-form shadow-lg" style={{ width: "500px" }} onSubmit={handleLogin}>
+    <Container className="d-flex justify-content-center align-items-center" style={{ height: "800px" }}>
+      <Form className="login-form shadow-lg" onSubmit={handleLogin}>
         <div className="login-volaya mb-3 text-center">
           <i className="bx bx-paper-plane" style={{ color: "#0d6efd", fontSize: "47px" }}></i>
           <span className="ms-2">VolaYA</span>
@@ -154,7 +154,7 @@ function Login() {
           ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
         </div>
 
-        {error && <Alert className="mt-4" variant="danger">{error}</Alert>}
+        {error && <Alert className="mt-4 text-center" variant="danger">{error}</Alert>}
       </Form>
     </Container>
   );

@@ -44,7 +44,7 @@ const CreateCars = () => {
   };
 
   return (
-    <Container className="mt-5" style={{ maxWidth: '700px' }}>
+    <Container className="mt-5" style={{ maxWidth: '600px' }}>
       <Form onSubmit={handleSubmit}>
         <h2 className="mb-4 text-center create-title">Agregar Autos</h2>
 

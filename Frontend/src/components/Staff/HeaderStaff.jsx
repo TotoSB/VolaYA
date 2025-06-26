@@ -1,4 +1,3 @@
-// src/components/Public/staff/HeaderStaff.jsx
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import '../../styles/Staff/Header.css'
@@ -17,13 +16,13 @@ const HeaderStaff = () => {
   return (
     <header className="staff-header">
       <div className="staff-header__left">
-        <h2>Panel Administrativo</h2>
+        <h2 className='fw-bold'>Panel Administrativo</h2>
       </div>
-      <div className="staff-header__right">
-        <Button variant="danger" onClick={handleLogout}>
+      <div className="staff-header__right d-flex gap-5">
+        <Button className='fw-bold' variant="danger" onClick={handleLogout}>
           Cerrar sesión
         </Button>
-         <Button variant="primary" onClick={handleHome}>
+         <Button className='fw-bold' variant="primary" onClick={handleHome}>
           Ir al inicio
           
         </Button>

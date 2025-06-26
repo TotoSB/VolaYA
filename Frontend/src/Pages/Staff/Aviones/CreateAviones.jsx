@@ -40,7 +40,15 @@ const CreateAviones = () => {
         setIsLoading(false);
         if (res.status === 201) {
           alert('Avión creado correctamente');
-          navigate('/staff/avion/lista');
+          navigate('/staff/Aviones/crear');
+          setForm({
+            nombre: '',
+            costo_km_general: '',
+            costo_km_vip: '',
+            capacidad_vip: '',
+            capacidad_general: '',
+          })
+
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);

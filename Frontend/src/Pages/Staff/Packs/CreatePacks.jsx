@@ -84,7 +84,16 @@ const CreatePacks = () => {
         setIsLoading(false);
         if (res.status === 201) {
           alert('Paquete creado correctamente');
-          navigate('/staff/paquetes/lista');
+          navigate('/staff/paquetes/crear');
+          setForm({
+            descripcion: '',
+            personas: 1,
+            vuelo_ida: '',
+            vuelo_vuelta: '',
+            hotel: '',
+            auto: '',
+            total: 0,
+          })
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);
@@ -100,7 +109,7 @@ const CreatePacks = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '800px' }}>
+    <div className="container mt-5" style={{ maxWidth: '600px' }}>
       <h2 className="mb-4 text-center create-title">Crear Paquete</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

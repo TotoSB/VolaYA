@@ -43,7 +43,7 @@ const ListCiudad = () => {
                 <th>ID</th>
                 <th>Nombre</th>
                 <th>País</th>
-                <th>Acciones</th>
+                {/* <th>Acciones</th> */}
               </tr>
             </thead>
             <tbody>
@@ -52,7 +52,7 @@ const ListCiudad = () => {
                   <td>{ciudad.id}</td>
                   <td>{ciudad.nombre}</td>
                   <td>{ciudad.pais_nombre || '—'}</td>
-                  <td>
+                  {/* <td>
                     <div className="d-flex justify-content-center gap-3">
                       <Link
                         to={`/staff/ciudades/editar/${ciudad.id}`}
@@ -79,7 +79,7 @@ const ListCiudad = () => {
                         <i className="bx bx-trash" style={{ fontSize: "1.2rem", color: "#dc3545" }}></i>
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

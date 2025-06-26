@@ -55,7 +55,13 @@ const CreateVuelo = () => {
         setLoading(false);
         if (res.status === 201) {
           alert('Vuelo creado correctamente');
-          navigate('/staff/vuelo/lista');
+          navigate('/staff/Vuelos/crear');
+          setForm({
+            avion: '',
+            origen: '',
+            destino: '',
+            fecha: '',
+          })
         } else {
           return res.json().then(data => {
             alert('Error al crear vuelo');
@@ -72,10 +78,10 @@ const CreateVuelo = () => {
 
   return (
     <div className="container mt-5" style={{ maxWidth: '600px' }}>
-      <h2 className="mb-4 text-center create-title">Crear Vuelo</h2>
+      <h2 className="mb-4 text-center create-title">Agregar Vuelo</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label>Avión</label>
+          <label className="create-label">Avión</label>
           <select className="form-control" name="avion" value={form.avion} onChange={handleChange} required>
             <option value="">Seleccionar avión</option>
             {aviones.map(avion => (
@@ -85,7 +91,7 @@ const CreateVuelo = () => {
         </div>
 
         <div className="mb-3">
-          <label>Origen</label>
+          <label className="create-label">Origen</label>
           <select className="form-control" name="origen" value={form.origen} onChange={handleChange} required>
             <option value="">Seleccionar ciudad de origen</option>
             {ciudades.map(ciudad => (
@@ -95,7 +101,7 @@ const CreateVuelo = () => {
         </div>
 
         <div className="mb-3">
-          <label>Destino</label>
+          <label className="create-label">Destino</label>
           <select className="form-control" name="destino" value={form.destino} onChange={handleChange} required>
             <option value="">Seleccionar ciudad de destino</option>
             {ciudades.map(ciudad => (
@@ -105,7 +111,7 @@ const CreateVuelo = () => {
         </div>
 
         <div className="mb-4">
-          <label>Fecha y hora</label>
+          <label className="create-label">Fecha y hora</label>
           <input
             type="datetime-local"
             className="form-control"
@@ -117,14 +123,16 @@ const CreateVuelo = () => {
         </div>
 
         <button type="submit" className="btn btn-primary w-100" disabled={loading}>
-          {loading ? (
-            <>
-              <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-              Guardando...
-            </>
-          ) : (
-            'Guardar +'
-          )}
+          <div className="create-button">
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                Guardando...
+              </>
+            ) : (
+              'Guardar +'
+            )}
+          </div>
         </button>
       </form>
     </div>

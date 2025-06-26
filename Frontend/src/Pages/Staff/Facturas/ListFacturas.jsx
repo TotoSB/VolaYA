@@ -34,11 +34,11 @@ const ListFacturas = () => {
     <div className="container mt-4">
     <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
         <i className="bx bx-receipt" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
-        Estado de Cuenta
+        Lista De Facturas
     </div>
 
     {/* Facturas Pagadas */}
-    <h4 className="text-success fw-bold">Facturas Pagadas</h4>
+    <h4 className="text-success fw-bold mt-5">Facturas Pagadas</h4>
     <div className="table-responsive mb-5">
         {facturasPagadas.length > 0 ? (
         <table className="table table-striped table-bordered align-middle text-center">
@@ -79,7 +79,7 @@ const ListFacturas = () => {
             </tbody>
         </table>
         ) : (
-        <p className="text-center text-muted">No hay facturas pagadas.</p>
+        <p className="text-center text-muted fw-bold">No hay facturas pagadas.</p>
         )}
     </div>
 
@@ -106,7 +106,7 @@ const ListFacturas = () => {
             </tbody>
         </table>
         ) : (
-        <p className="text-center text-muted">No hay facturas a cobrar.</p>
+        <p className="text-center text-muted fw-bold">No hay facturas a cobrar.</p>
         )}
     </div>
     </div>

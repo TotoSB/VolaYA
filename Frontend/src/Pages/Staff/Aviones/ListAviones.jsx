@@ -47,7 +47,7 @@ const ListAviones = () => {
                 <th>General</th>
                 <th>Costo x km (VIP)</th>
                 <th>Costo x km (General)</th>
-                <th>Acciones</th>
+                {/* <th>Acciones</th> */}
               </tr>
             </thead>
             <tbody>
@@ -60,7 +60,7 @@ const ListAviones = () => {
                   <td>{avion.capacidad_general}</td>
                   <td>${avion.costo_km_vip}</td>
                   <td>${avion.costo_km_general}</td>
-                  <td>
+                  {/* <td>
                     <div className="d-flex justify-content-center gap-3">
                       <Link
                         to={`/staff/avion/editar/${avion.id}`}
@@ -87,7 +87,7 @@ const ListAviones = () => {
                         <i className="bx bx-trash" style={{ fontSize: "1.2rem", color: "#dc3545" }}></i>
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

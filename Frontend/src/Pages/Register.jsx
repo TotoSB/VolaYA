@@ -81,8 +81,8 @@ function Register() {
   }, [navigate, setIsAuthenticated, setUserData]);
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}>
-      <Form className="register-form shadow-lg" style={{ width: "500px" }} onSubmit={handleSubmit}>
+    <Container className="d-flex justify-content-center align-items-center" style={{ height: "800px" }}>
+      <Form className="register-form shadow-lg" onSubmit={handleSubmit}>
         <div className="register-volaya mb-3 text-center">
           <i className="bx bx-paper-plane" style={{ color: "#0d6efd", fontSize: "47px" }}></i>
           <span className="ms-2">VolaYA</span>

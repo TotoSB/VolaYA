@@ -54,7 +54,13 @@ const CreateCiudad = () => {
         setIsLoading(false); // ✅ Finalizar loading
         if (res.status === 201) {
           alert('Ciudad creada correctamente');
-          navigate('/staff/ciudad/lista');
+          navigate('/staff/ciudad/crear');
+          setForm({
+            nombre: '',
+            pais: '',
+            latitud: '',
+            longitud: ''
+          })
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);

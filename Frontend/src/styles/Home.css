@@ -2,7 +2,6 @@
 .welcome {
   text-align: center;
   padding: 5rem 1rem;
-  background: linear-gradient(to bottom, #ffffff 0%, #f0f4ff 100%);
 }
 
 .welcome__title {

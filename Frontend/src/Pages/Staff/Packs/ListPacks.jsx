@@ -81,7 +81,7 @@ const ListPacks = () => {
                 <th>Auto</th>
                 <th>Hotel</th>
                 <th>Total</th>
-                <th>Acciones</th>
+                {/* <th>Acciones</th> */}
               </tr>
             </thead>
             <tbody>
@@ -95,7 +95,7 @@ const ListPacks = () => {
                   <td>{pack.auto || "—"}</td>
                   <td>{pack.hotel || "—"}</td>
                   <td>{pack.total}</td>
-                  <td>
+                  {/* <td>
                     <div className="d-flex justify-content-center gap-3">
                       <Link
                         to={`/staff/paquetes/editar/${pack.id}`}
@@ -126,7 +126,7 @@ const ListPacks = () => {
                         ></i>
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

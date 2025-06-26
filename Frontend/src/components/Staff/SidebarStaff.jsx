@@ -97,6 +97,48 @@ const SidebarStaff = () => {
             )}
           </li>
 
+         <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('aviones')}>
+              <i className='bx bx-paper-plane'></i> Aviones
+              <i className={`bx bx-chevron-${openMenu === 'aviones' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'aviones' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/Aviones/lista">
+                    <i className="bx bx-list-ul"></i> Listar Aviones
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/Aviones/crear">
+                    <i className="bx bx-plus"></i> Agregar Aviones
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+          
+           <li>
+            <button className="sidebar-toggle" onClick={() => toggleMenu('Vuelos')}>
+              < i className='bx  bx-calendar-week'  ></i> Vuelos
+              <i className={`bx bx-chevron-${openMenu === 'Vuelos' ? 'up' : 'down'}`}></i>
+            </button>
+            {openMenu === 'Vuelos' && (
+              <ul className="sidebar-submenu">
+                <li>
+                  <Link to="/staff/Vuelos/lista">
+                    <i className="bx bx-list-ul"></i> Listar Vuelos
+                  </Link>
+                </li>
+                <li>
+                  <Link to="/staff/Vuelos/crear">
+                    <i className="bx bx-plus"></i> Agregar Vuelos
+                  </Link>
+                </li>
+              </ul>
+            )}
+          </li>
+
           <li>
             <button className="sidebar-toggle" onClick={() => toggleMenu('paquetes')}>
               <i className='bx bx-package'></i> Paquetes
@@ -118,76 +160,27 @@ const SidebarStaff = () => {
             )}
           </li>
 
-         <li>
-            <button className="sidebar-toggle" onClick={() => toggleMenu('aviones')}>
-              <i className='bx bx-paper-plane'></i> Aviones
-              <i className={`bx bx-chevron-${openMenu === 'aviones' ? 'up' : 'down'}`}></i>
-            </button>
-            {openMenu === 'aviones' && (
-              <ul className="sidebar-submenu">
-                <li>
-                  <Link to="/staff/Aviones/lista">
-                    <i className="bx bx-list-ul"></i> Listar Aviones
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/staff/Aviones/crear">
-                    <i className="bx bx-plus"></i> Agregar Aviones
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-
-           <li>
-            <button className="sidebar-toggle" onClick={() => toggleMenu('Vuelos')}>
-              < i className='bx  bx-calendar-week'  ></i> Vuelos
-              <i className={`bx bx-chevron-${openMenu === 'Vuelos' ? 'up' : 'down'}`}></i>
-            </button>
-            {openMenu === 'Vuelos' && (
-              <ul className="sidebar-submenu">
-                <li>
-                  <Link to="/staff/Vuelos/lista">
-                    <i className="bx bx-list-ul"></i> Listar Vuelos
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/staff/Vuelos/crear">
-                    <i className="bx bx-plus"></i> Agregar Vuelos
-                  </Link>
-                </li>
-              </ul>
-            )}
-          </li>
-          
-
-
-
           <li>
-            <button
-              className="sidebar-toggle"
-              onClick={() => toggleMenu('pendientes')}
-            >
-              <i className='bx bx-time-five'></i> Paquetes pendientes
+            <button className="sidebar-toggle" onClick={() => toggleMenu('pendientes')}>
+              <i className='bx bx-time-five'></i>Pedidos Pendientes
+              <i className={`bx bx-chevron-${openMenu === 'pendientes' ? 'up' : 'down'}`}></i>
             </button>
 
             {openMenu === 'pendientes' && (
               <ul className="sidebar-submenu">
                 <li>
                   <Link to="/staff/paquetes_pendientes">
-                    <i className="bx bx-list-ul"></i> Listar Paquetes pendientes
+                    <i className="bx bx-list-ul"></i> Listar Pedidos Pendientes
                   </Link>
                 </li>
               </ul>
             )}
-         </li>
+          </li>
 
           <li>
-            <button
-              className="sidebar-toggle"
-              onClick={() => toggleMenu('facturas')}
-            >
+            <button className="sidebar-toggle" onClick={() => toggleMenu('facturas')}>
               <i className='bx bx-book'></i> Facturas
+              <i className={`bx bx-chevron-${openMenu === 'facturas' ? 'up' : 'down'}`}></i>
             </button>
 
             {openMenu === 'facturas' && (
@@ -199,8 +192,7 @@ const SidebarStaff = () => {
                 </li>
               </ul>
             )}
-         </li>
-         
+          </li>
         </ul>
       </nav>
     </aside>

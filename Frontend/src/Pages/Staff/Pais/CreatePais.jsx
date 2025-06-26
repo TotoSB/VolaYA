@@ -36,7 +36,8 @@ const CreatePais = () => {
         setIsLoading(false); // ✅ Finaliza loading
         if (res.status === 201) {
           alert('País creado correctamente');
-          navigate('/staff/paises/lista');
+          navigate('/staff/pais/crear');
+          setForm({nombre:''})
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);

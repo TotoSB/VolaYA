@@ -52,7 +52,15 @@ const CreateHotels = () => {
         setIsLoading(false); // ✅ Finalizamos el loading
         if (res.status === 201) {
           alert('Hotel creado correctamente');
-          navigate('/staff/hoteles/lista');
+          navigate('/staff/hoteles/agregar');
+          setForm({
+            nombre: '',
+            ciudad: '',
+            descripcion: '',
+            personas: 1,
+            precio_noche: '',
+            direccion: ''
+          })
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);
@@ -68,7 +76,7 @@ const CreateHotels = () => {
   };
 
   return (
-    <div className="container mt-5" style={{ maxWidth: '700px' }}>
+    <div className="container mt-5" style={{ maxWidth: '600px' }}>
       <h2 className="mb-4 text-center create-title">Agregar Hoteles</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">

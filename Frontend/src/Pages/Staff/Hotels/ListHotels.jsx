@@ -51,7 +51,7 @@ const ListHotels = () => {
               <th>Personas</th>
               <th>Ciudad</th>
               <th>País</th>
-              <th>Acciones</th>
+              {/* <th>Acciones</th> */}
             </tr>
           </thead>
           <tbody>
@@ -65,7 +65,7 @@ const ListHotels = () => {
                 <td>{hotel.personas}</td>
                 <td>{hotel.ciudad_nombre}</td>
                 <td>{hotel.pais_nombre}</td>
-                <td>
+                {/* <td>
                   <div className="d-flex justify-content-center gap-3">
                     <button
                       className="btn btn-primary btn-sm"
@@ -82,7 +82,7 @@ const ListHotels = () => {
                       <i className="bx bx-trash" style={{ fontSize: "1.2rem", color: "#dc3545" }}></i>
                     </button>
                   </div>
-                </td>
+                </td> */}
               </tr>
             ))}
           </tbody>

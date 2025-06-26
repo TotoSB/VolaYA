@@ -33,7 +33,7 @@ function Header() {
           return response.json();
         })
         .then(data => {
-            console.log("Respuesta del backend:", data);
+            // console.log("Respuesta del backend:", data);
             setUsername(data.nombre_usuario);
           // setUsername(data.username);
         })

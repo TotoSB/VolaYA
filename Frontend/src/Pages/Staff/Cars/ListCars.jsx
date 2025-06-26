@@ -48,7 +48,7 @@ const ListCars = () => {
                 <th>Modelo</th>
                 <th>Color</th>
                 <th>Precio x Día</th>
-                <th>Acciones</th>
+                {/* <th>Acciones</th> */}
               </tr>
             </thead>
             <tbody>
@@ -59,7 +59,7 @@ const ListCars = () => {
                   <td>{auto.modelo}</td>
                   <td>{auto.color}</td>
                   <td>${auto.precio_dia}</td>
-                  <td>
+                  {/* <td>
                     <div className="d-flex justify-content-center gap-3">
                       <Link
                         to={`/staff/autos/editar/${auto.id}`}
@@ -86,7 +86,7 @@ const ListCars = () => {
                         ></i>
                       </button>
                     </div>
-                  </td>
+                  </td> */}
                 </tr>
               ))}
             </tbody>

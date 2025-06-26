@@ -52,13 +52,18 @@ const ListPedidosPendientes = () => {
 
   return (
     <div className="container mt-4">
-      <h2 className="mb-3" style={{ color: "#0d6efd" }}>Pedidos Pendientes</h2>
-
+      <div
+        className="d-flex align-items-center mb-3 fw-bold gap-2"
+        style={{ color: "#0d6efd", fontSize: "25px" }}
+      >
+        <i className="bx bx-time-five" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
+        Lista De Pedidos Pendientes
+      </div>
       {loading && <p className="text-center">Cargando pedidos...</p>}
       {error && <div className="alert alert-danger text-center">{error}</div>}
 
       {!loading && pedidos.length === 0 && (
-        <p className="text-center" style={{ color: "#0d6efd" }}>No hay pedidos pendientes.</p>
+        <p className="text-center fw-bold" style={{ color: "#0d6efd" }}>No hay pedidos pendientes.</p>
       )}
 
       {!loading && pedidos.length > 0 && (
