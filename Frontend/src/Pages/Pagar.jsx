@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import '../styles/Pagar.css';
+import SuccessModal from '../components/SuccessModal.jsx';
 
 const Pagar = () => {
   const location = useLocation();
@@ -18,6 +19,10 @@ const Pagar = () => {
     departamento: ''
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMensaje, setErrorMensaje] = useState('');
+  const [showModal, setShowModal] = useState(false);
+
   const handleChange = (e) => {
     setFormData(prev => ({
       ...prev,
@@ -25,12 +30,20 @@ const Pagar = () => {
     }));
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMensaje('');
+    setIsLoading(true);
 
     const token = localStorage.getItem('access');
     if (!token) {
       alert('No estás logeado.');
+      setIsLoading(false);
       return navigate('/login');
     }
 
@@ -54,11 +67,12 @@ const Pagar = () => {
         throw new Error(errorMsg);
       }
 
-      alert('Pago y factura generados con éxito.');
-      navigate('/');
+      setShowModal(true);
 
     } catch (err) {
-      alert(`Error: ${err.message}`);
+      setErrorMensaje(`Error: ${err.message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -93,8 +107,29 @@ const Pagar = () => {
 
         <p>El total a pagar es: ${total}</p>
 
-        <button type="submit">Confirmar y Cobrar</button>
+        {errorMensaje && (
+          <div className="error-message" style={{ color: 'red', marginBottom: '10px' }}>
+            {errorMensaje}
+          </div>
+        )}
+
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Procesando...
+            </>
+          ) : (
+            "Confirmar y Cobrar"
+          )}
+        </button>
       </form>
+
+      {showModal && (
+        <SuccessModal
+          message="Pago y factura generados con éxito."
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };
