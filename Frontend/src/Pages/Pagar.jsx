@@ -93,7 +93,7 @@ const Pagar = () => {
 
         <p>El total a pagar es: ${total}</p>
 
-        <button type="submit">Confirmar y Pagar</button>
+        <button type="submit">Confirmar y Cobrar</button>
       </form>
     </div>
   );
