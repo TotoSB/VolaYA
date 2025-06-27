@@ -66,10 +66,10 @@ const Pagar = () => {
     <div className="formulario-pago">
       <h1>Pago Y Facturación</h1>
       <form onSubmit={handleSubmit}>
-        <label>Razón Social:
+        <label>Razón Social/Nombre:
           <input type="text" name="razon_social" value={formData.razon_social} onChange={handleChange} required />
         </label>
-        <label>CUIL:
+        <label>CUIL/CUIT:
           <input type="text" name="cuil" value={formData.cuil} onChange={handleChange} required />
         </label>
         <label>Provincia:
