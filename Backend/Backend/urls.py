@@ -61,9 +61,16 @@ urlpatterns = [
     path('conseguir_aviones/', views.get_aviones, name='conseguir_aviones'),
     path('conseguir_asientos/', views.get_asientos, name='conseguir_asientos'),
     path('conseguir_pagos/', views.get_pagos, name='conseguir_pagos'),
-    path('conseguir_asientos_vuelo/<int:vuelo_id>/', views.get_asientos_vuelo, name='conseguir_asientos_vuelos')
+    path('conseguir_asientos_vuelo/<int:vuelo_id>/', views.get_asientos_vuelo, name='conseguir_asientos_vuelos'),
    # path('conseguir_facturas_completas/', views.get_facturas_completas, name='conseguir_facturas_completas'),
 
 
-
+    #Actualizar 
+    path('actualizar_vuelo/<int:vuelo_id>/', views.actualizar_vuelo, name='actualizar_vuelo'),
+    path('actualizar_paquete/<int:paquete_id>/', views.actualizar_paquete, name='actualizar_paquete'),
+    path('actualizar_hotel/<int:hotel_id>/', views.actualizar_hotel, name='actualizar_hotel'),
+    path('actualizar_auto/<int:auto_id>/', views.actualizar_auto, name='actualizar_auto'),
+    path('actualizar_avion/<int:avion_id>/', views.actualizar_avion, name='actualizar_avion'),
+    path('actualizar_pais/<int:pais_id>/', views.actualizar_pais, name='actualizar_pais'),
+    path('actualizar_ciudad/<int:ciudad_id>/', views.actualizar_ciudad, name='actualizar_ciudad')
 ]

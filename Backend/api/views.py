@@ -986,3 +986,118 @@ def busqueda_general(request):
         'vuelos': VueloListSerializer(vuelos, many=True).data,
         'aviones': AvionSerializer(aviones, many=True).data,
     }, status=200)
+
+
+
+#UPDATES
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_vuelo(request, vuelo_id):
+    if not request.user.is_staff:
+        return Response({"error": "No autorizado"}, status=403)
+    try:
+        vuelo = Vuelos.objects.get(id=vuelo_id)
+    except Vuelos.DoesNotExist:
+        return Response({"error": "Vuelo no encontrado"}, status=404)
+
+    serializer = VueloListSerializer(vuelo, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Vuelo actualizado correctamente"})
+    return Response(serializer.errors, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_paquete(request, paquete_id):
+    try:
+        paquete = Paquetes.objects.get(id=paquete_id)
+        if not request.user.is_staff and paquete.id_usuario != request.user:
+            return Response({"error": "No autorizado"}, status=403)
+    except Paquetes.DoesNotExist:
+        return Response({"error": "Paquete no encontrado"}, status=404)
+
+    serializer = PaqueteSerializer(paquete, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Paquete actualizado correctamente"})
+    return Response(serializer.errors, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_hotel(request, hotel_id):
+    if not request.user.is_staff:
+        return Response({"error": "No autorizado"}, status=403)
+    try:
+        hotel = Hoteles.objects.get(id=hotel_id)
+    except Hoteles.DoesNotExist:
+        return Response({"error": "Hotel no encontrado"}, status=404)
+
+    serializer = HotelSerializer(hotel, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Hotel actualizado correctamente"})
+    return Response(serializer.errors, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_auto(request, auto_id):
+    if not request.user.is_staff:
+        return Response({"error": "No autorizado"}, status=403)
+    try:
+        auto = Autos.objects.get(id=auto_id)
+    except Autos.DoesNotExist:
+        return Response({"error": "Auto no encontrado"}, status=404)
+
+    serializer = AutoSerializer(auto, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Auto actualizado correctamente"})
+    return Response(serializer.errors, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_avion(request, avion_id):
+    if not request.user.is_staff:
+        return Response({"error": "No autorizado"}, status=403)
+    try:
+        avion = Aviones.objects.get(id=avion_id)
+    except Aviones.DoesNotExist:
+        return Response({"error": "Avión no encontrado"}, status=404)
+
+    serializer = AvionSerializer(avion, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Avión actualizado correctamente"})
+    return Response(serializer.errors, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_pais(request, pais_id):
+    if not request.user.is_staff:
+        return Response({"error": "No autorizado"}, status=403)
+    try:
+        pais = Paises.objects.get(id=pais_id)
+    except Paises.DoesNotExist:
+        return Response({"error": "País no encontrado"}, status=404)
+
+    serializer = PaisSerializer(pais, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "País actualizado correctamente"})
+    return Response(serializer.errors, status=400)
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def actualizar_ciudad(request, ciudad_id):
+    if not request.user.is_staff:
+        return Response({"error": "No autorizado"}, status=403)
+    try:
+        ciudad = Ciudades.objects.get(id=ciudad_id)
+    except Ciudades.DoesNotExist:
+        return Response({"error": "Ciudad no encontrada"}, status=404)
+
+    serializer = CiudadSerializer(ciudad, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "Ciudad actualizada correctamente"})
+    return Response(serializer.errors, status=400)
