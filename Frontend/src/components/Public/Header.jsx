@@ -33,9 +33,9 @@ function Header() {
           return response.json();
         })
         .then(data => {
-            // console.log("Respuesta del backend:", data);
+
             setUsername(data.nombre_usuario);
-          // setUsername(data.username);
+    
         })
         .catch(error => {
           console.error('Error:', error);

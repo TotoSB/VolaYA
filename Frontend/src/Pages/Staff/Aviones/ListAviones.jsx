@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import '../../../styles/Staff/List.css';
 
 const ListAviones = () => {
   const [aviones, setAviones] = useState([]);
+  const [avionEditar, setAvionEditar] = useState(null);
 
-  useEffect(() => {
+  const cargarAviones = () => {
     const token = localStorage.getItem('access');
 
     fetch('http://127.0.0.1:8000/conseguir_aviones/', {
@@ -23,7 +23,38 @@ const ListAviones = () => {
         console.error('Error:', err);
         alert('No se pudieron cargar los aviones');
       });
+  };
+
+  useEffect(() => {
+    cargarAviones();
   }, []);
+
+  const handleEditar = (avion) => {
+    setAvionEditar(avion);
+  };
+
+  const handleUpdate = () => {
+    const token = localStorage.getItem('access');
+
+    fetch(`http://127.0.0.1:8000/actualizar_avion/${avionEditar.id}/`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(avionEditar),
+    })
+      .then(res => {
+        if (res.ok) {
+          alert('Avión actualizado correctamente');
+          setAvionEditar(null);
+          cargarAviones();
+        } else {
+          alert('Error al actualizar el avión');
+        }
+      })
+      .catch(err => console.error('Error al actualizar:', err));
+  };
 
   return (
     <div className="container mt-4">
@@ -47,7 +78,7 @@ const ListAviones = () => {
                 <th>General</th>
                 <th>Costo x km (VIP)</th>
                 <th>Costo x km (General)</th>
-                {/* <th>Acciones</th> */}
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -60,34 +91,18 @@ const ListAviones = () => {
                   <td>{avion.capacidad_general}</td>
                   <td>${avion.costo_km_vip}</td>
                   <td>${avion.costo_km_general}</td>
-                  {/* <td>
+                  <td>
                     <div className="d-flex justify-content-center gap-3">
-                      <Link
-                        to={`/staff/avion/editar/${avion.id}`}
+                      <button
                         className="btn btn-primary btn-sm"
-                        style={{
-                          backgroundColor: "transparent",
-                          borderColor: "#0d6efd",
-                        }}
+                        style={{ backgroundColor: "transparent", borderColor: "#0d6efd" }}
                         title="Modificar"
+                        onClick={() => handleEditar(avion)}
                       >
                         <i className="bx bx-edit" style={{ fontSize: "1.2rem", color: "#0d6efd" }}></i>
-                      </Link>
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        style={{
-                          background: "transparent",
-                          borderColor: "#dc3545",
-                        }}
-                        title="Eliminar"
-                        onClick={() => {
-                          console.log("Eliminar avión:", avion.id);
-                        }}
-                      >
-                        <i className="bx bx-trash" style={{ fontSize: "1.2rem", color: "#dc3545" }}></i>
                       </button>
                     </div>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -98,6 +113,70 @@ const ListAviones = () => {
           </p>
         )}
       </div>
+
+      {avionEditar && (
+        <div className="mt-5">
+          <h4 className="mb-3">Editar Avión ID {avionEditar.id}</h4>
+          <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
+            <div className="mb-3">
+              <label className="form-label">Nombre</label>
+              <input
+                type="text"
+                className="form-control"
+                value={avionEditar.nombre}
+                onChange={(e) => setAvionEditar({ ...avionEditar, nombre: e.target.value })}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Capacidad Total</label>
+              <input
+                type="number"
+                className="form-control"
+                value={avionEditar.capacidad_avion}
+                onChange={(e) => setAvionEditar({ ...avionEditar, capacidad_avion: e.target.value })}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Capacidad VIP</label>
+              <input
+                type="number"
+                className="form-control"
+                value={avionEditar.capacidad_vip}
+                onChange={(e) => setAvionEditar({ ...avionEditar, capacidad_vip: e.target.value })}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Capacidad General</label>
+              <input
+                type="number"
+                className="form-control"
+                value={avionEditar.capacidad_general}
+                onChange={(e) => setAvionEditar({ ...avionEditar, capacidad_general: e.target.value })}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Costo por km (VIP)</label>
+              <input
+                type="number"
+                className="form-control"
+                value={avionEditar.costo_km_vip}
+                onChange={(e) => setAvionEditar({ ...avionEditar, costo_km_vip: e.target.value })}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Costo por km (General)</label>
+              <input
+                type="number"
+                className="form-control"
+                value={avionEditar.costo_km_general}
+                onChange={(e) => setAvionEditar({ ...avionEditar, costo_km_general: e.target.value })}
+              />
+            </div>
+            <button type="submit" className="btn btn-success">Guardar Cambios</button>
+            <button type="button" className="btn btn-secondary ms-2" onClick={() => setAvionEditar(null)}>Cancelar</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

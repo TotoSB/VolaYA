@@ -28,13 +28,13 @@ function VuelosDisponibles() {
   const handleSeleccionVueloIda = (vuelo) => {
     setVueloIdaSeleccionado((prevVuelo) => 
       prevVuelo && prevVuelo.id === vuelo.id ? null : vuelo
-    ); // Cambia el estado solo si el vuelo ya estaba seleccionado
+    ); 
   };
 
   const handleSeleccionVueloVuelta = (vuelo) => {
     setVueloVueltaSeleccionado((prevVuelo) => 
       prevVuelo && prevVuelo.id === vuelo.id ? null : vuelo
-    ); // Cambia el estado solo si el vuelo ya estaba seleccionado
+    );
   };
 
   const formatoPesos = (num) =>

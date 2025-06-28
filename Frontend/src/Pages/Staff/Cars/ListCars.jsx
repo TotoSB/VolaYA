@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 
 const ListCars = () => {
   const [autos, setAutos] = useState([]);
+  const [autoEditar, setAutoEditar] = useState(null);
 
-  useEffect(() => {
+  const cargarAutos = () => {
     const token = localStorage.getItem("access");
 
     fetch("http://127.0.0.1:8000/conseguir_autos/", {
@@ -27,18 +27,47 @@ const ListCars = () => {
         console.error(err);
         setAutos([]);
       });
+  };
+
+  useEffect(() => {
+    cargarAutos();
   }, []);
+
+  const handleEditar = (auto) => {
+    setAutoEditar(auto);
+  };
+
+  const handleUpdate = () => {
+    const token = localStorage.getItem("access");
+
+    fetch(`http://127.0.0.1:8000/actualizar_auto/${autoEditar.id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(autoEditar),
+    })
+      .then((res) => {
+        if (res.ok) {
+          alert("Auto actualizado correctamente");
+          setAutoEditar(null);
+          cargarAutos();
+        } else {
+          alert("Error al actualizar auto");
+        }
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <div className="container mt-4">
-      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize:"25px" }}>
+      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
         <i className="bx bx-car" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
-          Lista De Autos
-      </div>   
-      <div
-        className="table-responsive"
-        style={{ maxHeight: "70vh", overflowY: "auto" }}
-      >
+        Lista De Autos
+      </div>
+
+      <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
         {autos.length > 0 ? (
           <table className="table table-striped table-bordered align-middle text-center">
             <thead className="table-primary text-center">
@@ -48,7 +77,7 @@ const ListCars = () => {
                 <th>Modelo</th>
                 <th>Color</th>
                 <th>Precio x Día</th>
-                {/* <th>Acciones</th> */}
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -59,34 +88,18 @@ const ListCars = () => {
                   <td>{auto.modelo}</td>
                   <td>{auto.color}</td>
                   <td>${auto.precio_dia}</td>
-                  {/* <td>
+                  <td>
                     <div className="d-flex justify-content-center gap-3">
-                      <Link
-                        to={`/staff/autos/editar/${auto.id}`}
+                      <button
+                        onClick={() => handleEditar(auto)}
                         className="btn btn-primary btn-sm"
-                        style={{
-                          backgroundColor: "transparent",
-                          borderColor: "#0d6efd",
-                        }}
+                        style={{ backgroundColor: "transparent", borderColor: "#0d6efd" }}
                         title="Modificar"
                       >
-                        <i
-                          className="bx bx-edit"
-                          style={{ fontSize: "1.2rem", color: "#0d6efd" }}
-                        ></i>
-                      </Link>
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        style={{ background: "transparent", borderColor: "#dc3545" }}
-                        title="Eliminar"
-                      >
-                        <i
-                          className="bx bx-trash"
-                          style={{ fontSize: "1.2rem", color: "#dc3545" }}
-                        ></i>
+                        <i className="bx bx-edit" style={{ fontSize: "1.2rem", color: "#0d6efd" }}></i>
                       </button>
                     </div>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -97,6 +110,56 @@ const ListCars = () => {
           </p>
         )}
       </div>
+
+      {autoEditar && (
+        <div className="mt-5">
+          <h4 className="mb-3">Editar Auto ID {autoEditar.id}</h4>
+          <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
+            <div className="mb-3">
+              <label className="form-label">Marca</label>
+              <input
+                type="text"
+                className="form-control"
+                value={autoEditar.marca}
+                onChange={(e) => setAutoEditar({ ...autoEditar, marca: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Modelo</label>
+              <input
+                type="text"
+                className="form-control"
+                value={autoEditar.modelo}
+                onChange={(e) => setAutoEditar({ ...autoEditar, modelo: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Color</label>
+              <input
+                type="text"
+                className="form-control"
+                value={autoEditar.color}
+                onChange={(e) => setAutoEditar({ ...autoEditar, color: e.target.value })}
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Precio por Día</label>
+              <input
+                type="number"
+                className="form-control"
+                value={autoEditar.precio_dia}
+                onChange={(e) => setAutoEditar({ ...autoEditar, precio_dia: e.target.value })}
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-success">Guardar Cambios</button>
+            <button type="button" className="btn btn-secondary ms-2" onClick={() => setAutoEditar(null)}>Cancelar</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };

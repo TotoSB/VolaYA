@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
 
 const ListPais = () => {
   const [paises, setPaises] = useState([]);
+  const [paisEditar, setPaisEditar] = useState(null);
 
-  useEffect(() => {
+  const cargarPaises = () => {
     const token = localStorage.getItem('access');
 
     fetch('http://127.0.0.1:8000/conseguir_paises/', {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
@@ -23,14 +23,42 @@ const ListPais = () => {
         console.error('Error:', err);
         alert('No se pudieron cargar los países');
       });
+  };
+
+  useEffect(() => {
+    cargarPaises();
   }, []);
+
+  const handleEditar = (pais) => {
+    setPaisEditar(pais);
+  };
+
+  const handleUpdate = () => {
+    const token = localStorage.getItem('access');
+
+    fetch(`http://127.0.0.1:8000/actualizar_pais/${paisEditar.id}/`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(paisEditar),
+    })
+      .then(res => {
+        if (res.ok) {
+          alert('País actualizado correctamente');
+          setPaisEditar(null);
+          cargarPaises();
+        } else {
+          alert('Error al actualizar país');
+        }
+      })
+      .catch(err => console.error('Error al actualizar:', err));
+  };
 
   return (
     <div className="container mt-4">
-      <div
-        className="d-flex align-items-center mb-3 fw-bold gap-2"
-        style={{ color: "#0d6efd", fontSize: "25px" }}
-      >
+      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
         <i className="bx bx-flag" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
         Lista de Países
       </div>
@@ -42,7 +70,7 @@ const ListPais = () => {
               <tr>
                 <th>ID</th>
                 <th>Nombre</th>
-                {/* <th>Acciones</th> */}
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -50,34 +78,18 @@ const ListPais = () => {
                 <tr key={pais.id}>
                   <td>{pais.id}</td>
                   <td>{pais.nombre}</td>
-                  {/* <td>
+                  <td>
                     <div className="d-flex justify-content-center gap-3">
-                      <Link
-                        to={`/staff/paises/editar/${pais.id}`}
+                      <button
+                        onClick={() => handleEditar(pais)}
                         className="btn btn-primary btn-sm"
-                        style={{
-                          backgroundColor: "transparent",
-                          borderColor: "#0d6efd",
-                        }}
+                        style={{ backgroundColor: "transparent", borderColor: "#0d6efd" }}
                         title="Modificar"
                       >
                         <i className="bx bx-edit" style={{ fontSize: "1.2rem", color: "#0d6efd" }}></i>
-                      </Link>
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        style={{
-                          background: "transparent",
-                          borderColor: "#dc3545",
-                        }}
-                        title="Eliminar"
-                        onClick={() => {
-                          console.log("Eliminar país:", pais.id);
-                        }}
-                      >
-                        <i className="bx bx-trash" style={{ fontSize: "1.2rem", color: "#dc3545" }}></i>
                       </button>
                     </div>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -88,6 +100,26 @@ const ListPais = () => {
           </p>
         )}
       </div>
+
+      {paisEditar && (
+        <div className="mt-5">
+          <h4 className="mb-3">Editar País ID {paisEditar.id}</h4>
+          <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
+            <div className="mb-3">
+              <label className="form-label">Nombre del País</label>
+              <input
+                type="text"
+                className="form-control"
+                value={paisEditar.nombre}
+                onChange={(e) => setPaisEditar({ ...paisEditar, nombre: e.target.value })}
+                required
+              />
+            </div>
+            <button type="submit" className="btn btn-success">Guardar Cambios</button>
+            <button type="button" className="btn btn-secondary ms-2" onClick={() => setPaisEditar(null)}>Cancelar</button>
+          </form>
+        </div>
+      )}
     </div>
   );
 };
