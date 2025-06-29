@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import '../../../styles/Staff/List.css';
+import SuccessModal from '../../../components/SuccessModal.jsx';
 
 const ListCars = () => {
   const [autos, setAutos] = useState([]);
   const [autoEditar, setAutoEditar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("access");
 
   const cargarAutos = () => {
-    const token = localStorage.getItem("access");
-
     fetch("http://127.0.0.1:8000/conseguir_autos/", {
       method: "GET",
       headers: {
@@ -15,14 +20,10 @@ const ListCars = () => {
       },
     })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error("Error al obtener autos");
-        }
+        if (!res.ok) throw new Error("Error al obtener autos");
         return res.json();
       })
-      .then((data) => {
-        setAutos(data);
-      })
+      .then((data) => setAutos(data))
       .catch((err) => {
         console.error(err);
         setAutos([]);
@@ -38,8 +39,6 @@ const ListCars = () => {
   };
 
   const handleUpdate = () => {
-    const token = localStorage.getItem("access");
-
     fetch(`http://127.0.0.1:8000/actualizar_auto/${autoEditar.id}/`, {
       method: "PUT",
       headers: {
@@ -50,7 +49,7 @@ const ListCars = () => {
     })
       .then((res) => {
         if (res.ok) {
-          alert("Auto actualizado correctamente");
+          setShowModal(true);
           setAutoEditar(null);
           cargarAutos();
         } else {
@@ -58,6 +57,10 @@ const ListCars = () => {
         }
       })
       .catch((err) => console.error(err));
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -159,6 +162,13 @@ const ListCars = () => {
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setAutoEditar(null)}>Cancelar</button>
           </form>
         </div>
+      )}
+
+      {showModal && (
+        <SuccessModal
+          message="¡Auto modificado correctamente!"
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

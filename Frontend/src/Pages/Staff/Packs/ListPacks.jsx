@@ -1,74 +1,133 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import SuccessModal from "../../../components/SuccessModal.jsx";
 
 const ListPacks = () => {
   const [paquetes, setPaquetes] = useState([]);
+  const [paqueteEditar, setPaqueteEditar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
-  const handleDelete = (paqueteId) => {
-    const token = localStorage.getItem("access");
+  const [vuelos, setVuelos] = useState([]);
+  const [autos, setAutos] = useState([]);
+  const [hoteles, setHoteles] = useState([]);
 
-    if (!window.confirm("¿Estás seguro de que querés eliminar este paquete?")) return;
+  const token = localStorage.getItem("access");
 
-    fetch(`http://127.0.0.1:8000/eliminar_paquete/${paqueteId}/`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("No se pudo eliminar el paquete");
-        return res.json();
-      })
-      .then((data) => {
-        alert(data.message || "Paquete eliminado");
-        // Filtrar el paquete eliminado de la lista
-        setPaquetes((prev) => prev.filter((p) => p.id !== paqueteId));
-      })
-      .catch((err) => {
-        console.error(err);
-        alert("Error al eliminar el paquete");
-      });
-  };
-
-
-  useEffect(() => {
-    const token = localStorage.getItem("access");
-
+  const cargarPaquetes = () => {
     fetch("http://127.0.0.1:8000/conseguir_paquetes_lista/", {
-      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al obtener paquetes");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => setPaquetes(data))
       .catch((err) => {
         console.error(err);
         setPaquetes([]);
       });
+  };
+
+  const cargarVuelos = () => {
+    fetch("http://127.0.0.1:8000/conseguir_vuelos/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setVuelos(data))
+      .catch((err) => console.error("Error al cargar vuelos", err));
+  };
+
+  const cargarAutos = () => {
+    fetch("http://127.0.0.1:8000/conseguir_autos/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setAutos(data))
+      .catch((err) => console.error("Error al cargar autos", err));
+  };
+
+  const cargarHoteles = () => {
+    fetch("http://127.0.0.1:8000/conseguir_hoteles/", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setHoteles(data))
+      .catch((err) => console.error("Error al cargar hoteles", err));
+  };
+
+  useEffect(() => {
+    cargarPaquetes();
+    cargarVuelos();
+    cargarAutos();
+    cargarHoteles();
   }, []);
+
+  const handleEditar = (paquete) => {
+    setPaqueteEditar({
+      ...paquete,
+      vuelo_ida: paquete.vuelo_ida || '',
+      vuelo_vuelta: paquete.vuelo_vuelta || '',
+      auto: paquete.auto || '',
+      hotel: paquete.hotel || '',
+      total: paquete.total || 0,
+    });
+  };
+
+  const handleUpdate = () => {
+    const data = {
+      descripcion: paqueteEditar.descripcion,
+      personas: parseInt(paqueteEditar.personas),
+      vuelo_ida: parseInt(paqueteEditar.vuelo_ida),
+      vuelo_vuelta: parseInt(paqueteEditar.vuelo_vuelta),
+      auto: parseInt(paqueteEditar.auto),
+      hotel: parseInt(paqueteEditar.hotel),
+      total: parseFloat(paqueteEditar.total),
+    };
+
+    fetch(`http://127.0.0.1:8000/actualizar_paquete/${paqueteEditar.id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => {
+        if (res.ok) {
+          setShowModal(true);
+          setPaqueteEditar(null);
+          cargarPaquetes();
+        } else {
+          return res.json().then(err => {
+            console.error("Detalles del error:", err);
+            alert("Error al actualizar el paquete.");
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Error de conexión al actualizar el paquete.");
+      });
+  };
+
+  const handleCloseModal = () => setShowModal(false);
 
   return (
     <div className="container mt-4">
-      <div
-        className="d-flex align-items-center mb-3 fw-bold gap-2"
-        style={{ color: "#0d6efd", fontSize: "25px" }}
-      >
-        <i
-          className="bx bx-package"
-          style={{ fontSize: "2rem", color: "#0d6efd" }}
-        ></i>
+      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
+        <i className="bx bx-package" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
         Lista De Paquetes
       </div>
-      <div
-        className="table-responsive"
-        style={{ maxHeight: "70vh", overflowY: "auto" }}
-      >
+
+      <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
         {paquetes.length > 0 ? (
           <table className="table table-striped table-bordered align-middle text-center">
             <thead className="table-primary text-center">
@@ -81,7 +140,7 @@ const ListPacks = () => {
                 <th>Auto</th>
                 <th>Hotel</th>
                 <th>Total</th>
-                {/* <th>Acciones</th> */}
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -95,38 +154,18 @@ const ListPacks = () => {
                   <td>{pack.auto || "—"}</td>
                   <td>{pack.hotel || "—"}</td>
                   <td>{pack.total}</td>
-                  {/* <td>
+                  <td>
                     <div className="d-flex justify-content-center gap-3">
-                      <Link
-                        to={`/staff/paquetes/editar/${pack.id}`}
+                      <button
+                        onClick={() => handleEditar(pack)}
                         className="btn btn-primary btn-sm"
-                        style={{
-                          backgroundColor: "transparent",
-                          borderColor: "#0d6efd",
-                        }}
+                        style={{ backgroundColor: "transparent", borderColor: "#0d6efd" }}
                         title="Modificar"
                       >
-                        <i
-                          className="bx bx-edit"
-                          style={{ fontSize: "1.2rem", color: "#0d6efd" }}
-                        ></i>
-                      </Link>
-                      <button
-                        className="btn btn-outline-danger btn-sm"
-                        style={{
-                          background: "transparent",
-                          borderColor: "#dc3545",
-                        }}
-                        title="Eliminar"
-                          onClick={() => handleDelete(pack.id)}
-                      >
-                        <i
-                          className="bx bx-trash"
-                          style={{ fontSize: "1.2rem", color: "#dc3545" }}
-                        ></i>
+                        <i className="bx bx-edit" style={{ fontSize: "1.2rem", color: "#0d6efd" }}></i>
                       </button>
                     </div>
-                  </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -137,6 +176,112 @@ const ListPacks = () => {
           </p>
         )}
       </div>
+
+      {paqueteEditar && (
+        <div className="mt-5">
+          <h4 className="mb-3">Editar Paquete ID {paqueteEditar.id}</h4>
+          <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
+            <div className="mb-3">
+              <label className="form-label">Descripción</label>
+              <input
+                type="text"
+                className="form-control"
+                value={paqueteEditar.descripcion}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, descripcion: e.target.value })}
+              />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Personas</label>
+              <input
+                type="number"
+                className="form-control"
+                value={paqueteEditar.personas}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, personas: e.target.value })}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Vuelo Ida</label>
+              <select
+                className="form-control"
+                value={paqueteEditar.vuelo_ida}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, vuelo_ida: e.target.value })}
+              >
+                <option value="">Seleccione un vuelo</option>
+                {vuelos.map(v => (
+                  <option key={v.id} value={v.id}>
+                    ID {v.id} - {v.origen} ➝ {v.destino}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Vuelo Vuelta</label>
+              <select
+                className="form-control"
+                value={paqueteEditar.vuelo_vuelta}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, vuelo_vuelta: e.target.value })}
+              >
+                <option value="">Seleccione un vuelo</option>
+                {vuelos.map(v => (
+                  <option key={v.id} value={v.id}>
+                    ID {v.id} - {v.origen} ➝ {v.destino}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Auto</label>
+              <select
+                className="form-control"
+                value={paqueteEditar.auto}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, auto: e.target.value })}
+              >
+                <option value="">Seleccione un auto</option>
+                {autos.map(a => (
+                  <option key={a.id} value={a.id}>{a.modelo}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Hotel</label>
+              <select
+                className="form-control"
+                value={paqueteEditar.hotel}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, hotel: e.target.value })}
+              >
+                <option value="">Seleccione un hotel</option>
+                {hoteles.map(h => (
+                  <option key={h.id} value={h.id}>{h.nombre}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label">Total</label>
+              <input
+                type="number"
+                className="form-control"
+                value={paqueteEditar.total}
+                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, total: e.target.value })}
+              />
+            </div>
+
+            <button type="submit" className="btn btn-success">Guardar Cambios</button>
+            <button type="button" className="btn btn-secondary ms-2" onClick={() => setPaqueteEditar(null)}>Cancelar</button>
+          </form>
+        </div>
+      )}
+
+      {showModal && (
+        <SuccessModal
+          message="¡Paquete actualizado correctamente!"
+          onClose={handleCloseModal}
+        />
+      )}
     </div>
   );
 };

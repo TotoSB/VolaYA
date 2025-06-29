@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SuccessModal from '../../../components/SuccessModal.jsx';
 
 const ListHotels = () => {
   const [hoteles, setHoteles] = useState([]);
   const [hotelEditar, setHotelEditar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
 
-  // Cargar hoteles al inicio
+  const token = localStorage.getItem('access');
+
   const cargarHoteles = () => {
-    const token = localStorage.getItem('access');
-
     fetch('http://127.0.0.1:8000/conseguir_hoteles/', {
       method: 'GET',
       headers: {
@@ -16,14 +19,10 @@ const ListHotels = () => {
       },
     })
       .then((res) => {
-        if (!res.ok) {
-          throw new Error('Error al obtener hoteles');
-        }
+        if (!res.ok) throw new Error('Error al obtener hoteles');
         return res.json();
       })
-      .then((data) => {
-        setHoteles(data);
-      })
+      .then((data) => setHoteles(data))
       .catch((err) => {
         console.error(err);
         setHoteles([]);
@@ -39,8 +38,6 @@ const ListHotels = () => {
   };
 
   const handleUpdate = () => {
-    const token = localStorage.getItem('access');
-
     fetch(`http://127.0.0.1:8000/actualizar_hotel/${hotelEditar.id}/`, {
       method: 'PUT',
       headers: {
@@ -51,14 +48,18 @@ const ListHotels = () => {
     })
       .then((res) => {
         if (res.ok) {
-          alert('Hotel actualizado correctamente');
+          setShowModal(true);
           setHotelEditar(null);
-          cargarHoteles(); // recargar la lista
+          cargarHoteles();
         } else {
           alert('Error al actualizar hotel');
         }
       })
       .catch((err) => console.error(err));
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -177,6 +178,13 @@ const ListHotels = () => {
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setHotelEditar(null)}>Cancelar</button>
           </form>
         </div>
+      )}
+
+      {showModal && (
+        <SuccessModal
+          message="¡Hotel modificado correctamente!"
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

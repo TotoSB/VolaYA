@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/List.css';
+import SuccessModal from '../../../components/SuccessModal.jsx';
 
 const ListCiudad = () => {
   const [ciudades, setCiudades] = useState([]);
   const [paises, setPaises] = useState([]);
   const [ciudadEditar, setCiudadEditar] = useState(null);
-
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
   const token = localStorage.getItem('access');
 
   const cargarCiudades = () => {
@@ -52,7 +55,7 @@ const ListCiudad = () => {
   const handleEditar = (ciudad) => {
     setCiudadEditar({
       ...ciudad,
-      pais: ciudad.pais_id || ciudad.pais || null, // en caso de que venga como "pais_id"
+      pais: ciudad.pais_id || ciudad.pais || '',
     });
   };
 
@@ -70,7 +73,7 @@ const ListCiudad = () => {
     })
       .then(res => {
         if (res.ok) {
-          alert('Ciudad actualizada correctamente');
+          setShowModal(true);
           setCiudadEditar(null);
           cargarCiudades();
         } else {
@@ -80,12 +83,13 @@ const ListCiudad = () => {
       .catch(err => console.error('Error al actualizar:', err));
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="container mt-4">
-      <div
-        className="d-flex align-items-center mb-3 fw-bold gap-2"
-        style={{ color: "#0d6efd", fontSize: "25px" }}
-      >
+      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
         <i className="bx bx-buildings" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
         Lista de Ciudades
       </div>
@@ -149,7 +153,7 @@ const ListCiudad = () => {
               <label className="form-label">País</label>
               <select
                 className="form-select"
-                value={ciudadEditar.pais || ''}
+                value={ciudadEditar.pais}
                 onChange={(e) => setCiudadEditar({ ...ciudadEditar, pais: parseInt(e.target.value) })}
                 required
               >
@@ -166,6 +170,13 @@ const ListCiudad = () => {
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setCiudadEditar(null)}>Cancelar</button>
           </form>
         </div>
+      )}
+
+      {showModal && (
+        <SuccessModal
+          message="¡Ciudad modificada correctamente!"
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );

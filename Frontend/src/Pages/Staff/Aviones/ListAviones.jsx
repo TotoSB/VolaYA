@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import SuccessModal from '../../../components/SuccessModal.jsx';
 import '../../../styles/Staff/List.css';
 
 const ListAviones = () => {
   const [aviones, setAviones] = useState([]);
   const [avionEditar, setAvionEditar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem('access');
 
   const cargarAviones = () => {
-    const token = localStorage.getItem('access');
-
     fetch('http://127.0.0.1:8000/conseguir_aviones/', {
       headers: {
-        'Authorization': `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     })
@@ -34,8 +38,6 @@ const ListAviones = () => {
   };
 
   const handleUpdate = () => {
-    const token = localStorage.getItem('access');
-
     fetch(`http://127.0.0.1:8000/actualizar_avion/${avionEditar.id}/`, {
       method: 'PUT',
       headers: {
@@ -46,7 +48,7 @@ const ListAviones = () => {
     })
       .then(res => {
         if (res.ok) {
-          alert('Avión actualizado correctamente');
+          setShowModal(true);
           setAvionEditar(null);
           cargarAviones();
         } else {
@@ -56,12 +58,13 @@ const ListAviones = () => {
       .catch(err => console.error('Error al actualizar:', err));
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
+
   return (
     <div className="container mt-4">
-      <div
-        className="d-flex align-items-center mb-3 fw-bold gap-2"
-        style={{ color: "#0d6efd", fontSize: "25px" }}
-      >
+      <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
         <i className="bx bx-paper-plane" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
         Lista de Aviones
       </div>
@@ -176,6 +179,13 @@ const ListAviones = () => {
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setAvionEditar(null)}>Cancelar</button>
           </form>
         </div>
+      )}
+
+      {showModal && (
+        <SuccessModal
+          message="¡Avión modificado correctamente!"
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
