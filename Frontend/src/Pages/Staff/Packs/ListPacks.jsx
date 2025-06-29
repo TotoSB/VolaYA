@@ -149,11 +149,36 @@ const ListPacks = () => {
                   <td>{pack.id}</td>
                   <td>{pack.descripcion}</td>
                   <td>{pack.personas}</td>
-                  <td>{pack.vuelo_ida || "—"}</td>
-                  <td>{pack.vuelo_vuelta || "—"}</td>
+                  <td>
+                    {new Date(pack.vuelo_ida_obj.fecha).toLocaleString("es-AR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                    | <b>{pack.vuelo_ida_obj.origen_nombre || "—"}</b> a  <b> {pack.vuelo_ida_obj.destino_nombre || "—"} </b>
+                  </td>
+
+                  <td>
+                    {new Date(pack.vuelo_vuelta_obj.fecha).toLocaleString("es-AR", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}{" "}
+                    | <b> {pack.vuelo_vuelta_obj.origen_nombre || "—"} </b> a <b> {pack.vuelo_vuelta_obj.destino_nombre || "—"} </b>
+                  </td>
+
                   <td>{pack.auto || "—"}</td>
                   <td>{pack.hotel || "—"}</td>
-                  <td>{pack.total}</td>
+                  <td>  {pack.total.toLocaleString("es-AR", {
+                        style: "currency",
+                        currency: "ARS",
+                        minimumFractionDigits: 2,
+                      })}
+                  </td>
                   <td>
                     <div className="d-flex justify-content-center gap-3">
                       <button

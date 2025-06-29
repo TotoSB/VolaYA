@@ -1,103 +1,87 @@
-import React, { useEffect, useState } from "react";
-import SuccessModal from "../../../components/SuccessModal.jsx";
+import React, { useEffect, useState } from 'react';
+import '../../../styles/Staff/Create.css';
 
-const ListPacks = () => {
-  const [paquetes, setPaquetes] = useState([]);
-  const [paqueteEditar, setPaqueteEditar] = useState(null);
-  const [showModal, setShowModal] = useState(false);
+const ListPais = () => {
+  const [paises, setPaises] = useState([]);
+  const [paisEditar, setPaisEditar] = useState(null);
 
-  const token = localStorage.getItem("access");
+  const cargarPaises = () => {
+    const token = localStorage.getItem('access');
 
-  const cargarPaquetes = () => {
-    fetch("http://127.0.0.1:8000/conseguir_paquetes_lista/", {
-      method: "GET",
+    fetch('http://127.0.0.1:8000/conseguir_paises/', {
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Error al obtener paquetes");
+      .then(res => {
+        if (!res.ok) throw new Error('Error al cargar países');
         return res.json();
       })
-      .then((data) => setPaquetes(data))
-      .catch((err) => {
-        console.error(err);
-        setPaquetes([]);
+      .then(data => setPaises(data))
+      .catch(err => {
+        console.error('Error:', err);
+        alert('No se pudieron cargar los países');
       });
   };
 
   useEffect(() => {
-    cargarPaquetes();
+    cargarPaises();
   }, []);
 
-  const handleEditar = (paquete) => {
-    setPaqueteEditar(paquete);
+  const handleEditar = (pais) => {
+    setPaisEditar(pais);
   };
 
   const handleUpdate = () => {
-    fetch(`http://127.0.0.1:8000/actualizar_paquete/${paqueteEditar.id}/`, {
-      method: "PUT",
+    const token = localStorage.getItem('access');
+
+    fetch(`http://127.0.0.1:8000/actualizar_pais/${paisEditar.id}/`, {
+      method: 'PUT',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(paqueteEditar),
+      body: JSON.stringify(paisEditar),
     })
-      .then((res) => {
+      .then(res => {
         if (res.ok) {
-          setShowModal(true);
-          setPaqueteEditar(null);
-          cargarPaquetes();
+          alert('País actualizado correctamente');
+          setPaisEditar(null);
+          cargarPaises();
         } else {
-          alert("Error al actualizar el paquete");
+          alert('Error al actualizar país');
         }
       })
-      .catch((err) => console.error(err));
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
+      .catch(err => console.error('Error al actualizar:', err));
   };
 
   return (
     <div className="container mt-4">
       <div className="d-flex align-items-center mb-3 fw-bold gap-2" style={{ color: "#0d6efd", fontSize: "25px" }}>
-        <i className="bx bx-package" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
-        Lista De Paquetes
+        <i className="bx bx-flag" style={{ fontSize: "2rem", color: "#0d6efd" }}></i>
+        Lista de Países
       </div>
 
       <div className="table-responsive" style={{ maxHeight: "70vh", overflowY: "auto" }}>
-        {paquetes.length > 0 ? (
+        {paises.length > 0 ? (
           <table className="table table-striped table-bordered align-middle text-center">
             <thead className="table-primary text-center">
               <tr>
                 <th>ID</th>
-                <th>Descripción</th>
-                <th>Personas</th>
-                <th>Vuelo Ida</th>
-                <th>Vuelo Vuelta</th>
-                <th>Auto</th>
-                <th>Hotel</th>
-                <th>Total</th>
+                <th>Nombre</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
-              {paquetes.map((pack) => (
-                <tr key={pack.id}>
-                  <td>{pack.id}</td>
-                  <td>{pack.descripcion}</td>
-                  <td>{pack.personas}</td>
-                  <td>{pack.vuelo_ida || "—"}</td>
-                  <td>{pack.vuelo_vuelta || "—"}</td>
-                  <td>{pack.auto || "—"}</td>
-                  <td>{pack.hotel || "—"}</td>
-                  <td>{pack.total}</td>
+              {paises.map((pais) => (
+                <tr key={pais.id}>
+                  <td>{pais.id}</td>
+                  <td>{pais.nombre}</td>
                   <td>
                     <div className="d-flex justify-content-center gap-3">
                       <button
-                        onClick={() => handleEditar(pack)}
+                        onClick={() => handleEditar(pais)}
                         className="btn btn-primary btn-sm"
                         style={{ backgroundColor: "transparent", borderColor: "#0d6efd" }}
                         title="Modificar"
@@ -112,47 +96,32 @@ const ListPacks = () => {
           </table>
         ) : (
           <p className="text-center fw-bold" style={{ color: "#0d6efd" }}>
-            No se encontraron paquetes para mostrar.
+            No hay países disponibles.
           </p>
         )}
       </div>
 
-      {paqueteEditar && (
+      {paisEditar && (
         <div className="mt-5">
-          <h4 className="mb-3">Editar Paquete ID {paqueteEditar.id}</h4>
+          <h4 className="mb-3">Editar País ID {paisEditar.id}</h4>
           <form onSubmit={(e) => { e.preventDefault(); handleUpdate(); }}>
             <div className="mb-3">
-              <label className="form-label">Descripción</label>
+              <label className="form-label">Nombre del País</label>
               <input
                 type="text"
                 className="form-control"
-                value={paqueteEditar.descripcion}
-                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, descripcion: e.target.value })}
-              />
-            </div>
-            <div className="mb-3">
-              <label className="form-label">Personas</label>
-              <input
-                type="number"
-                className="form-control"
-                value={paqueteEditar.personas}
-                onChange={(e) => setPaqueteEditar({ ...paqueteEditar, personas: e.target.value })}
+                value={paisEditar.nombre}
+                onChange={(e) => setPaisEditar({ ...paisEditar, nombre: e.target.value })}
+                required
               />
             </div>
             <button type="submit" className="btn btn-success">Guardar Cambios</button>
-            <button type="button" className="btn btn-secondary ms-2" onClick={() => setPaqueteEditar(null)}>Cancelar</button>
+            <button type="button" className="btn btn-secondary ms-2" onClick={() => setPaisEditar(null)}>Cancelar</button>
           </form>
         </div>
-      )}
-
-      {showModal && (
-        <SuccessModal
-          message="¡Paquete actualizado correctamente!"
-          onClose={handleCloseModal}
-        />
       )}
     </div>
   );
 };
 
-export default ListPacks;
+export default ListPais;
