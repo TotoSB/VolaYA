@@ -6,6 +6,9 @@ const ListHotels = () => {
   const [hoteles, setHoteles] = useState([]);
   const [hotelEditar, setHotelEditar] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [paises, setPaises] = useState([]);
+  const [ciudades, setCiudades] = useState([]);
+  const [ciudadesFiltradas, setCiudadesFiltradas] = useState([]);
   const navigate = useNavigate();
 
   const token = localStorage.getItem('access');
@@ -31,10 +34,43 @@ const ListHotels = () => {
 
   useEffect(() => {
     cargarHoteles();
+
+    fetch('http://127.0.0.1:8000/conseguir_paises/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setPaises(data))
+      .catch((err) => console.error('Error al cargar países:', err));
+
+    fetch('http://127.0.0.1:8000/conseguir_ciudades/', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => setCiudades(data))
+      .catch((err) => console.error('Error al cargar ciudades:', err));
   }, []);
 
+  useEffect(() => {
+    if (hotelEditar?.pais) {
+      const filtradas = ciudades.filter(
+        (c) => c.pais === parseInt(hotelEditar.pais)
+      );
+      setCiudadesFiltradas(filtradas);
+    }
+  }, [hotelEditar?.pais, ciudades]);
+
   const handleEditar = (hotel) => {
-    setHotelEditar(hotel);
+    setHotelEditar({
+      ...hotel,
+      pais: hotel.pais_id || '', // aseguramos compatibilidad con el backend
+      ciudad: hotel.ciudad_id || ''
+    });
   };
 
   const handleUpdate = () => {
@@ -44,7 +80,11 @@ const ListHotels = () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(hotelEditar),
+      body: JSON.stringify({
+        ...hotelEditar,
+        ciudad: parseInt(hotelEditar.ciudad),
+        pais: parseInt(hotelEditar.pais)
+      }),
     })
       .then((res) => {
         if (res.ok) {
@@ -135,6 +175,7 @@ const ListHotels = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Descripción</label>
               <textarea
@@ -144,6 +185,7 @@ const ListHotels = () => {
                 required
               ></textarea>
             </div>
+
             <div className="mb-3">
               <label className="form-label">Dirección</label>
               <input
@@ -154,6 +196,7 @@ const ListHotels = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Precio por Noche</label>
               <input
@@ -164,6 +207,7 @@ const ListHotels = () => {
                 required
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Personas</label>
               <input
@@ -174,6 +218,46 @@ const ListHotels = () => {
                 required
               />
             </div>
+
+            {/* País */}
+            <div className="mb-3">
+              <label className="form-label">País</label>
+              <select
+                className="form-control"
+                value={hotelEditar.pais}
+                onChange={(e) => {
+                  const nuevoPais = e.target.value;
+                  setHotelEditar({ ...hotelEditar, pais: nuevoPais, ciudad: '' });
+                }}
+                required
+              >
+                <option value="">Seleccionar país</option>
+                {paises.map((pais) => (
+                  <option key={pais.id} value={pais.id}>
+                    {pais.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Ciudad */}
+            <div className="mb-3">
+              <label className="form-label">Ciudad</label>
+              <select
+                className="form-control"
+                value={hotelEditar.ciudad}
+                onChange={(e) => setHotelEditar({ ...hotelEditar, ciudad: e.target.value })}
+                required
+              >
+                <option value="">Seleccionar ciudad</option>
+                {ciudadesFiltradas.map((ciudad) => (
+                  <option key={ciudad.id} value={ciudad.id}>
+                    {ciudad.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <button type="submit" className="btn btn-success">Guardar Cambios</button>
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setHotelEditar(null)}>Cancelar</button>
           </form>

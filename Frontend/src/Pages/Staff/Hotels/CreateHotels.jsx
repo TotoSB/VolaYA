@@ -5,20 +5,11 @@ import SuccessModal from '../../../components/SuccessModal';
 
 const CreateHotels = () => {
   const navigate = useNavigate();
-  
   const [showModal, setShowModal] = useState(false);
-
-  const handleSuccess = () => {
-    setShowModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowModal(false);
-    navigate('/staff/hoteles/agregar');
-  };
 
   const [form, setForm] = useState({
     nombre: '',
+    pais: '',
     ciudad: '',
     descripcion: '',
     personas: 1,
@@ -26,11 +17,24 @@ const CreateHotels = () => {
     direccion: ''
   });
 
+  const [paises, setPaises] = useState([]);
   const [ciudades, setCiudades] = useState([]);
-  const [isLoading, setIsLoading] = useState(false); // ⏳ Estado de carga
+  const [ciudadesFiltradas, setCiudadesFiltradas] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const token = localStorage.getItem('access');
 
   useEffect(() => {
-    const token = localStorage.getItem('access');
+    fetch('http://127.0.0.1:8000/conseguir_paises/', {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+      .then(res => res.json())
+      .then(data => setPaises(data))
+      .catch(err => console.error('Error al cargar países:', err));
+
     fetch('http://127.0.0.1:8000/conseguir_ciudades/', {
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -42,6 +46,16 @@ const CreateHotels = () => {
       .catch(err => console.error('Error al cargar ciudades:', err));
   }, []);
 
+  useEffect(() => {
+    if (form.pais) {
+      const filtradas = ciudades.filter(c => c.pais === parseInt(form.pais));
+      setCiudadesFiltradas(filtradas);
+    } else {
+      setCiudadesFiltradas([]);
+    }
+    setForm(prev => ({ ...prev, ciudad: '' })); // Resetear ciudad si cambia país
+  }, [form.pais, ciudades]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm(prev => ({ ...prev, [name]: value }));
@@ -49,8 +63,7 @@ const CreateHotels = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const token = localStorage.getItem('access');
-    setIsLoading(true); // 🌀 Activamos el loading
+    setIsLoading(true);
 
     fetch('http://127.0.0.1:8000/crear_hotel/', {
       method: 'POST',
@@ -58,20 +71,21 @@ const CreateHotels = () => {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(form)
+      body: JSON.stringify({ ...form, ciudad: parseInt(form.ciudad) })
     })
       .then(res => {
-        setIsLoading(false); // ✅ Finalizamos el loading
+        setIsLoading(false);
         if (res.status === 201) {
-          setShowModal(true)
+          setShowModal(true);
           setForm({
             nombre: '',
+            pais: '',
             ciudad: '',
             descripcion: '',
             personas: 1,
             precio_noche: '',
             direccion: ''
-          })
+          });
         } else {
           return res.json().then(data => {
             console.error('Errores:', data);
@@ -86,6 +100,11 @@ const CreateHotels = () => {
       });
   };
 
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate('/staff/hoteles/agregar');
+  };
+
   return (
     <div className="container mt-5" style={{ maxWidth: '600px' }}>
       <h2 className="mb-4 text-center create-title">Agregar Hoteles</h2>
@@ -96,16 +115,34 @@ const CreateHotels = () => {
         </div>
 
         <div className="mb-3">
+          <label className="create-label">País</label>
+          <select
+            className="form-control"
+            name="pais"
+            value={form.pais}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Seleccionar país</option>
+            {paises.map(pais => (
+              <option key={pais.id} value={pais.id}>
+                {pais.nombre}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mb-3">
           <label className="create-label">Ciudad</label>
           <select
             className="form-control"
             name="ciudad"
             value={form.ciudad}
-            onChange={(e) => handleChange({ target: { name: 'ciudad', value: parseInt(e.target.value) } })}
+            onChange={handleChange}
             required
           >
             <option value="">Seleccionar ciudad</option>
-            {ciudades.map(ciudad => (
+            {ciudadesFiltradas.map(ciudad => (
               <option key={ciudad.id} value={ciudad.id}>
                 {ciudad.nombre}
               </option>
@@ -145,12 +182,13 @@ const CreateHotels = () => {
             )}
           </div>
         </button>
-          {showModal && (
-            <SuccessModal
-              message="¡Hotel agregado correctamente!"
-              onClose={handleCloseModal}
-            />
-          )}
+
+        {showModal && (
+          <SuccessModal
+            message="¡Hotel agregado correctamente!"
+            onClose={handleCloseModal}
+          />
+        )}
       </form>
     </div>
   );

@@ -38,13 +38,22 @@ const ListAviones = () => {
   };
 
   const handleUpdate = () => {
+    const capacidad_vip = Number(avionEditar.capacidad_vip || 0);
+    const capacidad_general = Number(avionEditar.capacidad_general || 0);
+    const capacidad_total = capacidad_vip + capacidad_general;
+
+    const avionActualizado = {
+      ...avionEditar,
+      capacidad_avion: capacidad_total,
+    };
+
     fetch(`http://127.0.0.1:8000/actualizar_avion/${avionEditar.id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(avionEditar),
+      body: JSON.stringify(avionActualizado),
     })
       .then(res => {
         if (res.ok) {
@@ -130,15 +139,22 @@ const ListAviones = () => {
                 onChange={(e) => setAvionEditar({ ...avionEditar, nombre: e.target.value })}
               />
             </div>
+
+            {/* Capacidad Total solo lectura */}
             <div className="mb-3">
               <label className="form-label">Capacidad Total</label>
               <input
                 type="number"
                 className="form-control"
-                value={avionEditar.capacidad_avion}
-                onChange={(e) => setAvionEditar({ ...avionEditar, capacidad_avion: e.target.value })}
+                value={
+                  Number(avionEditar.capacidad_vip || 0) +
+                  Number(avionEditar.capacidad_general || 0)
+                }
+                readOnly
+                style={{ backgroundColor: '#e9ecef' }}
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Capacidad VIP</label>
               <input
@@ -148,6 +164,7 @@ const ListAviones = () => {
                 onChange={(e) => setAvionEditar({ ...avionEditar, capacidad_vip: e.target.value })}
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Capacidad General</label>
               <input
@@ -157,6 +174,7 @@ const ListAviones = () => {
                 onChange={(e) => setAvionEditar({ ...avionEditar, capacidad_general: e.target.value })}
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Costo por km (VIP)</label>
               <input
@@ -166,6 +184,7 @@ const ListAviones = () => {
                 onChange={(e) => setAvionEditar({ ...avionEditar, costo_km_vip: e.target.value })}
               />
             </div>
+
             <div className="mb-3">
               <label className="form-label">Costo por km (General)</label>
               <input
@@ -175,6 +194,7 @@ const ListAviones = () => {
                 onChange={(e) => setAvionEditar({ ...avionEditar, costo_km_general: e.target.value })}
               />
             </div>
+
             <button type="submit" className="btn btn-success">Guardar Cambios</button>
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setAvionEditar(null)}>Cancelar</button>
           </form>
