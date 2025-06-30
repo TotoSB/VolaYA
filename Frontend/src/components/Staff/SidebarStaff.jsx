@@ -15,19 +15,12 @@ const SidebarStaff = () => {
       <nav>
         <ul>
           <li>
+            <Link to="/staff/">
             <button className="sidebar-toggle" onClick={() => toggleMenu('dashboard')}>
               < i className='bx  bx-home-alt-2'  ></i>  Dashboard
               <i className={`bx bx-transparentt-${openMenu === 'dashboard' ? 'up' : 'down'}`}></i>
             </button>
-            {openMenu === 'dashboard' && (
-              <ul className="sidebar-submenu">
-                <li>
-                  <Link to="/staff/">
-                    <i className="bx bx-list-ul"></i> Abrir dashboard
-                  </Link>
-                </li>
-              </ul>
-            )}
+            </Link>
           </li>
 
           <li>

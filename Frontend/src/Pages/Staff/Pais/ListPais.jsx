@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import '../../../styles/Staff/Create.css';
+import SuccessModal from '../../../components/SuccessModal.jsx';
 
 const ListPais = () => {
   const [paises, setPaises] = useState([]);
   const [paisEditar, setPaisEditar] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const navigate = useNavigate(); // ← ✅
 
   const cargarPaises = () => {
     const token = localStorage.getItem('access');
@@ -46,7 +50,7 @@ const ListPais = () => {
     })
       .then(res => {
         if (res.ok) {
-          alert('País actualizado correctamente');
+          setShowModal(true);
           setPaisEditar(null);
           cargarPaises();
         } else {
@@ -54,6 +58,10 @@ const ListPais = () => {
         }
       })
       .catch(err => console.error('Error al actualizar:', err));
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
   };
 
   return (
@@ -119,6 +127,13 @@ const ListPais = () => {
             <button type="button" className="btn btn-secondary ms-2" onClick={() => setPaisEditar(null)}>Cancelar</button>
           </form>
         </div>
+      )}
+
+      {showModal && (
+        <SuccessModal
+          message="¡País modificado correctamente!"
+          onClose={handleCloseModal}
+        />
       )}
     </div>
   );
